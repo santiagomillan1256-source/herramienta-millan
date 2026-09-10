@@ -168,7 +168,8 @@ function pintarVisitanos() {
   $("#mapa").innerHTML =
     `<a class="mapa-imagen" href="${esc(GOOGLE.ubicacion)}" target="_blank" rel="noopener"
         aria-label="Ver la ubicación de ${esc(SITE.nombre)} en Google Maps">
-      <img src="img/mapa.webp" alt="Mapa con la ubicación del local, en ${esc(d.calle)}" loading="lazy" decoding="async">
+      <img src="img/mapa.webp" alt="Mapa con la ubicación del local, en ${esc(d.calle)}" loading="lazy" decoding="async"
+           onerror="this.closest('.mapa-imagen').classList.add('sin-mapa'); this.remove()">
       <span class="mapa-pie">
         <span class="mapa-calle">${esc(d.calle)}</span>
         <span>${esc(d.barrio)}, ${esc(d.localidad)} — ${esc(d.provincia)}</span>
