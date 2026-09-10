@@ -444,56 +444,49 @@ li{list-style:none}
 .valor h3{font-family:var(--texto);font-size:1rem;font-weight:700;margin-bottom:.4rem}
 .valor p{font-size:.88rem;color:var(--gris);line-height:1.6}
 
-/* ══════ OPINIONES ═══════════════════════════════════════════════════════ */
+/* ══════ OPINIONES DE GOOGLE ════════════════════════════════════════════ */
 .opiniones{background:var(--blanco);padding-block:clamp(2.6rem,6vw,4.2rem);border-bottom:1px solid var(--borde)}
-.op-resumen{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
-.op-nota{font-family:var(--titulo);font-size:2.4rem;line-height:1;color:var(--naranja)}
-.op-cuenta{font-size:.86rem;color:var(--gris-2)}
+.resenas-cab{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1.4rem 2.4rem;align-items:center}
+
+.resenas-resumen{display:flex;align-items:center;gap:1rem;padding:1rem 1.3rem;
+  border:1px solid var(--borde);background:var(--papel-2);white-space:nowrap}
+.resenas-nota{font-family:var(--titulo);font-size:3rem;line-height:.9;color:var(--tinta)}
+.resenas-detalle{display:flex;flex-direction:column;gap:.25rem}
+.resenas-detalle span{font-size:.8rem;color:var(--gris)}
+
 .estrellas{display:inline-flex;gap:.1rem}
 .estrella{width:18px;height:18px;fill:var(--borde-fuerte);stroke:none;flex:none}
-.estrella.llena{fill:var(--naranja)}
+.estrella.llena{fill:#f5a623}
 .estrellas.chicas .estrella{width:14px;height:14px}
-.op-destacadas{display:grid;gap:1px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+.g-ico{width:1.05em;height:1.05em;flex:none}
+
+.resenas-estado{margin-top:1.6rem;padding:1.2rem 1.3rem;border:1px dashed var(--borde-fuerte);
+  background:var(--papel-2);font-size:.92rem;color:var(--gris);max-width:66ch}
+.resenas-estado b{color:var(--tinta)}
+
+.resenas{display:grid;gap:1px;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
   margin-top:2rem;background:var(--borde);border:1px solid var(--borde)}
-.op-destacada{margin:0;padding:1.5rem;background:var(--papel-2);border-top:3px solid var(--naranja)}
-.op-destacada blockquote{margin:.8rem 0 1rem;font-size:1rem;line-height:1.6}
-.op-destacada figcaption{font-size:.9rem;font-weight:700;display:flex;flex-direction:column;gap:.1rem}
-.op-destacada figcaption span{font-weight:400;font-size:.78rem;color:var(--gris-2)}
-.op-subtitulo{font-size:1.3rem;text-transform:uppercase;margin-top:2.4rem}
-.op-grid{display:grid;gap:1px;grid-template-columns:repeat(auto-fill,minmax(262px,1fr));
-  margin-top:1rem;background:var(--borde);border:1px solid var(--borde)}
-.op-card{padding:1.1rem 1.15rem;background:var(--blanco)}
-.op-card-top{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.6rem}
-.op-nombre{font-size:.9rem;font-weight:700}
-.op-texto{font-size:.88rem;line-height:1.6;color:var(--gris)}
-.op-fecha{margin-top:.7rem;font-size:.76rem;color:var(--gris-2)}
-.op-vacio{margin-top:1.6rem;padding:1.4rem;border:1px dashed var(--borde-fuerte);background:var(--papel-2);
-  color:var(--gris);font-size:.92rem;max-width:62ch}
-.op-form-caja{margin-top:2.4rem;padding:clamp(1.3rem,3vw,2rem);background:var(--papel-2);
-  border:1px solid var(--borde);max-width:760px}
-.op-form-caja h3{font-size:1.35rem;text-transform:uppercase}
-.op-bajada{margin-top:.35rem;font-size:.88rem;color:var(--gris-2)}
-#op-form{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:1.4rem}
-.op-campo{display:flex;flex-direction:column;gap:.4rem}
-.op-ancho{grid-column:1/-1}
-.op-campo label,.op-etq{font-size:.78rem;font-weight:600;color:var(--gris)}
-.op-campo input[type=text],.op-campo textarea{width:100%;padding:.7rem .85rem;border:1px solid var(--borde-fuerte);
-  border-radius:var(--radio);background:var(--blanco);font:inherit;font-size:.92rem;resize:vertical}
-.op-campo input[type=text]:focus,.op-campo textarea:focus{outline:none;border-color:var(--naranja)}
-.op-estrellas{display:flex;gap:.2rem}
-.op-estrellas button{width:32px;height:32px;padding:0;border:0;background:none;cursor:pointer}
-.op-estrellas button::before{content:"";display:block;width:100%;height:100%;background:var(--borde-fuerte);
-  -webkit-mask:var(--estrella) center/contain no-repeat;mask:var(--estrella) center/contain no-repeat}
-.op-estrellas button.activa::before{background:var(--naranja)}
-#op-form .boton{grid-column:1/-1;justify-self:start}
-.op-senuelo{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.op-aviso{margin-top:1rem;padding:.8rem .95rem;border-radius:var(--radio);font-size:.88rem}
-.op-aviso.bien{background:#e7f6ec;border:1px solid #a9dcbc;color:#12622f}
-.op-aviso.mal{background:#fdeceb;border:1px solid #f0b5b0;color:#8c2016}
+.resena{display:flex;flex-direction:column;gap:.55rem;padding:1.2rem 1.25rem;background:var(--blanco)}
+.resena-top{display:flex;align-items:center;gap:.7rem}
+.resena-cara{position:relative;display:grid;place-items:center;width:38px;height:38px;flex:none;
+  border-radius:50%;background:var(--tinta);color:#fff;overflow:hidden;
+  font-family:var(--titulo);font-size:1.15rem;line-height:1}
+.resena-cara img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.resena-quien{display:flex;flex-direction:column;gap:.1rem;min-width:0;flex:1}
+.resena-quien b{font-size:.9rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.resena-quien span{font-size:.76rem;color:var(--gris-2)}
+.resena-texto{font-size:.89rem;line-height:1.6;color:var(--gris)}
+.resena-enlace{margin-top:auto;padding-top:.5rem;font-size:.78rem;font-weight:700;
+  color:var(--naranja);text-decoration:none}
+.resena-enlace:hover{text-decoration:underline}
+
+.resenas-acciones{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem;
+  padding-top:1.6rem;border-top:1px solid var(--borde)}
 
 /* ══════ VISITANOS: ubicación + contacto ═════════════════════════════════ */
 .visitanos{background:var(--papel);padding-block:clamp(2.6rem,6vw,4.2rem)}
-.visitanos-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1.4rem,3.5vw,2.6rem);margin-top:2rem}
+.visitanos-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1.4rem,3.5vw,2.6rem);margin-top:2rem;align-items:start}
 .datos-caja{background:var(--blanco);border:1px solid var(--borde)}
 .datos-fila{padding:1.2rem 1.4rem;border-bottom:1px solid var(--borde)}
 .datos-fila:last-child{border-bottom:0}
@@ -518,12 +511,17 @@ a.contacto-fila{text-decoration:none;transition:border-color .15s,background .15
 a.contacto-fila:hover{border-color:var(--naranja);background:var(--naranja-papel)}
 a.contacto-fila .flecha{margin-left:auto;color:var(--gris-2)}
 a.contacto-fila:hover .flecha{color:var(--naranja)}
-.mapa{border:1px solid var(--borde);background:var(--blanco);min-height:320px;height:100%}
-.mapa iframe{display:block;width:100%;height:100%;min-height:420px;border:0;filter:grayscale(.2)}
-.mapa-vacio{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;
-  height:100%;min-height:320px;padding:2rem;text-align:center;border:1px dashed var(--borde-fuerte);background:var(--papel-2)}
-.mapa-vacio .icono{width:32px;height:32px;color:var(--naranja)}
-.mapa-vacio p:last-child{font-size:.88rem;color:var(--gris);max-width:32ch}
+.ubi-acciones{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.2rem}
+.direccion-calle{font-family:var(--titulo);font-size:1.35rem;letter-spacing:.01em}
+.mapa{position:relative;border:1px solid var(--borde);background:var(--papel-2);height:clamp(320px,52vh,540px);overflow:hidden}
+.mapa iframe{position:absolute;inset:0;display:block;width:100%;height:100%;border:0}
+/* Se ve sólo si el marco de Google no carga. */
+.mapa-respaldo{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;
+  height:100%;padding:2rem;text-align:center}
+.mapa-respaldo .icono{width:30px;height:30px;color:var(--naranja);margin-bottom:.3rem}
+.mapa-respaldo p{font-size:.9rem;color:var(--gris)}
+.mapa-calle{font-family:var(--titulo);font-size:1.4rem;color:var(--tinta)}
+.mapa-respaldo .boton{margin-top:.8rem}
 
 /* ══════ LLAMADA FINAL ═══════════════════════════════════════════════════ */
 .cierre{--foto:none;position:relative;background-color:var(--tinta-2);color:#fff;
@@ -623,6 +621,7 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .paso:nth-child(2n)::after{display:none}
 }
 @media (max-width:980px){
+  .resenas-cab{grid-template-columns:1fr;justify-items:start}
   .portada-in{grid-template-columns:1fr}
   .alquiler-cab,.reparacion-cab{grid-template-columns:1fr;align-items:start}
   .visitanos-grid{grid-template-columns:1fr}

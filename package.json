@@ -6,9 +6,6 @@
   "scripts": {
     "dev": "node servidor.js"
   },
-  "dependencies": {
-    "pg": "^8.13.1"
-  },
   "engines": {
     "node": ">=20"
   }

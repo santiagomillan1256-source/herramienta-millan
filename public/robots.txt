@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /panel
 Disallow: /api/
 
 Sitemap: https://ferreteria-millan-sas.vercel.app/sitemap.xml

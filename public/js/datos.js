@@ -45,21 +45,33 @@ export const SITE = {
   tiktok: "https://www.tiktok.com/@ferreteriamillan",
   tiktokUsuario: "@ferreteriamillan",
 
-  /* ⚠ PENDIENTE: completar con la dirección real del local.
-     Mientras un valor empiece con "[", la página lo muestra marcado
-     para que se vea y no quede olvidado. */
+  /* El teléfono fijo del local, tal como figura en la ficha de Google. */
+  fijo: { visible: "0264 424-2212", tel: "+542644242212" },
+
   direccion: {
-    calle: "[CALLE Y NÚMERO]",
-    barrio: "[BARRIO]",
-    localidad: "[LOCALIDAD]",
-    provincia: "[PROVINCIA]",
-    referencia: "[REFERENCIA PARA LLEGAR]",
+    calle: "Mendoza Sur 2357",
+    barrio: "Villa Krause",
+    localidad: "Rawson",
+    provincia: "San Juan",
+    codigoPostal: "J5425",
+    referencia: "",
   },
-  /* Enlace corto de Google Maps del local. Cuando esté, el mapa se dibuja solo. */
-  comoLlegar: "[ENLACE_COMO_LLEGAR]",
-  /* Dirección para el mapa incrustado, con "+" en lugar de espacios.
-     Ejemplo: "Ferreteria+Millan+Av.+Libertador+1234+San+Juan" */
-  mapa: "",
+
+  /* ── La ficha del local en Google ────────────────────────────────────────
+     De acá salen el mapa, el botón de ubicación y las reseñas.
+     `placeId` es el identificador del local en Google Maps: si algún día
+     cambia la ficha, es el único valor que hay que actualizar.
+     ──────────────────────────────────────────────────────────────────────── */
+  google: {
+    placeId: "ChIJV6PL-ts_gZYRSlwFeKtY-Jk",
+    /* El nombre tal cual figura en la ficha. */
+    nombre: "Ferretería y herramientas Millán S.A.S",
+    /* Enlace corto de la ficha, para el botón "Ver ubicación en Google Maps". */
+    ficha: "https://maps.app.goo.gl/td421uqogeY6N42M7",
+    /* Para el mapa incrustado: la búsqueda con "+" en lugar de espacios. */
+    consultaMapa:
+      "Ferreteria+y+herramientas+Millan+S.A.S,+Mendoza+Sur+2357,+Villa+Krause,+San+Juan",
+  },
 
   /* Franjas horarias en minutos desde las 00:00, por día (0 = domingo).
      480 = 08:00 · 780 = 13:00 · 960 = 16:00 · 990 = 16:30 · 1200 = 20:00 · 1230 = 20:30 */
@@ -82,6 +94,28 @@ export const SITE = {
 
 /** Un dato todavía sin completar: la página lo muestra marcado. */
 export const pendiente = (v) => typeof v === "string" && v.trim().startsWith("[");
+
+/* ── Enlaces a la ficha de Google ─────────────────────────────────────────
+   Todos se arman con el mismo `placeId`, así que no hay nada que mantener
+   por separado: si cambia la ficha, se cambia el placeId y listo.
+   ───────────────────────────────────────────────────────────────────────── */
+
+const LUGAR = SITE.google.placeId;
+
+export const GOOGLE = {
+  /** La ficha del local en Google Maps. */
+  ubicacion: SITE.google.ficha,
+  /** Indicaciones para llegar desde donde esté el cliente. */
+  comoLlegar:
+    `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(SITE.google.nombre)}` +
+    `&destination_place_id=${LUGAR}`,
+  /** Todas las opiniones publicadas en Google. */
+  resenas: `https://search.google.com/local/reviews?placeid=${LUGAR}`,
+  /** El formulario de Google para escribir una opinión. */
+  dejarResena: `https://search.google.com/local/writereview?placeid=${LUGAR}`,
+  /** El mapa incrustado. No necesita clave de API. */
+  mapa: `https://www.google.com/maps/embed?origin=mfe&pb=!1m3!2m1!1s${SITE.google.consultaMapa}!6i17!3m1!1ses!5m1!1ses`,
+};
 
 /* ── Categorías del catálogo ──────────────────────────────────────────────
    Cada categoría es una tarjeta en la portada del catálogo. Sus subcategorías

@@ -7,7 +7,7 @@
  */
 
 import {
-  SITE, CATEGORIAS, ICONOS, PRODUCTOS, armarProductos, categoriaPorId, productosDe,
+  SITE, GOOGLE, CATEGORIAS, ICONOS, PRODUCTOS, armarProductos, categoriaPorId, productosDe,
   marcasDe, nombreSub, pendiente, waLink, mensajeGeneral, mensajeProducto,
   mensajeCategoria, mensajeReparacion, mensajeAlquiler, mensajePresupuesto, estadoActual,
 } from "./datos.js";
@@ -49,6 +49,7 @@ const WA_SVG = '<svg class="wa-icono" viewBox="0 0 24 24" aria-hidden="true"><pa
 const FLECHA = '<svg class="icono flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const TEL_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h4l2 5-2.5 1.6a13 13 0 0 0 6 6L15 14l5 2v4a17 17 0 0 1-16-16z"/></svg>';
 const PIN_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>';
+const RUTA_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.4 12-9.4 9.4L2.6 12 12 2.6z"/><path d="M8.6 14v-2.2a2 2 0 0 1 2-2h4.2"/><path d="m13 8 2 2-2 2"/></svg>';
 const IG_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/></svg>';
 const TT_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3.2v9.9a3.7 3.7 0 1 1-3.1-3.65"/><path d="M15.2 3.2a5 5 0 0 0 4.6 4.2"/></svg>';
 /* Marcador para lo que todavía no tiene foto: mejor un dibujo que una imagen rota. */
@@ -101,7 +102,7 @@ function pintarCabecera() {
      <a href="${esc(SITE.tiktok)}" target="_blank" rel="noopener" aria-label="TikTok">${TT_SVG}</a>`;
 
   const corta = $("[data-ubicacion-corta]");
-  if (HAY_DIRECCION) corta.textContent = [LINEA_CORTA, LINEA_LARGA].filter(Boolean).join(" — ");
+  if (HAY_DIRECCION) corta.textContent = `${d.calle}, ${d.barrio} · ${d.provincia}`;
 }
 
 function pintarPortada() {
@@ -120,11 +121,12 @@ function pintarPortada() {
 }
 
 function pintarVisitanos() {
-  $("#dato-direccion").innerHTML = HAY_DIRECCION
-    ? [dato(d.calle), dato(d.barrio), `${dato(d.localidad)} — ${dato(d.provincia)}, Argentina`,
-       pendiente(d.referencia) ? "" : esc(d.referencia)].filter(Boolean).join("<br>")
-    : `${dato(d.calle)}<br>${dato(d.barrio)}<br>${dato(d.localidad)} — ${dato(d.provincia)}
-       <span class="falta-nota">Falta cargar la dirección del local. Pasanosla y la completamos.</span>`;
+  $("#dato-direccion").innerHTML = [
+    `<b class="direccion-calle">${dato(d.calle)}</b>`,
+    `${dato(d.barrio)}, ${dato(d.localidad)}`,
+    `${dato(d.provincia)}${d.codigoPostal ? ` (${esc(d.codigoPostal)})` : ""} — Argentina`,
+    d.referencia && !pendiente(d.referencia) ? esc(d.referencia) : "",
+  ].filter(Boolean).join("<br>");
 
   $("#dato-horarios").innerHTML = SITE.horariosTexto.map((h) =>
     `<li><span>${esc(h.dia)}</span><b>${esc(h.horas)}</b></li>`).join("");
@@ -138,24 +140,38 @@ function pintarVisitanos() {
         <a class="boton boton-linea boton-chico" href="tel:${esc(n.tel)}">${TEL_SVG} Llamar</a>
       </span>
     </div>`),
+    SITE.fijo
+      ? `<a class="contacto-fila" href="tel:${esc(SITE.fijo.tel)}">
+          ${TEL_SVG}<span class="contacto-txt"><span>Teléfono del local</span><b>${esc(SITE.fijo.visible)}</b></span>${FLECHA}
+        </a>`
+      : "",
     `<a class="contacto-fila" href="${esc(SITE.instagram)}" target="_blank" rel="noopener">
       ${IG_SVG}<span class="contacto-txt"><span>Instagram</span><b>${esc(SITE.instagramUsuario)}</b></span>${FLECHA}
     </a>`,
     `<a class="contacto-fila" href="${esc(SITE.tiktok)}" target="_blank" rel="noopener">
       ${TT_SVG}<span class="contacto-txt"><span>TikTok</span><b>${esc(SITE.tiktokUsuario)}</b></span>${FLECHA}
     </a>`,
-    pendiente(SITE.comoLlegar)
-      ? ""
-      : `<a class="contacto-fila" href="${esc(SITE.comoLlegar)}" target="_blank" rel="noopener">
-          ${PIN_SVG}<span class="contacto-txt"><span>Cómo llegar</span><b>Abrir en Google Maps</b></span>${FLECHA}
-        </a>`,
   ].filter(Boolean).join("");
 
-  /* El mapa recién se dibuja cuando hay una dirección para buscar. */
-  $("#mapa").innerHTML = SITE.mapa
-    ? `<iframe title="Mapa con la ubicación de ${esc(SITE.nombre)}" src="https://www.google.com/maps/embed?origin=mfe&pb=!1m2!2m1!1s${esc(SITE.mapa)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>`
-    : `<div class="mapa-vacio">${PIN_SVG}<p class="falta">Mapa pendiente</p>
-       <p>Cuando esté cargada la dirección del local, acá va el mapa para llegar.</p></div>`;
+  /* Los dos accesos a Google Maps: ver dónde queda y cómo llegar. */
+  $("#ubi-acciones").innerHTML =
+    `<a class="boton boton-naranja" href="${esc(GOOGLE.ubicacion)}" target="_blank" rel="noopener">
+      ${PIN_SVG}Ver ubicación en Google Maps
+    </a>
+    <a class="boton boton-linea" href="${esc(GOOGLE.comoLlegar)}" target="_blank" rel="noopener">
+      ${RUTA_SVG}Cómo llegar
+    </a>`;
+
+  /* Debajo del mapa queda siempre una tarjeta con la dirección: si el visor
+     bloquea el marco de Google, la página sigue diciendo dónde queda el local. */
+  $("#mapa").innerHTML =
+    `<div class="mapa-respaldo">
+      ${PIN_SVG}
+      <p class="mapa-calle">${esc(d.calle)}</p>
+      <p>${esc(d.barrio)}, ${esc(d.localidad)} — ${esc(d.provincia)}</p>
+      <a class="boton boton-oscuro boton-chico" href="${esc(GOOGLE.ubicacion)}" target="_blank" rel="noopener">Abrir en Google Maps</a>
+    </div>
+    <iframe title="Mapa con la ubicación de ${esc(SITE.nombre)}" src="${esc(GOOGLE.mapa)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>`;
 }
 
 function pintarPie() {

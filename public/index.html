@@ -3,12 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FERRETERIA Y HERRAMIENTAS MILLAN S.A.S. — Venta, alquiler y reparación</title>
-<meta name="description" content="Ferretería y casa de herramientas: máquinas a explosión y eléctricas, bulones, pinturas, PVC, cemento y membranas. Alquiler de equipos y servicio de reparación. Consultanos por WhatsApp.">
+<title>FERRETERIA Y HERRAMIENTAS MILLAN S.A.S. — Ferretería en Villa Krause, San Juan</title>
+<meta name="description" content="Ferretería y casa de herramientas en Mendoza Sur 2357, Villa Krause, San Juan: máquinas a explosión y eléctricas, bulones, pinturas, PVC, cemento y membranas. Alquiler de equipos y servicio de reparación.">
 <meta name="theme-color" content="#15181c">
 <!-- El sitio se publica en ferreteria-millan-sas.vercel.app. Si algún día se le
-     pone un dominio propio, cambiarlo acá, en robots.txt y en sitemap.xml.
-     Cuando esté la dirección del local, conviene sumar la localidad al título. -->
+     pone un dominio propio, cambiarlo acá, en robots.txt y en sitemap.xml. -->
 <link rel="canonical" href="https://ferreteria-millan-sas.vercel.app/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_AR">
@@ -25,8 +24,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="css/styles.css">
-<!-- Ficha del negocio para los buscadores: los mismos datos que muestra la página.
-     FALTA: agregar el bloque "address" y "hasMap" cuando esté la dirección del local. -->
+<!-- Ficha del negocio para los buscadores: los mismos datos que muestra la página. -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -36,11 +34,21 @@
   "image": "https://ferreteria-millan-sas.vercel.app/img/logo.webp",
   "logo": "https://ferreteria-millan-sas.vercel.app/img/logo.webp",
   "description": "Ferretería y casa de herramientas: máquinas a explosión y eléctricas, bulones, pinturas, PVC, cemento y membranas. Alquiler de equipos y servicio de reparación.",
-  "telephone": ["+5492645061440", "+5492646619688"],
-  "addressCountry": "AR",
+  "telephone": ["+542644242212", "+5492645061440", "+5492646619688"],
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Mendoza Sur 2357",
+    "addressLocality": "Villa Krause, Rawson",
+    "addressRegion": "San Juan",
+    "postalCode": "J5425",
+    "addressCountry": "AR"
+  },
+  "geo": { "@type": "GeoCoordinates", "latitude": -31.5880989, "longitude": -68.5369484 },
+  "hasMap": "https://maps.app.goo.gl/td421uqogeY6N42M7",
   "sameAs": [
     "https://www.instagram.com/herramientasmillan/",
-    "https://www.tiktok.com/@ferreteriamillan"
+    "https://www.tiktok.com/@ferreteriamillan",
+    "https://maps.app.goo.gl/td421uqogeY6N42M7"
   ],
   "openingHoursSpecification": [
     { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "13:00" },
@@ -357,51 +365,21 @@
   </div>
 </div></section>
 
-<!-- ══════ OPINIONES ══════ -->
+<!-- ══════ OPINIONES DE GOOGLE ══════ -->
 <section class="opiniones" id="opiniones"><div class="contenedor">
-  <p class="rotulo">Clientes</p>
-  <h2 class="titulo-seccion">Lo que dicen de nosotros</h2>
-  <div class="op-resumen" id="op-resumen" hidden></div>
-
-  <div id="op-destacadas-bloque" hidden>
-    <div class="op-destacadas" id="op-destacadas"></div>
+  <div class="resenas-cab">
+    <div>
+      <p class="rotulo">Opiniones</p>
+      <h2 class="titulo-seccion">Lo que dicen en Google</h2>
+      <p class="bajada">Estas son las opiniones que dejan los clientes en la ficha del local. No las administramos nosotros: se escriben y se leen en Google, con nombre y foto de quien las publica.</p>
+    </div>
+    <div class="resenas-resumen" id="resenas-resumen" hidden></div>
   </div>
 
-  <h3 class="op-subtitulo" id="op-titulo-lista" hidden>Todas las opiniones</h3>
-  <div class="op-grid" id="op-lista" hidden></div>
-  <p class="op-vacio" id="op-vacio" hidden>Todavía no hay opiniones publicadas. Si ya nos visitaste, contanos cómo te fue.</p>
+  <p class="resenas-estado" id="resenas-estado">Cargando las opiniones de Google…</p>
+  <div class="resenas" id="resenas" hidden></div>
 
-  <div class="op-form-caja">
-    <h3>Dejanos tu opinión</h3>
-    <p class="op-bajada">La leemos antes de publicarla, así que puede tardar un poco en aparecer.</p>
-    <form id="op-form" novalidate>
-      <div class="op-campo">
-        <label for="op-nombre">Tu nombre</label>
-        <input type="text" id="op-nombre" name="nombre" maxlength="60" required autocomplete="name" placeholder="Cómo querés que aparezca">
-      </div>
-      <div class="op-campo">
-        <span class="op-etq" id="op-estrellas-etq">Puntuación</span>
-        <div class="op-estrellas" role="radiogroup" aria-labelledby="op-estrellas-etq">
-          <button type="button" role="radio" aria-checked="false" data-puntua="1" aria-label="1 estrella"></button>
-          <button type="button" role="radio" aria-checked="false" data-puntua="2" aria-label="2 estrellas"></button>
-          <button type="button" role="radio" aria-checked="false" data-puntua="3" aria-label="3 estrellas"></button>
-          <button type="button" role="radio" aria-checked="false" data-puntua="4" aria-label="4 estrellas"></button>
-          <button type="button" role="radio" aria-checked="false" data-puntua="5" aria-label="5 estrellas"></button>
-        </div>
-        <input type="hidden" id="op-estrellas" name="estrellas" value="5">
-      </div>
-      <div class="op-campo op-ancho">
-        <label for="op-comentario">Tu comentario</label>
-        <textarea id="op-comentario" name="comentario" rows="4" maxlength="600" required placeholder="Contanos cómo te atendimos, qué compraste o alquilaste, cómo te fue."></textarea>
-      </div>
-      <div class="op-senuelo" aria-hidden="true">
-        <label for="op-web">No completes este campo</label>
-        <input type="text" id="op-web" name="web" tabindex="-1" autocomplete="off">
-      </div>
-      <button class="boton boton-naranja" type="submit" id="op-enviar">Enviar mi opinión</button>
-    </form>
-    <p class="op-aviso" id="op-aviso" hidden role="status"></p>
-  </div>
+  <div class="resenas-acciones" id="resenas-acciones"></div>
 </div></section>
 
 <!-- ══════ DÓNDE ESTAMOS ══════ -->
@@ -426,6 +404,7 @@
           <dd><div class="contactos" id="dato-contactos"></div></dd>
         </div>
       </dl>
+      <div class="ubi-acciones" id="ubi-acciones"></div>
     </div>
     <div class="mapa" id="mapa"></div>
   </div>
@@ -504,6 +483,6 @@
 
 <script src="js/filas.js"></script>
 <script type="module" src="js/app.js"></script>
-<script type="module" src="js/opiniones.js"></script>
+<script type="module" src="js/resenas.js"></script>
 </body>
 </html>
