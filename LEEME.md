@@ -1,9 +1,8 @@
 # FERRETERIA Y HERRAMIENTAS MILLAN S.A.S. — sitio web
 
-Sitio de una página, con identidad propia: base clara de papel, bandas oscuras,
-el naranja del logo como único acento y tipografía condensada de cartel de
-ferretería. El catálogo se recorre con un riel de categorías a la izquierda y
-un buscador general arriba.
+Sitio de una página: base clara de papel, bandas oscuras, el naranja del logo
+como único acento y tipografía condensada de cartel de ferretería. El catálogo
+se recorre con un riel de categorías a la izquierda y un buscador general arriba.
 
 **No es una tienda en línea:** no hay precios, ni carrito, ni pagos. Todo
 termina en una consulta por WhatsApp o en un llamado.
@@ -11,11 +10,10 @@ termina en una consulta por WhatsApp o en un llamado.
 ## Cómo verlo en esta computadora
 
 ```bash
-npm install
 npm run dev
 ```
 
-Queda en <http://localhost:5173>.
+Queda en <http://localhost:5173>. No hace falta instalar nada.
 
 Para ver cómo se va a ver el catálogo **una vez cargado**, con productos y
 equipos de ejemplo: <http://localhost:5173/?demo=1>. Esos productos son
@@ -26,13 +24,14 @@ normal**.
 
 | Archivo | Qué se toca ahí |
 |---|---|
-| `public/js/datos.js` | Teléfonos, redes, horarios, dirección y **las categorías y subcategorías** |
+| `public/js/datos.js` | Teléfonos, redes, horarios, dirección, ficha de Google y **las categorías y subcategorías** |
 | `public/js/filas.js` | **Los productos**, una línea por producto |
 | `public/js/alquiler.js` | **Los equipos de alquiler** y sus categorías |
+| `public/js/resenas.js` | Cómo se muestran las opiniones de Google |
+| `api/resenas.js` | Consulta las reseñas a Google (la clave vive acá, no en el navegador) |
 | `public/index.html` | Los textos de las secciones |
 | `public/css/styles.css` | Colores, tipografías y diseño |
 | `public/img/` | Las fotos |
-| `public/panel.html` | El panel de opiniones (lleva sus propios estilos) |
 
 ## Cargar un producto
 
@@ -77,7 +76,6 @@ subcategorías.
 - **Sacar:** borrá el objeto (y sus productos).
 - **Renombrar:** cambiá `nombre`. Al `id` conviene no tocarlo, porque nombra las
   fotos y los enlaces.
-- **Subcategorías:** se agregan o se sacan dentro de `sub`.
 
 El riel de categorías, el menú "Todo el catálogo", el índice, los filtros y el
 pie se rearman solos.
@@ -87,8 +85,48 @@ pie se rearman solos.
 En `public/js/alquiler.js`, dentro de `ALQUILER`. Las categorías (`GRUPOS`) ya
 están armadas y **la sección aparece recién cuando hay equipos cargados**.
 
-En las tarjetas no se muestra marca ni modelo: sólo qué es la máquina y para
-qué sirve, porque el parque de alquiler se renueva.
+## Ubicación
+
+Sale toda de `SITE.direccion` y `SITE.google`, en `public/js/datos.js`:
+
+- **Dirección**: Mendoza Sur 2357, Villa Krause, Rawson — San Juan (J5425).
+- **Ficha de Google**: `placeId` `ChIJV6PL-ts_gZYRSlwFeKtY-Jk`.
+
+De ese `placeId` salen solos el botón **Ver ubicación en Google Maps**, el de
+**Cómo llegar**, el mapa incrustado y los dos botones de reseñas. Si algún día
+cambia la ficha del local, se cambia el `placeId` y se acomoda todo.
+
+El mapa incrustado **no necesita clave de API**. Debajo del mapa queda siempre
+una tarjeta con la dirección: si el navegador bloquea el marco de Google, la
+página igual dice dónde queda el local.
+
+## Opiniones: las reseñas de Google
+
+No hay un sistema de opiniones propio. La sección muestra las reseñas reales de
+la ficha de Google y manda a Google para escribir una:
+
+- **Dejar una reseña en Google** → abre el formulario de Google.
+- **Ver todas las opiniones** → abre la ficha con todas las reseñas.
+
+Esos dos botones **funcionan siempre**, sin configurar nada.
+
+Para que además se **vean las reseñas dentro de la página** hace falta una clave
+de Google, porque Google no ofrece un recuadro gratis para incrustarlas:
+
+1. Entrá a <https://console.cloud.google.com/> y creá un proyecto.
+2. Habilitá **Places API (New)**.
+3. Creá una **clave de API** y restringila a esa API.
+4. En Vercel → *Settings* → *Environment Variables*, agregá:
+   - `GOOGLE_MAPS_API_KEY` — la clave
+   - `GOOGLE_PLACE_ID` — opcional; si no está, usa el local de Millán
+
+`api/resenas.js` consulta a Google **cada seis horas** y guarda la respuesta, así
+que el consumo es de unas 120 consultas por mes: entra de sobra en el uso
+gratuito. La clave nunca llega al navegador.
+
+Google entrega **hasta cinco reseñas** por consulta: ese es el máximo que se
+puede mostrar dentro de la página. El botón "Ver todas las opiniones" lleva al
+resto.
 
 ## Las fotos
 
@@ -99,45 +137,26 @@ aparece sola: no hay que tocar código.
 |---|---|
 | `public/img/hero.webp` | detrás de la ficha de atención de la portada |
 | `public/img/alquiler.webp` | detrás de la banda oscura de Alquiler |
-| `public/img/local.webp` | detrás de la banda final "¿No encontrás lo que buscás?" |
+| `public/img/local.webp` | detrás de la banda final |
 | `public/img/p/<categoria>-<codigo>.webp` | una por producto |
 | `public/img/alq/<id>.webp` | una por equipo de alquiler |
 
 Las de fondo conviene subirlas de unos 1600 px de ancho; las de producto,
-cuadradas, de 600 px como máximo. Todas en **WebP** y servidas desde el propio
-sitio.
+cuadradas, de 600 px como máximo. Todas en **WebP**.
 
-El logo ya está cargado: `public/img/logo.webp` y `public/img/logo-256.webp`
-(este último es el ícono de la pestaña).
+## El sitio en un solo archivo
 
-## Opiniones de clientes
+```bash
+node herramientas-armar-un-archivo.mjs
+```
 
-Lo que manda un cliente **queda pendiente y no se ve**. Recién aparece cuando se
-aprueba desde `/panel`, que pide una clave.
-
-- En esta computadora, la clave está en `.env.local` (`CLAVE_PANEL`).
-- Publicado, hacen falta dos variables de entorno en Vercel:
-  - `CLAVE_PANEL` — la clave del panel
-  - `POSTGRES_URL` (o `DATABASE_URL`) — la base de datos
-
-**Sin base de datos configurada, la sección de opiniones no aparece en el sitio
-publicado.** Es a propósito: antes que recibir opiniones que se van a perder,
-mejor no pedirlas.
-
-## Falta completar
-
-- La **dirección del local** (calle, barrio, localidad, provincia) en
-  `SITE.direccion`, dentro de `public/js/datos.js`. Mientras no esté, la página
-  la muestra marcada en naranja para que no quede olvidada.
-- El **enlace de Google Maps** (`SITE.comoLlegar`) y la dirección para el mapa
-  incrustado (`SITE.mapa`).
-- El bloque `address` de la ficha para buscadores, en el `<head>` de `index.html`.
-- El **dominio**: reemplazar `[DOMINIO]` en `index.html`, `robots.txt` y
-  `sitemap.xml` por el subdominio real una vez publicado.
+Junta el HTML, los estilos, los scripts y el logo en un único `.html` que se
+abre con doble clic. Sirve para mandarlo por mail o subirlo a cualquier hosting.
+En esa versión las reseñas no se cargan (no hay servidor), pero los botones a
+Google sí funcionan.
 
 ## Publicar
 
-Conectar el repositorio a Vercel. El archivo `vercel.json` ya trae todo:
-carpeta pública, direcciones sin `.html`, caché larga para las imágenes y las
-cabeceras de seguridad. **Cada cambio que se sube a `main` se publica solo, en
-la misma dirección de siempre.**
+Conectar el repositorio a Vercel. `vercel.json` ya trae la carpeta pública, las
+direcciones sin `.html`, la caché larga de las imágenes y las cabeceras de
+seguridad. **Cada cambio que se sube a `main` se publica solo.**
