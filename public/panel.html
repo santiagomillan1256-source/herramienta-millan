@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel de opiniones — FERRETERIA Y HERRAMIENTAS MILLAN S.A.S.</title>
+<link rel="icon" type="image/webp" href="img/logo-256.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<!-- El panel es una herramienta interna: lleva sus propios estilos, así no
+     depende de cómo esté diseñada la página pública en cada momento. -->
+<style>
+  :root{
+    color-scheme:dark;
+    --fondo:#14171b; --caja:#1c2026; --caja-2:#242931;
+    --linea:#2e343c; --linea-2:#3c444e;
+    --texto:#e9ecef; --tenue:#98a0a9; --tenue-2:#727a84;
+    --naranja:#e8720c; --naranja-claro:#ff9330;
+    --verde:#3fbf76; --rojo:#e46a5c;
+    --radio:4px;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:var(--fondo);color:var(--texto);
+    font:400 16px/1.6 Inter,"Segoe UI",system-ui,sans-serif}
+  h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.01em}
+  p{margin:0}
+  ul{margin:0;padding:0;list-style:none}
+  [hidden]{display:none !important}
+  :focus-visible{outline:2px solid var(--naranja);outline-offset:2px}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+    padding:.7rem 1.2rem;border:1px solid transparent;border-radius:var(--radio);
+    font-size:.88rem;font-weight:700;cursor:pointer;text-decoration:none}
+  .btn-oro{background:var(--naranja);color:#fff}
+  .btn-oro:hover{background:#c25c02}
+
+  .pn{max-width:1000px;margin-inline:auto;padding:clamp(1.4rem,4vw,3rem) clamp(1rem,4vw,2rem)}
+  .pn-cabeza{display:flex;flex-wrap:wrap;align-items:center;gap:1rem;justify-content:space-between}
+  .pn-cabeza h1{font-size:clamp(1.3rem,3.4vw,1.8rem)}
+  .pn-salir{background:none;border:1px solid var(--linea-2);color:var(--tenue);padding:.45rem .9rem;
+    border-radius:var(--radio);cursor:pointer;font:inherit;font-size:.85rem}
+  .pn-salir:hover{border-color:var(--texto);color:var(--texto)}
+
+  .pn-entrar{max-width:400px;margin:12vh auto;padding:2rem;background:var(--caja);
+    border:1px solid var(--linea);border-radius:var(--radio)}
+  .pn-entrar h1{font-size:1.35rem;margin-bottom:.4rem}
+  .pn-entrar p{color:var(--tenue);font-size:.9rem;margin-bottom:1.3rem}
+  .pn-entrar input{width:100%;padding:.75rem .9rem;border:1px solid var(--linea-2);border-radius:var(--radio);
+    background:var(--caja-2);color:var(--texto);font:inherit;margin-bottom:1rem}
+  .pn-entrar input:focus{outline:none;border-color:var(--naranja)}
+  .pn-entrar .btn{width:100%}
+
+  .pn-resumen{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:1.8rem}
+  .pn-dato{padding:.9rem 1rem;background:var(--caja);border:1px solid var(--linea);border-radius:var(--radio)}
+  .pn-dato b{display:block;font-size:1.6rem;line-height:1.15}
+  .pn-dato span{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tenue-2)}
+  .pn-dato.urgente{border-color:var(--naranja)}
+  .pn-dato.urgente b{color:var(--naranja-claro)}
+
+  .chip{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .85rem;border:1px solid var(--linea-2);
+    border-radius:var(--radio);background:transparent;color:var(--tenue);font:inherit;font-size:.83rem;
+    font-weight:600;cursor:pointer}
+  .chip:hover{border-color:var(--texto);color:var(--texto)}
+  .chip.activa{background:var(--naranja);border-color:var(--naranja);color:#fff}
+  .chip .n{font-size:.75rem;opacity:.75}
+  .pn-filtros{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:2rem}
+
+  .estrellas{display:inline-flex;gap:.1rem}
+  .estrella{width:15px;height:15px;fill:var(--linea-2);flex:none}
+  .estrella.llena{fill:var(--naranja)}
+
+  .pn-op{display:grid;gap:.8rem;margin-top:1.2rem}
+  .pn-fila{padding:1.05rem 1.15rem;background:var(--caja);border:1px solid var(--linea);border-radius:var(--radio)}
+  .pn-fila.pendiente{border-left:3px solid var(--naranja)}
+  .pn-fila-top{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin-bottom:.55rem}
+  .pn-fila-top b{font-size:.96rem}
+  .pn-etiqueta{padding:.14rem .55rem;border-radius:var(--radio);font-size:.7rem;font-weight:700;
+    letter-spacing:.05em;text-transform:uppercase}
+  .et-pendiente{background:rgba(232,114,12,.18);color:var(--naranja-claro)}
+  .et-aprobada{background:rgba(63,191,118,.16);color:var(--verde)}
+  .et-rechazada{background:rgba(228,106,92,.16);color:var(--rojo)}
+  .et-destacada{background:rgba(255,255,255,.1);color:var(--texto)}
+  .pn-texto{font-size:.92rem;line-height:1.6;color:#cfd4da}
+  .pn-pie{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-top:.85rem}
+  .pn-fecha{font-size:.78rem;color:var(--tenue-2);margin-right:auto}
+  .pn-accion{padding:.4rem .8rem;border:1px solid var(--linea-2);border-radius:var(--radio);background:transparent;
+    color:#cfd4da;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer}
+  .pn-accion:hover{border-color:var(--texto);background:rgba(255,255,255,.05)}
+  .pn-accion.si{border-color:rgba(63,191,118,.5);color:var(--verde)}
+  .pn-accion.no{border-color:rgba(228,106,92,.5);color:var(--rojo)}
+  .pn-accion:disabled{opacity:.5;cursor:default}
+
+  .pn-vacio{margin-top:1.2rem;padding:2rem;text-align:center;border:1px dashed var(--linea-2);
+    border-radius:var(--radio);color:var(--tenue)}
+  .pn-error{margin-top:1rem;padding:.8rem .95rem;border-radius:var(--radio);font-size:.9rem;
+    background:rgba(228,106,92,.12);border:1px solid rgba(228,106,92,.45);color:#ffc9c0}
+</style>
+</head>
+<body>
+
+<!-- ══════ ENTRAR ══════ -->
+<div class="pn-entrar" id="entrar">
+  <h1>Panel de opiniones</h1>
+  <p>Escribí la clave para revisar lo que dejan los clientes.</p>
+  <form id="form-entrar">
+    <label class="sr-only" for="clave">Clave del panel</label>
+    <input type="password" id="clave" autocomplete="current-password" placeholder="Clave" required>
+    <button class="btn btn-oro" type="submit">Entrar</button>
+  </form>
+  <p class="pn-error" id="error-entrar" hidden></p>
+</div>
+
+<!-- ══════ PANEL ══════ -->
+<main class="pn" id="panel" hidden>
+  <div class="pn-cabeza">
+    <h1>Opiniones de clientes</h1>
+    <button class="pn-salir" type="button" id="salir">Salir</button>
+  </div>
+
+  <div class="pn-resumen" id="resumen"></div>
+  <div class="pn-filtros" id="filtros" role="group" aria-label="Filtrar opiniones"></div>
+  <div class="pn-op" id="lista"></div>
+  <p class="pn-vacio" id="vacio" hidden>No hay opiniones en este filtro.</p>
+  <p class="pn-error" id="error" hidden></p>
+</main>
+
+<script type="module" src="js/panel.js"></script>
+</body>
+</html>

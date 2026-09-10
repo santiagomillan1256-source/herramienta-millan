@@ -1,0 +1,15 @@
+{
+  "name": "ferreteria-millan",
+  "private": true,
+  "type": "module",
+  "description": "Sitio de FERRETERIA Y HERRAMIENTAS MILLAN S.A.S.",
+  "scripts": {
+    "dev": "node servidor.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
