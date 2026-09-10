@@ -24,7 +24,7 @@ normal**.
 
 | Archivo | Qué se toca ahí |
 |---|---|
-| `public/js/datos.js` | Teléfonos, redes, horarios, dirección, ficha de Google y **las categorías y subcategorías** |
+| `public/js/datos.js` | Teléfonos, redes, horarios, dirección, ficha de Google, **las categorías del catálogo** y **los rubros** |
 | `public/js/filas.js` | **Los productos**, una línea por producto |
 | `public/js/alquiler.js` | **Los equipos de alquiler** y sus categorías |
 | `public/js/resenas.js` | Cómo se muestran las opiniones de Google |
@@ -65,20 +65,42 @@ La foto de ese producto va en `public/img/p/explosion-MS250.webp`
 > **Regla:** antes una foto que falta que una foto equivocada. Si no estás
 > seguro de que la imagen es de ese producto, poné `-`.
 
-## Agregar, cambiar o sacar una categoría
+## Las dos partes del catálogo
 
-Todo pasa por `CATEGORIAS`, en `public/js/datos.js`. Cada categoría es un
-objeto con `id`, `nombre`, `lema`, `texto`, `icono` y la lista `sub` de
-subcategorías.
+El sitio muestra los productos de dos maneras distintas, y cada una se
+configura en su propia lista dentro de `public/js/datos.js`:
+
+### 1. `CATEGORIAS` — las que llevan catálogo
+
+Sólo **Máquinas a explosión** y **Máquinas eléctricas**. Son las que tienen
+riel, subcategorías, buscador, ficha de producto con foto, modelo y código.
+Los productos van en `filas.js`.
 
 - **Agregar:** sumá el objeto a la lista y usá el mismo `id` como clave en
   `filas.js`.
 - **Sacar:** borrá el objeto (y sus productos).
-- **Renombrar:** cambiá `nombre`. Al `id` conviene no tocarlo, porque nombra las
-  fotos y los enlaces.
+- **Renombrar:** cambiá `nombre`. Al `id` conviene no tocarlo, porque nombra
+  las fotos y los enlaces.
 
-El riel de categorías, el menú "Todo el catálogo", el índice, los filtros y el
-pie se rearman solos.
+### 2. `RUBROS` — las secciones informativas
+
+**Bulones, Pinturas, PVC, Materiales, Herramientas manuales y Repuestos.**
+No llevan lista de productos: cada uno es una tarjeta con foto de fondo,
+nombre, un texto corto y un botón de **Consultar por WhatsApp**.
+
+```js
+{
+  id: "bulones",          // nombra la foto: img/rubros/bulones.webp
+  nombre: "Bulones",
+  texto: "Una o dos líneas sobre el rubro.",
+  icono: "bulon",         // una de las claves de ICONOS
+}
+```
+
+Para sumar un rubro, un objeto más en la lista. Para sacarlo, borralo.
+
+El riel del catálogo, el menú "Todo el catálogo", el índice, los filtros, la
+sección de rubros y el pie se rearman solos con lo que haya en esas dos listas.
 
 ## Cargar equipos de alquiler
 
@@ -96,9 +118,16 @@ De ese `placeId` salen solos el botón **Ver ubicación en Google Maps**, el de
 **Cómo llegar**, el mapa incrustado y los dos botones de reseñas. Si algún día
 cambia la ficha del local, se cambia el `placeId` y se acomoda todo.
 
-El mapa incrustado **no necesita clave de API**. Debajo del mapa queda siempre
-una tarjeta con la dirección: si el navegador bloquea el marco de Google, la
-página igual dice dónde queda el local.
+En la sección **Pasá por el local** se ve una **imagen del mapa** con el local
+marcado (`public/img/mapa.webp`), con la dirección abajo, y encima se carga el
+mapa interactivo de Google cuando el navegador lo permite. Si lo bloquea, queda
+la imagen: la página nunca deja de mostrar dónde está el local.
+
+Nada de esto necesita clave de API. Para rehacer la imagen del mapa:
+
+```bash
+node herramientas-armar-el-mapa.mjs
+```
 
 ## Opiniones: las reseñas de Google
 
@@ -138,11 +167,20 @@ aparece sola: no hay que tocar código.
 | `public/img/hero.webp` | detrás de la ficha de atención de la portada |
 | `public/img/alquiler.webp` | detrás de la banda oscura de Alquiler |
 | `public/img/local.webp` | detrás de la banda final |
+| `public/img/rubros/<id>.webp` | **el fondo de cada tarjeta de rubro** (bulones, pinturas, pvc, materiales, manuales, repuestos) |
 | `public/img/p/<categoria>-<codigo>.webp` | una por producto |
 | `public/img/alq/<id>.webp` | una por equipo de alquiler |
 
-Las de fondo conviene subirlas de unos 1600 px de ancho; las de producto,
-cuadradas, de 600 px como máximo. Todas en **WebP**.
+Las de fondo conviene subirlas de unos 1600 px de ancho; las de rubro, de unos
+1000 px; las de producto, cuadradas, de 600 px como máximo. Todas en **WebP**.
+
+Mientras un rubro no tenga foto, la tarjeta se dibuja con su ícono sobre un
+fondo oscuro y se ve igual de terminada. Al subir la foto con el nombre
+correcto, aparece sola.
+
+**El mapa** (`public/img/mapa.webp`) ya está generado, con el local marcado.
+Si alguna vez hay que rehacerlo, está el script que lo arma a partir de las
+coordenadas de la ficha de Google.
 
 ## El sitio en un solo archivo
 
@@ -150,7 +188,7 @@ cuadradas, de 600 px como máximo. Todas en **WebP**.
 node herramientas-armar-un-archivo.mjs
 ```
 
-Junta el HTML, los estilos, los scripts y el logo en un único `.html` que se
+Junta el HTML, los estilos, los scripts, el logo y el mapa en un único `.html` que se
 abre con doble clic. Sirve para mandarlo por mail o subirlo a cualquier hosting.
 En esa versión las reseñas no se cargan (no hay servidor), pero los botones a
 Google sí funcionan.

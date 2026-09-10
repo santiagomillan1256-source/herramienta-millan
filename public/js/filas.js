@@ -1,8 +1,11 @@
 /* ══════════════════════════════════════════════════════════════════════════
    EL CATÁLOGO — FERRETERIA Y HERRAMIENTAS MILLAN S.A.S.
 
-   Una línea por producto, agrupadas por categoría. Las claves de abajo
-   (explosion, electricas, bulones…) son los `id` de CATEGORIAS, en datos.js.
+   Una línea por producto, agrupadas por categoría. Las dos claves de abajo
+   son los `id` de CATEGORIAS, en datos.js: las máquinas son las únicas que
+   llevan catálogo con ficha, foto y buscador. Los demás rubros (bulones,
+   pinturas, PVC, materiales, herramientas manuales y repuestos) son tarjetas
+   con foto y botón de consulta, y se configuran en RUBROS.
 
    FORMATO DE CADA LÍNEA
      "codigo|nombre|marca|modelo|subcategoria|foto|caracteristicas"
@@ -32,12 +35,6 @@
 globalThis.FILAS = {
   explosion: [],
   electricas: [],
-  bulones: [],
-  pinturas: [],
-  pvc: [],
-  cemento: [],
-  manuales: [],
-  repuestos: [],
 };
 
 /* ── Vista de ejemplo ──────────────────────────────────────────────────────
@@ -62,35 +59,5 @@ globalThis.FILAS_EJEMPLO = {
     "EJ-14|Atornillador a batería 20 V|Otra marca|AB-20|bateria|-|20 V · 2 baterías · Maletín",
     "EJ-15|Soldadora inverter 200 A|Otra marca|SI-200|soldadoras|-|200 A · Electrodo hasta 3,25 mm",
     "EJ-16|Compresor 50 L 2 HP|Marca de ejemplo|CP-50|compresores|-|50 L · 2 HP · 8 bar",
-  ],
-  bulones: [
-    "EJ-21|Bulón hexagonal 1/2\" x 3\" grado 5|Marca de ejemplo||bulones|-|1/2\" x 3\" · Grado 5 · Zincado",
-    "EJ-22|Tuerca hexagonal 1/2\"|Marca de ejemplo||bulones|-|1/2\" · Zincada",
-    "EJ-23|Tornillo autoperforante 8 x 1\" (caja x 100)|Marca de ejemplo||tornillos|-|8 x 1\" · Caja x 100",
-    "EJ-24|Tarugo con tornillo 8 mm (caja x 50)|Marca de ejemplo||tarugos|-|8 mm · Caja x 50",
-  ],
-  pinturas: [
-    "EJ-31|Látex interior mate 20 L|Marca de ejemplo||latex|-|20 L · Interior · Mate",
-    "EJ-32|Esmalte sintético brillante 1 L|Marca de ejemplo||sinteticos|-|1 L · Brillante · Interior y exterior",
-    "EJ-33|Rodillo de lana 22 cm con mango|Otra marca||accesorios|-|22 cm · Lana natural",
-  ],
-  pvc: [
-    "EJ-41|Caño de agua fría 3/4\" x 4 m|Marca de ejemplo||canos|-|3/4\" · 4 m · Agua fría",
-    "EJ-42|Codo 90° 3/4\"|Marca de ejemplo||conexiones|-|90° · 3/4\"",
-    "EJ-43|Llave de paso esférica 1/2\"|Otra marca||llaves|-|1/2\" · Bronce",
-  ],
-  cemento: [
-    "EJ-51|Cemento de albañilería 50 kg|Marca de ejemplo||cemento|-|50 kg · Uso general",
-    "EJ-52|Membrana asfáltica 10 m con aluminio|Marca de ejemplo||membranas|-|10 m · 4 mm · Con aluminio",
-  ],
-  manuales: [
-    "EJ-61|Juego de llaves combinadas 8 a 22 mm|Marca de ejemplo||llaves|-|12 piezas · 8 a 22 mm",
-    "EJ-62|Pinza universal 8\" aislada|Otra marca||pinzas|-|8\" · Aislada 1000 V",
-    "EJ-63|Cinta métrica 5 m|Otra marca||medicion|-|5 m · Traba automática",
-  ],
-  repuestos: [
-    "EJ-71|Disco de corte para hierro 115 mm|Marca de ejemplo||corte|-|115 mm · Hierro y acero",
-    "EJ-72|Cadena para motosierra 18\" 72 eslabones|Marca de ejemplo||cadenas|-|18\" · 0,325 · 72 eslabones",
-    "EJ-73|Juego de mechas para metal 1 a 10 mm|Otra marca||mechas|-|19 piezas · 1 a 10 mm · HSS",
   ],
 };

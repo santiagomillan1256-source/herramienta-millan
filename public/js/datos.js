@@ -117,17 +117,16 @@ export const GOOGLE = {
   mapa: `https://www.google.com/maps/embed?origin=mfe&pb=!1m3!2m1!1s${SITE.google.consultaMapa}!6i17!3m1!1ses!5m1!1ses`,
 };
 
-/* ── Categorías del catálogo ──────────────────────────────────────────────
-   Cada categoría es una tarjeta en la portada del catálogo. Sus subcategorías
-   son los filtros que aparecen adentro.
+/* ── El catálogo con productos ────────────────────────────────────────────
+   Sólo las dos familias de máquinas: son las que llevan ficha, foto y
+   buscador. Cada una es una entrada del riel del catálogo y sus
+   subcategorías son los filtros de adentro.
 
-   AGREGAR una categoría → sumá un objeto a esta lista y usá el mismo `id`
-                           como clave en filas.js.
-   SACAR una categoría   → borrá el objeto (y sus filas).
-   RENOMBRARLA           → cambiá `nombre`; al `id` conviene no tocarlo,
+   AGREGAR una categoría → sumá el objeto acá y usá el mismo `id` como clave
+                           en filas.js.
+   SACARLA               → borrá el objeto (y sus filas).
+   RENOMBRARLA           → cambiá `nombre`; al `id` no conviene tocarlo,
                            porque nombra las fotos y los enlaces.
-
-   `icono` es una de las claves de ICONOS, más abajo.
    ───────────────────────────────────────────────────────────────────────── */
 
 export const CATEGORIAS = [
@@ -166,104 +165,59 @@ export const CATEGORIAS = [
       otras: "Otras máquinas eléctricas",
     },
   },
+];
+
+/* ── Los otros rubros ─────────────────────────────────────────────────────
+   No llevan catálogo de productos: son tarjetas con foto, nombre y un botón
+   para consultar. El cliente ve que trabajamos el rubro y escribe.
+
+   La foto de cada uno va en public/img/rubros/<id>.webp y aparece sola al
+   subirla. Mientras no esté, la tarjeta se dibuja con su ícono y se ve igual
+   de terminada.
+
+   Para sumar un rubro: un objeto más en esta lista. Para sacarlo: borralo.
+   ───────────────────────────────────────────────────────────────────────── */
+
+export const RUBROS = [
   {
     id: "bulones",
     nombre: "Bulones",
-    lema: "Bulones, tornillos, tuercas, arandelas y anclajes",
-    texto:
-      "Fijaciones por unidad o por caja, en las medidas que se piden todos los días. Traé la pieza y te buscamos la medida exacta en el mostrador.",
+    texto: "Fijaciones en las medidas que se piden todos los días, por unidad o por caja. Traé la pieza y te buscamos la que va.",
     icono: "bulon",
-    sub: {
-      bulones: "Bulones y tuercas",
-      tornillos: "Tornillos",
-      arandelas: "Arandelas",
-      tarugos: "Tarugos y anclajes",
-      clavos: "Clavos y remaches",
-      varilla: "Varilla roscada",
-    },
   },
   {
     id: "pinturas",
     nombre: "Pinturas",
-    lema: "Látex, esmaltes, aerosoles, diluyentes y accesorios",
-    texto:
-      "Pinturas para interior y exterior, con todo lo que hace falta para aplicarlas: rodillos, pinceles, lijas, masillas y protecciones.",
+    texto: "Pinturas para interior y exterior, con todo lo que hace falta para aplicarlas.",
     icono: "pintura",
-    sub: {
-      latex: "Látex y pintura de pared",
-      sinteticos: "Esmaltes sintéticos",
-      aerosoles: "Aerosoles",
-      impermeabilizantes: "Impermeabilizantes",
-      diluyentes: "Diluyentes y solventes",
-      accesorios: "Pinceles, rodillos y bandejas",
-      lijas: "Lijas y masillas",
-    },
   },
   {
     id: "pvc",
     nombre: "PVC",
-    lema: "Caños de agua, conexiones y accesorios",
-    texto:
-      "Caños, uniones, llaves de paso y todo lo que cierra una instalación de agua o de desagüe. Decinos el diámetro y el tipo de instalación y te armamos la lista.",
+    texto: "Caños, conexiones y accesorios para instalaciones de agua y de desagüe.",
     icono: "cano",
-    sub: {
-      canos: "Caños",
-      conexiones: "Conexiones y uniones",
-      llaves: "Llaves de paso y válvulas",
-      cloacal: "Cloacal y desagüe",
-      riego: "Riego",
-      pegamentos: "Pegamentos y selladores",
-    },
   },
   {
-    id: "cemento",
-    nombre: "Cemento y membranas",
-    lema: "Cemento, cal, mezclas, membranas e hidrófugos",
-    texto:
-      "Materiales para levantar, revocar, impermeabilizar y terminar. Consultanos por cantidad: para obra manejamos volumen.",
+    id: "materiales",
+    nombre: "Materiales",
+    texto: "Materiales para la obra: lo que hace falta para levantar, revocar, impermeabilizar y terminar.",
     icono: "obra",
-    sub: {
-      cemento: "Cemento y cal",
-      mezclas: "Mezclas y adhesivos",
-      membranas: "Membranas",
-      hidrofugos: "Hidrófugos y aditivos",
-      hierro: "Hierro y mallas",
-    },
   },
   {
     id: "manuales",
     nombre: "Herramientas manuales",
-    lema: "Llaves, pinzas, destornilladores, medición y albañilería",
-    texto:
-      "La herramienta de mano de todos los días, para el oficio y para la casa. Piezas sueltas o juegos completos.",
+    texto: "La herramienta de mano de todos los días, para el oficio y para la casa.",
     icono: "llave",
-    sub: {
-      llaves: "Llaves y tubos",
-      destornilladores: "Destornilladores",
-      pinzas: "Pinzas y alicates",
-      martillos: "Martillos y mazas",
-      medicion: "Medición",
-      albanileria: "Albañilería",
-      cajas: "Cajas y organización",
-    },
   },
   {
     id: "repuestos",
-    nombre: "Repuestos y accesorios",
-    lema: "Discos, mechas, cadenas, filtros y consumibles",
-    texto:
-      "Lo que se gasta y lo que se cambia. Traé la pieza usada o el modelo de tu máquina y te decimos si lo tenemos o lo pedimos.",
+    nombre: "Repuestos",
+    texto: "Lo que se gasta y lo que se cambia. Traé la pieza usada o el modelo de tu máquina.",
     icono: "engranaje",
-    sub: {
-      corte: "Discos y hojas de corte",
-      mechas: "Mechas y brocas",
-      cadenas: "Espadas, cadenas y limas",
-      filtros: "Filtros, bujías y lubricantes",
-      tanza: "Cabezales y tanza",
-      varios: "Otros repuestos",
-    },
   },
 ];
+
+export const rubroPorId = (id) => RUBROS.find((r) => r.id === id) || null;
 
 /* Dibujos de las tarjetas de categoría: trazo simple, toman el color del texto.
    Para una categoría nueva, sumá acá su dibujo y nombralo en `icono`. */
@@ -360,6 +314,10 @@ export function mensajeProducto(p) {
 
 export function mensajeCategoria(cat) {
   return `Hola, ${SITE.nombre}. Quería consultar por ${cat.nombre.toLowerCase()}.`;
+}
+
+export function mensajeRubro(rubro) {
+  return `Hola, ${SITE.nombre}. Quería consultar por ${rubro.nombre.toLowerCase()}.`;
 }
 
 export function mensajeReparacion() {

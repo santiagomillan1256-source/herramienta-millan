@@ -7,9 +7,10 @@
  */
 
 import {
-  SITE, GOOGLE, CATEGORIAS, ICONOS, PRODUCTOS, armarProductos, categoriaPorId, productosDe,
-  marcasDe, nombreSub, pendiente, waLink, mensajeGeneral, mensajeProducto,
-  mensajeCategoria, mensajeReparacion, mensajeAlquiler, mensajePresupuesto, estadoActual,
+  SITE, GOOGLE, CATEGORIAS, RUBROS, ICONOS, PRODUCTOS, armarProductos, categoriaPorId,
+  rubroPorId, productosDe, marcasDe, nombreSub, pendiente, waLink, mensajeGeneral,
+  mensajeProducto, mensajeCategoria, mensajeRubro, mensajeReparacion, mensajeAlquiler,
+  mensajePresupuesto, estadoActual,
 } from "./datos.js";
 import { ALQUILER, ALQUILER_EJEMPLO, GRUPOS, nombreGrupo, mensajeAlquilerMaquina } from "./alquiler.js";
 
@@ -165,18 +166,22 @@ function pintarVisitanos() {
   /* Debajo del mapa queda siempre una tarjeta con la dirección: si el visor
      bloquea el marco de Google, la página sigue diciendo dónde queda el local. */
   $("#mapa").innerHTML =
-    `<div class="mapa-respaldo">
-      ${PIN_SVG}
-      <p class="mapa-calle">${esc(d.calle)}</p>
-      <p>${esc(d.barrio)}, ${esc(d.localidad)} — ${esc(d.provincia)}</p>
-      <a class="boton boton-oscuro boton-chico" href="${esc(GOOGLE.ubicacion)}" target="_blank" rel="noopener">Abrir en Google Maps</a>
-    </div>
+    `<a class="mapa-imagen" href="${esc(GOOGLE.ubicacion)}" target="_blank" rel="noopener"
+        aria-label="Ver la ubicación de ${esc(SITE.nombre)} en Google Maps">
+      <img src="img/mapa.webp" alt="Mapa con la ubicación del local, en ${esc(d.calle)}" loading="lazy" decoding="async">
+      <span class="mapa-pie">
+        <span class="mapa-calle">${esc(d.calle)}</span>
+        <span>${esc(d.barrio)}, ${esc(d.localidad)} — ${esc(d.provincia)}</span>
+      </span>
+    </a>
     <iframe title="Mapa con la ubicación de ${esc(SITE.nombre)}" src="${esc(GOOGLE.mapa)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>`;
 }
 
 function pintarPie() {
-  $("#pie-categorias").innerHTML = CATEGORIAS.map((c) =>
-    `<li><button type="button" data-cat="${c.id}">${esc(c.nombre)}</button></li>`).join("");
+  $("#pie-categorias").innerHTML = [
+    ...CATEGORIAS.map((c) => `<li><button type="button" data-cat="${c.id}">${esc(c.nombre)}</button></li>`),
+    ...RUBROS.map((r) => `<li><button type="button" data-ir-rubro="${r.id}">${esc(r.nombre)}</button></li>`),
+  ].join("");
 
   $("#pie-contacto").innerHTML = [
     ...SITE.numeros.map((n) => `<li><a href="tel:${esc(n.tel)}">${esc(n.visible)} · ${esc(n.persona)}</a></li>`),
@@ -214,14 +219,26 @@ function pintarIndice() {
 }
 
 function pintarMegamenu() {
-  $("#megamenu-grid").innerHTML = CATEGORIAS.map((c) => `<div class="mm-col">
+  const columnas = CATEGORIAS.map((c) => `<div class="mm-col">
     <button class="mm-cab" type="button" data-cat="${c.id}">
       <span class="mm-ico" aria-hidden="true">${dibujo(c.icono)}</span>
       <b>${esc(c.nombre)}</b>
     </button>
     <div class="mm-subs">${Object.entries(c.sub).map(([id, nombre]) =>
       `<button type="button" data-cat="${c.id}" data-sub="${id}">${esc(nombre)}</button>`).join("")}</div>
-  </div>`).join("");
+  </div>`);
+
+  /* Los rubros sin catálogo llevan a su tarjeta, no a una lista de productos. */
+  columnas.push(`<div class="mm-col">
+    <div class="mm-cab mm-cab-quieta">
+      <span class="mm-ico" aria-hidden="true">${dibujo("herramienta")}</span>
+      <b>Otros rubros</b>
+    </div>
+    <div class="mm-subs">${RUBROS.map((r) =>
+      `<button type="button" data-ir-rubro="${r.id}">${esc(r.nombre)}</button>`).join("")}</div>
+  </div>`);
+
+  $("#megamenu-grid").innerHTML = columnas.join("");
 }
 
 /** Lo que se muestra: con categoría elegida o con búsqueda, la grilla; si no, el índice. */
@@ -381,6 +398,34 @@ function volverAlIndice() {
   $("#catalogo").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+
+/* ══════ OTROS RUBROS ══════════════════════════════════════ */
+
+/** Una tarjeta por rubro: foto de fondo, nombre y botón de consulta. */
+function pintarRubros() {
+  $("#rubros-grid").innerHTML = RUBROS.map((r) => `<article class="rubro" id="rubro-${r.id}">
+    <span class="rubro-ico" aria-hidden="true">${dibujo(r.icono)}</span>
+    <div class="rubro-cuerpo">
+      <h3>${esc(r.nombre)}</h3>
+      <p>${esc(r.texto)}</p>
+      <button class="boton boton-wa boton-chico" type="button" data-consulta-rubro="${r.id}">${WA_SVG} Consultar por WhatsApp</button>
+    </div>
+  </article>`).join("");
+
+  /* Cada foto se enciende cuando el archivo existe, igual que los fondos. */
+  for (const r of RUBROS) {
+    const prueba = new Image();
+    prueba.addEventListener("load", () => {
+      const card = $(`#rubro-${r.id}`);
+      if (card) {
+        card.style.setProperty("--foto", `url("img/rubros/${r.id}.webp")`);
+        card.classList.add("con-foto");
+      }
+    });
+    prueba.src = `img/rubros/${r.id}.webp`;
+  }
+}
+
 /* ══════ ALQUILER ═════════════════════════════════════════ */
 
 function pintarAlquiler() {
@@ -527,6 +572,7 @@ pintarRiel();
 pintarIndice();
 pintarMegamenu();
 pintarCatalogo();
+pintarRubros();
 pintarAlquiler();
 pintarVisitanos();
 pintarPie();
@@ -636,6 +682,20 @@ document.addEventListener("click", (e) => {
     return;
   }
 
+  const porRubro = t.closest?.("[data-consulta-rubro]");
+  if (porRubro) {
+    const r = rubroPorId(porRubro.dataset.consultaRubro);
+    if (r) abrirElegir(mensajeRubro(r), `Consulta por ${r.nombre.toLowerCase()}.`);
+    return;
+  }
+
+  const irRubro = t.closest?.("[data-ir-rubro]");
+  if (irRubro) {
+    cerrarMegamenu();
+    $(`#rubro-${irRubro.dataset.irRubro}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+
   const ir = t.closest?.("[data-ir-categoria]");
   if (ir) { abrirCategoria(ir.dataset.irCategoria); return; }
 
@@ -695,7 +755,7 @@ if (secciones.length) {
 }
 
 /* Aparición al desplazar */
-const revelables = $$(".servicio-fila, .valor, .paso, .extra, .catalogo-caja, .equipo, .datos-caja, .mapa");
+const revelables = $$(".servicio-fila, .valor, .paso, .extra, .catalogo-caja, .rubro, .equipo, .datos-caja, .mapa");
 revelables.forEach((el) => el.classList.add("aparece"));
 const obs = new IntersectionObserver((es, o) => {
   es.forEach((e, i) => {

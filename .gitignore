@@ -4,3 +4,7 @@ node_modules/
 Provedor/
 interno/
 *.log
+
+# Los arma herramientas-armar-un-archivo.mjs
+millan.html
+ferreteria-millan.html
