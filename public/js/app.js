@@ -219,9 +219,13 @@ function pintarRiel() {
 }
 
 function pintarIndice() {
-  $("#indice").innerHTML = CATEGORIAS.map((c) => `<div class="indice-bloque">
-    <h4><span class="indice-ico" aria-hidden="true">${dibujo(c.icono)}</span>${esc(c.nombre)}</h4>
-    <ul>${Object.entries(c.sub).map(([id, nombre]) =>
+  $("#indice").innerHTML = CATEGORIAS.map((c) => `<div class="indice-bloque" id="indice-${c.id}">
+    <div class="indice-foto">
+      <img src="${rutaFoto("cat-" + c.id)}" alt="${esc(c.nombre)} en el local de Millan S.A.S." loading="lazy" decoding="async" width="1600" height="900"
+           onerror="this.closest('.indice-bloque').classList.add('sin-foto')">
+      <h4><span class="indice-ico" aria-hidden="true">${dibujo(c.icono)}</span>${esc(c.nombre)}</h4>
+    </div>
+    <ul class="indice-lista">${Object.entries(c.sub).map(([id, nombre]) =>
       `<li><button type="button" data-cat="${c.id}" data-sub="${id}">${esc(nombre)}</button></li>`).join("")}</ul>
   </div>`).join("");
 }
@@ -411,27 +415,21 @@ function volverAlIndice() {
 
 /** Una tarjeta por rubro: foto de fondo, nombre y botón de consulta. */
 function pintarRubros() {
+  /* La imagen de cada rubro ya trae el nombre impreso, así que se muestra
+     entera y sin recortar. El h3 sigue en el documento para quien no ve la
+     foto; si la foto falta, "sin-foto" lo vuelve a poner en primer plano. */
   $("#rubros-grid").innerHTML = RUBROS.map((r) => `<article class="rubro" id="rubro-${r.id}">
     <span class="rubro-ico" aria-hidden="true">${dibujo(r.icono)}</span>
+    <div class="rubro-foto">
+      <img src="${rutaFoto("rubros/" + r.id)}" alt="${esc(r.nombre)}" loading="lazy" decoding="async" width="1312" height="1199"
+           onerror="this.closest('.rubro').classList.add('sin-foto')">
+    </div>
     <div class="rubro-cuerpo">
       <h3>${esc(r.nombre)}</h3>
       <p>${esc(r.texto)}</p>
       <button class="boton boton-wa boton-chico" type="button" data-consulta-rubro="${r.id}">${WA_SVG} Consultar por WhatsApp</button>
     </div>
   </article>`).join("");
-
-  /* Cada foto se enciende cuando el archivo existe, igual que los fondos. */
-  for (const r of RUBROS) {
-    const prueba = new Image();
-    prueba.addEventListener("load", () => {
-      const card = $(`#rubro-${r.id}`);
-      if (card) {
-        card.style.setProperty("--foto", `url("${rutaFoto("rubros/" + r.id)}")`);
-        card.classList.add("con-foto");
-      }
-    });
-    prueba.src = rutaFoto("rubros/" + r.id);
-  }
 }
 
 /* ══════ ALQUILER ═════════════════════════════════════════ */
@@ -552,6 +550,154 @@ function alternarMegamenu() {
   botonMega.setAttribute("aria-expanded", String(!abierto));
 }
 
+/* ══════ RECORRIDO POR EL LOCAL ═══════════════════════════ */
+
+/* El video es una panorámica: la cámara barre el salón de izquierda a derecha.
+   Arrastrar el dedo hacia la izquierda adelanta el video, o sea que la vista
+   gira hacia la derecha; es el mismo gesto de girar la cabeza. El video no se
+   descarga hasta que alguien abre el recorrido. */
+
+const VIDEO_RECORRIDO = globalThis.VIDEO_RECORRIDO || "/video/recorrido.mp4";
+
+function armarRecorrido() {
+  const visor = $("#visor");
+  if (!visor) return;
+
+  const marco = $("#visor-marco");
+  const video = $("#visor-video");
+  const rango = $("#visor-rango");
+  const aviso = $("#visor-cargando");
+  const botonGirar = $("#visor-girar");
+  let duracion = 0;
+  let abierto = false;
+
+  /* Los saltos de tiempo se encolan: pedir uno nuevo antes de que termine el
+     anterior hace que el navegador descarte pedidos y el arrastre se trabe. */
+  let destino = 0, saltando = false;
+  function irA(t) {
+    destino = Math.max(0, Math.min(duracion - 0.05, t));
+    if (saltando) return;
+    saltando = true;
+    video.currentTime = destino;
+  }
+  video.addEventListener("seeked", () => {
+    if (saltando) {
+      saltando = false;
+      if (Math.abs(destino - video.currentTime) > 0.02) irA(destino);
+    }
+    pintarAvance();
+  });
+
+  function pintarAvance() {
+    if (!duracion) return;
+    const parte = video.currentTime / duracion;
+    rango.value = String(Math.round(parte * 1000));
+    rango.style.setProperty("--avance", (parte * 100).toFixed(1) + "%");
+  }
+
+  /* Mientras gira solo, la barra se actualiza cuadro a cuadro. */
+  let latido = 0;
+  const seguir = () => {
+    pintarAvance();
+    latido = video.paused ? 0 : requestAnimationFrame(seguir);
+  };
+  const arrancarLatido = () => { if (!latido) latido = requestAnimationFrame(seguir); };
+
+  const quieto = matchMedia("(prefers-reduced-motion: reduce)");
+
+  function girar() {
+    if (video.currentTime >= duracion - 0.1) irA(0);
+    video.play().then(() => {
+      visor.classList.add("girando");
+      botonGirar.setAttribute("aria-label", "Pausar el giro automático");
+      arrancarLatido();
+    }).catch(() => {});
+  }
+  function frenar() {
+    video.pause();
+    visor.classList.remove("girando");
+    botonGirar.setAttribute("aria-label", "Reproducir el giro automático");
+  }
+
+  function abrir() {
+    if (abierto) return;
+    abierto = true;
+    visor.classList.add("cargando");
+    video.preload = "auto";
+    video.src = VIDEO_RECORRIDO;
+    video.load();
+  }
+
+  video.addEventListener("loadeddata", () => {
+    duracion = video.duration || 0;
+    visor.classList.remove("cargando");
+    visor.classList.add("andando", "listo");
+    if (quieto.matches) pintarAvance(); else girar();
+  }, { once: true });
+
+  video.addEventListener("error", () => {
+    visor.classList.remove("cargando");
+    aviso.textContent = "No pudimos cargar el recorrido. Probá de nuevo en un rato.";
+    visor.classList.add("cargando");
+  });
+
+  video.addEventListener("ended", () => {
+    visor.classList.remove("girando");
+    botonGirar.setAttribute("aria-label", "Volver a empezar el giro");
+  });
+
+  $("#visor-abrir").addEventListener("click", abrir);
+  botonGirar.addEventListener("click", () => (video.paused ? girar() : frenar()));
+
+  rango.addEventListener("input", () => {
+    if (!duracion) return;
+    frenar();
+    visor.classList.add("movido");
+    irA(Number(rango.value) / 1000 * duracion);
+  });
+
+  $("#visor-pantalla").addEventListener("click", () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (marco.requestFullscreen) marco.requestFullscreen().catch(() => {});
+  });
+
+  /* ── Arrastre: un ancho de pantalla recorre todo el giro ── */
+  let agarre = null;
+  marco.addEventListener("pointerdown", (e) => {
+    if (!duracion || e.target.closest(".visor-hud") || e.target.closest(".visor-boton")) return;
+    agarre = { x: e.clientX, t: video.currentTime, movido: false };
+    marco.setPointerCapture(e.pointerId);
+    visor.classList.add("agarrando");
+    frenar();
+  });
+  marco.addEventListener("pointermove", (e) => {
+    if (!agarre) return;
+    const dx = e.clientX - agarre.x;
+    if (!agarre.movido && Math.abs(dx) > 3) {
+      agarre.movido = true;
+      visor.classList.add("movido");
+    }
+    /* Un ancho completo del visor equivale a un giro completo del salón. */
+    irA(agarre.t - dx / marco.clientWidth * duracion);
+  });
+  const soltar = (e) => {
+    if (!agarre) return;
+    agarre = null;
+    visor.classList.remove("agarrando");
+    if (marco.hasPointerCapture?.(e.pointerId)) marco.releasePointerCapture(e.pointerId);
+  };
+  marco.addEventListener("pointerup", soltar);
+  marco.addEventListener("pointercancel", soltar);
+
+  /* Fuera de pantalla no tiene sentido que siga girando. */
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((entradas) => {
+      for (const en of entradas) if (!en.isIntersecting && !video.paused) frenar();
+    }, { threshold: 0.15 }).observe(marco);
+  }
+}
+
+
 /* ══════ ARRANQUE ═════════════════════════════════════════ */
 
 if (DEMO) $("#demo").hidden = false;
@@ -560,9 +706,9 @@ if (DEMO) $("#demo").hidden = false;
    no esté, la sección se queda con su fondo liso y el navegador no insiste
    con una imagen que no está. Subir la foto a public/img/ alcanza. */
 for (const [nombre, selector] of [
-  ["hero", ".ficha"],
+  ["frente", ".portada"],
   ["alquiler", ".alquiler"],
-  ["local", ".cierre"],
+  ["frente", ".cierre"],
 ]) {
   const prueba = new Image();
   prueba.addEventListener("load", () => {
@@ -587,6 +733,7 @@ pintarRubros();
 pintarAlquiler();
 pintarVisitanos();
 pintarPie();
+armarRecorrido();
 
 /* Estado abierto / cerrado, en la barra de servicio y en la ficha */
 const pintarEstado = () => {

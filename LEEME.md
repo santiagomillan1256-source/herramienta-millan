@@ -164,23 +164,51 @@ aparece sola: no hay que tocar código.
 
 | Archivo | Dónde se ve |
 |---|---|
-| `public/img/hero.webp` | detrás de la ficha de atención de la portada |
+| `public/img/frente.webp` | **el fondo de la portada** y el de la banda final |
 | `public/img/alquiler.webp` | detrás de la banda oscura de Alquiler |
-| `public/img/local.webp` | detrás de la banda final |
-| `public/img/rubros/<id>.webp` | **el fondo de cada tarjeta de rubro** (bulones, pinturas, pvc, materiales, manuales, repuestos) |
+| `public/img/cat-<id>.webp` | la foto de cada categoría del catálogo (`cat-explosion`, `cat-electricas`) |
+| `public/img/rubros/<id>.webp` | **la imagen de cada tarjeta de rubro** (bulones, pinturas, pvc, materiales, manuales, repuestos) |
+| `public/img/recorrido.webp` | la tapa del recorrido por el local |
 | `public/img/p/<categoria>-<codigo>.webp` | una por producto |
 | `public/img/alq/<id>.webp` | una por equipo de alquiler |
 
 Las de fondo conviene subirlas de unos 1600 px de ancho; las de rubro, de unos
 1000 px; las de producto, cuadradas, de 600 px como máximo. Todas en **WebP**.
 
+Las de rubro se muestran **enteras, sin recortar**: como los carteles traen el
+nombre del rubro impreso, la tarjeta los deja leer completos y abajo pone el
+texto y el botón de WhatsApp. Conviene que todas tengan la misma proporción
+(las actuales son de 1312 × 1199).
+
 Mientras un rubro no tenga foto, la tarjeta se dibuja con su ícono sobre un
 fondo oscuro y se ve igual de terminada. Al subir la foto con el nombre
-correcto, aparece sola.
+correcto, aparece sola. Lo mismo con las categorías del catálogo.
 
 **El mapa** (`public/img/mapa.webp`) ya está generado, con el local marcado.
 Si alguna vez hay que rehacerlo, está el script que lo arma a partir de las
 coordenadas de la ficha de Google.
+
+## El recorrido por el local
+
+`public/video/recorrido.mp4` es una panorámica del salón. La sección
+**El local** no lo reproduce y nada más: el arrastre horizontal maneja el
+tiempo del video, así que mover el dedo equivale a girar la vista. La barra de
+abajo es un `<input type="range">` de verdad, o sea que también se maneja con
+el teclado, y el botón de la izquierda prende y apaga el giro automático.
+
+El video **no se descarga hasta que alguien abre el recorrido** (`preload="none"`
+y el `src` lo pone el JS al abrirlo), así que no le pesa a quien no lo usa.
+
+Para cambiarlo por otro video hay que dejarlo en el mismo nombre y volver a
+sacarle la tapa:
+
+```bash
+ffmpeg -i nuevo.mp4 -an -vf "scale=1248:696:flags=lanczos" -r 24   -c:v libx264 -crf 21 -g 12 -keyint_min 12 -sc_threshold 0   -pix_fmt yuv420p -movflags +faststart public/video/recorrido.mp4
+```
+
+El `-g 12` es lo que importa: con cuadros clave cada medio segundo el arrastre
+responde al toque. Un video con cuadros clave cada varios segundos se arrastra
+a los saltos.
 
 ## El sitio en un solo archivo
 

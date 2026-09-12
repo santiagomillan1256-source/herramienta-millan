@@ -217,28 +217,46 @@ li{list-style:none}
 .megamenu-tapa{position:fixed;inset:0;z-index:99;background:rgba(20,24,28,.35)}
 
 /* ══════ PORTADA ══════════════════════════════════════════════════════════ */
-.portada{background:var(--papel);border-bottom:1px solid var(--borde);overflow:hidden}
-.portada-in{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(1.5rem,4vw,3.4rem);
-  align-items:center;padding-block:clamp(2.4rem,6vw,4.4rem)}
-.portada h1{font-size:clamp(2.4rem,6.2vw,4.6rem);text-transform:uppercase;line-height:.94;letter-spacing:-.015em}
-.portada h1 .naranja{color:var(--naranja);display:block}
-.portada .bajada{margin-top:1.2rem;font-size:clamp(1rem,1.6vw,1.1rem)}
+/* Detrás va la foto del frente del local; el texto siempre viaja por delante.
+   Sin foto la banda queda oscura igual, así que los colores no cambian. */
+.portada{
+  --foto:none;
+  position:relative;overflow:hidden;color:#e8eaed;
+  background-color:var(--tinta);background-image:var(--foto);
+  background-size:cover;background-position:center 45%;
+}
+/* Velo base: cuando no hay foto la banda es casi lisa. */
+.portada::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(13,15,19,.94),rgba(13,15,19,.99))}
+/* Con la foto puesta el velo se abre, más cargado del lado del texto. */
+.portada.con-foto::before{background:
+  linear-gradient(100deg,rgba(11,13,16,.92) 0%,rgba(11,13,16,.8) 40%,rgba(11,13,16,.4) 74%,rgba(11,13,16,.28) 100%),
+  linear-gradient(180deg,rgba(11,13,16,.42),rgba(11,13,16,.06) 46%,rgba(11,13,16,.7))}
+.portada-in{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:clamp(1.5rem,4vw,3.4rem);align-items:center;padding-block:clamp(3rem,7vw,5.4rem)}
+.portada .rotulo{color:var(--naranja-claro)}
+.portada h1{font-size:clamp(2.4rem,6.2vw,4.6rem);text-transform:uppercase;line-height:.94;
+  letter-spacing:-.015em;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.5)}
+.portada h1 .naranja{color:var(--naranja-claro);display:block}
+.portada .bajada{margin-top:1.2rem;font-size:clamp(1rem,1.6vw,1.1rem);color:#c5cbd3}
+.portada .boton-linea{border-color:var(--borde-oscuro);color:#fff}
+.portada .boton-linea:hover{border-color:#fff;background:rgba(255,255,255,.08)}
 .portada-botones{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.8rem}
-.portada-datos{display:flex;flex-wrap:wrap;gap:1.6rem 2.4rem;margin-top:2.2rem;padding-top:1.5rem;border-top:1px solid var(--borde)}
+.portada-datos{display:flex;flex-wrap:wrap;gap:1.6rem 2.4rem;margin-top:2.2rem;padding-top:1.5rem;
+  border-top:1px solid var(--borde-oscuro)}
 .portada-datos li{display:flex;flex-direction:column;gap:.1rem}
-.portada-datos b{font-family:var(--titulo);font-size:2rem;line-height:1;color:var(--tinta)}
-.portada-datos span{font-size:.72rem;letter-spacing:.13em;text-transform:uppercase;color:var(--gris-2);max-width:16ch}
+.portada-datos b{font-family:var(--titulo);font-size:2rem;line-height:1;color:#fff}
+.portada-datos span{font-size:.72rem;letter-spacing:.13em;text-transform:uppercase;color:#98a0aa;max-width:16ch}
 
 /* Ficha de atención, a la derecha */
 .ficha{
-  --foto:none;
-  position:relative;background-color:var(--tinta);background-image:var(--foto);
-  background-size:cover;background-position:center;color:#e8eaed;border-radius:var(--radio-g);
-  overflow:hidden;
+  position:relative;color:#e8eaed;border-radius:var(--radio-g);overflow:hidden;
+  border:1px solid var(--borde-oscuro);box-shadow:0 18px 50px rgba(0,0,0,.45);
 }
-.ficha::before{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(21,24,28,.9),rgba(21,24,28,.97))}
-/* Con foto real detrás, el velo se abre para que la foto se vea. */
-.ficha.con-foto::before{background:linear-gradient(160deg,rgba(21,24,28,.88),rgba(21,24,28,.8))}
+/* Panel de vidrio: deja entrever la foto del frente sin comerse el texto. */
+.ficha::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(16,19,23,.86),rgba(16,19,23,.94));
+  backdrop-filter:blur(14px) saturate(1.1);-webkit-backdrop-filter:blur(14px) saturate(1.1)}
 .ficha-in{position:relative;padding:clamp(1.4rem,3vw,2rem)}
 .ficha-logo{display:flex;align-items:center;gap:.9rem;padding-bottom:1.1rem;border-bottom:1px solid var(--borde-oscuro)}
 .ficha-logo img{width:64px;height:64px;background:#000;border-radius:var(--radio);flex:none}
@@ -309,14 +327,37 @@ li{list-style:none}
 .indice-intro{padding-bottom:1.2rem;margin-bottom:1.4rem;border-bottom:1px solid var(--borde)}
 .indice-intro h3{font-size:1.45rem;text-transform:uppercase;margin-bottom:.4rem}
 .indice-intro p{color:var(--gris);font-size:.92rem;max-width:70ch}
-.indice{display:grid;gap:1.2rem 1.8rem;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
-.indice-bloque h4{display:flex;align-items:center;gap:.5rem;font-size:1.02rem;text-transform:uppercase;
-  padding-bottom:.4rem;margin-bottom:.5rem;border-bottom:2px solid var(--naranja)}
-.indice-bloque h4 .indice-ico{display:grid;place-items:center;width:20px;height:20px;color:var(--naranja)}
-.indice-bloque h4 .indice-ico svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.indice-bloque ul{display:flex;flex-direction:column;gap:.05rem}
-.indice-bloque button{border:0;background:none;padding:.18rem 0;text-align:left;cursor:pointer;
-  font-size:.84rem;color:var(--gris);line-height:1.45}
+.indice{display:grid;gap:1.4rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+
+/* Cada categoría con catálogo se presenta con una foto real del local y,
+   debajo, la lista de subcategorías. */
+.indice-bloque{display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--borde);
+  border-radius:var(--radio-g);background:var(--blanco);transition:box-shadow .18s,border-color .18s}
+.indice-bloque:hover{border-color:var(--borde-fuerte);box-shadow:0 10px 26px rgba(21,24,28,.09)}
+
+.indice-foto{position:relative;display:block;line-height:0;background:var(--tinta);overflow:hidden}
+.indice-foto img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;
+  transition:transform .5s ease}
+.indice-bloque:hover .indice-foto img{transform:scale(1.035)}
+.indice-foto::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(15,18,22,.1) 0%,rgba(15,18,22,.55) 58%,rgba(15,18,22,.9) 100%)}
+.indice-foto h4{position:absolute;left:1rem;right:1rem;bottom:.8rem;z-index:1;line-height:1.1;
+  display:flex;align-items:center;gap:.55rem;color:#fff;
+  font-size:clamp(1.25rem,2.2vw,1.6rem);text-transform:uppercase;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.indice-foto .indice-ico{display:grid;place-items:center;width:26px;height:26px;color:var(--naranja-claro);flex:none}
+.indice-foto .indice-ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* Sin foto la ficha no se rompe: el título vuelve arriba, sobre la línea naranja. */
+.indice-bloque.sin-foto .indice-foto{aspect-ratio:auto;background:none;padding:1rem 1.1rem 0}
+.indice-bloque.sin-foto .indice-foto img,
+.indice-bloque.sin-foto .indice-foto::after{display:none}
+.indice-bloque.sin-foto .indice-foto h4{position:static;color:var(--tinta);text-shadow:none;
+  padding-bottom:.45rem;border-bottom:2px solid var(--naranja)}
+.indice-bloque.sin-foto .indice-foto .indice-ico{color:var(--naranja)}
+
+.indice-lista{display:flex;flex-direction:column;gap:.05rem;padding:.9rem 1.1rem 1.1rem}
+.indice-bloque button{border:0;background:none;padding:.24rem 0;text-align:left;cursor:pointer;
+  font-size:.86rem;color:var(--gris);line-height:1.45}
 .indice-bloque button:hover{color:var(--naranja);text-decoration:underline}
 
 /* Barra de la categoría abierta */
@@ -381,43 +422,44 @@ li{list-style:none}
 
 /* ══════ OTROS RUBROS ═════════════════════════════════════════════════════ */
 .rubros{background:var(--papel);padding-block:clamp(2.6rem,6vw,4.4rem);border-bottom:1px solid var(--borde)}
-.rubros-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(288px,1fr));margin-top:2.2rem}
+.rubros-grid{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:2.2rem}
 
+/* Cada rubro es una tarjeta de dos pisos: arriba la foto entera del rubro,
+   abajo el texto y el botón. La foto no se recorta: el cartel del rubro que
+   trae impreso se tiene que leer completo. */
 .rubro{
-  --foto:none;
-  position:relative;display:flex;flex-direction:column;justify-content:flex-end;
-  min-height:310px;padding:1.5rem;overflow:hidden;color:#fff;
-  background-color:var(--tinta);
+  position:relative;display:flex;flex-direction:column;overflow:hidden;color:#fff;
+  border-radius:var(--radio-g);background:linear-gradient(180deg,#232a32,#12161b);
+  border:1px solid var(--borde-oscuro);transition:box-shadow .18s,transform .18s;
+}
+.rubro:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.32),0 0 0 2px var(--naranja)}
+
+.rubro-foto{position:relative;display:block;background:#12161b;line-height:0;
+  border-bottom:1px solid var(--borde-oscuro)}
+.rubro-foto img{width:100%;height:auto;display:block;aspect-ratio:1312/1199;object-fit:cover}
+/* Un degradado muy suave abajo empalma la foto con el cuerpo de la tarjeta. */
+.rubro-foto::after{content:"";position:absolute;left:0;right:0;bottom:0;height:38%;pointer-events:none;
+  background:linear-gradient(180deg,rgba(18,21,26,0),rgba(18,21,26,.55))}
+
+.rubro-cuerpo{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;
+  gap:.5rem;padding:1.25rem 1.35rem 1.4rem;flex:1}
+.rubro-cuerpo h3{font-size:clamp(1.35rem,2.2vw,1.65rem);text-transform:uppercase;color:#fff;text-wrap:balance}
+.rubro-cuerpo p{font-size:.89rem;line-height:1.55;color:#ccd2d9;max-width:44ch}
+/* El botón se pega abajo para que quede a la misma altura en todas. */
+.rubro-cuerpo .boton{margin-top:auto;padding-top:0}
+
+/* Si la foto del rubro no está, la tarjeta vuelve al ícono como marca de agua
+   y el título pasa a ser el protagonista. */
+.rubro.sin-foto{min-height:270px;justify-content:flex-end;
   background-image:
-    var(--foto),
     radial-gradient(120% 95% at 82% 0%,rgba(232,114,12,.32),transparent 62%),
     repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 2px,transparent 2px 11px),
-    linear-gradient(180deg,#242b33,#11151a);
-  background-size:cover,auto,auto,auto;
-  background-position:center;
-  transition:box-shadow .18s;
-}
-.rubro:hover{box-shadow:0 0 0 3px var(--naranja) inset}
-/* El velo mantiene el texto legible sobre cualquier foto. */
-.rubro::before{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(18,21,26,.3) 0%,rgba(18,21,26,.55) 45%,rgba(18,21,26,.93) 100%)}
-
-/* Mientras no haya foto, el ícono del rubro hace de marca de agua. */
+    linear-gradient(180deg,#242b33,#11151a)}
+.rubro.sin-foto .rubro-foto{display:none}
+.rubro.sin-foto .rubro-cuerpo h3{font-size:clamp(1.6rem,2.6vw,2rem)}
 .rubro-ico{position:absolute;right:-.5rem;top:-.8rem;width:128px;height:128px;color:rgba(255,255,255,.11)}
 .rubro-ico svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
-.rubro.con-foto .rubro-ico{display:none}
-/* Con foto, el banner ya rotula el rubro: el titulo se oculta a la vista,
-   no al lector de pantalla, y el velo se abre arriba para que la foto se lea. */
-.rubro.con-foto{min-height:360px}
-.rubro.con-foto h3{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
-  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
-.rubro.con-foto::before{background:linear-gradient(180deg,rgba(18,21,26,0) 30%,
-  rgba(18,21,26,.7) 56%,rgba(18,21,26,.97) 100%)}
-
-.rubro-cuerpo{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:.5rem}
-.rubro-cuerpo h3{font-size:clamp(1.6rem,2.6vw,2rem);text-transform:uppercase;color:#fff;text-wrap:balance}
-.rubro-cuerpo p{font-size:.89rem;line-height:1.55;color:#ccd2d9;max-width:40ch}
-.rubro-cuerpo .boton{margin-top:.7rem}
+.rubro:not(.sin-foto) .rubro-ico{display:none}
 
 /* ══════ ALQUILER (banda oscura) ═════════════════════════════════════════ */
 .oscuro{--foto:none;position:relative;background-color:var(--tinta);color:#e8eaed;
@@ -571,6 +613,89 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
 .mapa-calle{font-family:var(--titulo);font-size:1.3rem;letter-spacing:.01em}
 .mapa-pie span:last-child{font-size:.82rem;color:#ccd2d9}
 
+/* ══════ RECORRIDO POR EL LOCAL ══════════════════════════════════════════ */
+/* El video es una panorámica del salón. En vez de reproducirlo y ya, el
+   arrastre horizontal maneja el tiempo del video: mover el dedo equivale a
+   girar la cabeza. La barra de abajo es un <input type=range> de verdad,
+   así el recorrido también se maneja con el teclado. */
+.recorrido{position:relative;background:linear-gradient(180deg,#12161b,#1b2129);color:#e8eaed;
+  padding-block:clamp(2.8rem,6vw,4.6rem);border-top:1px solid var(--borde-oscuro)}
+.recorrido .titulo-seccion{color:#fff}
+.recorrido .bajada{color:#b3b9c0}
+.recorrido-cab{max-width:70ch;margin-bottom:1.8rem}
+
+.visor{position:relative;margin:0}
+.visor-marco{position:relative;overflow:hidden;border-radius:var(--radio-g);background:#000;
+  border:1px solid var(--borde-oscuro);box-shadow:0 22px 60px rgba(0,0,0,.5);
+  aspect-ratio:1248/696;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.visor-marco:fullscreen{aspect-ratio:auto;width:100%;height:100%;border-radius:0;border:0}
+.visor-tapa,.visor-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.visor-video{opacity:0;transition:opacity .45s}
+.visor.andando .visor-video{opacity:1}
+.visor.andando .visor-tapa{opacity:0;transition:opacity .45s}
+.visor.agarrando .visor-marco{cursor:grabbing}
+.visor.listo .visor-marco{cursor:grab}
+
+/* Botón de entrada: ocupa toda la tapa hasta que se abre el recorrido. */
+.visor-boton{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:.55rem;cursor:pointer;color:#fff;
+  border:0;background:linear-gradient(180deg,rgba(11,14,18,.45),rgba(11,14,18,.75));
+  font-family:var(--titulo);font-size:clamp(1.15rem,2.6vw,1.75rem);text-transform:uppercase;
+  letter-spacing:.02em;transition:background .2s}
+.visor-boton:hover{background:linear-gradient(180deg,rgba(11,14,18,.3),rgba(11,14,18,.66))}
+.visor-boton small{font-family:var(--texto);font-size:.76rem;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:#b9c0c8}
+.visor-boton .visor-circulo{display:grid;place-items:center;width:clamp(58px,9vw,76px);
+  height:clamp(58px,9vw,76px);border-radius:50%;background:var(--naranja);color:#fff;
+  box-shadow:0 10px 30px rgba(232,114,12,.45);transition:transform .2s}
+.visor-boton:hover .visor-circulo{transform:scale(1.07)}
+.visor-boton .visor-circulo svg{width:52%;height:52%;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.visor.andando .visor-boton,.visor.cargando .visor-boton{display:none}
+
+.visor-cargando{position:absolute;inset:0;z-index:3;display:none;place-items:center;
+  background:rgba(11,14,18,.72);color:#fff;font-size:.86rem;letter-spacing:.08em;text-transform:uppercase}
+.visor.cargando .visor-cargando{display:grid}
+
+/* Panel de control, abajo, sobre el video. */
+.visor-hud{position:absolute;left:0;right:0;bottom:0;z-index:2;display:none;flex-direction:column;
+  gap:.5rem;padding:2.6rem clamp(.8rem,2vw,1.3rem) clamp(.7rem,1.6vw,1rem);
+  background:linear-gradient(180deg,rgba(11,14,18,0),rgba(11,14,18,.85))}
+.visor.andando .visor-hud{display:flex}
+.visor-pista{align-self:center;padding:.3rem .8rem;border-radius:999px;font-size:.72rem;
+  letter-spacing:.11em;text-transform:uppercase;color:#fff;background:rgba(11,14,18,.6);
+  border:1px solid var(--borde-oscuro);transition:opacity .4s}
+.visor.movido .visor-pista{opacity:0;pointer-events:none}
+
+.visor-fila{display:flex;align-items:center;gap:.7rem}
+.visor-rango{flex:1;min-width:0;appearance:none;-webkit-appearance:none;height:22px;background:none;cursor:pointer}
+.visor-rango::-webkit-slider-runnable-track{height:4px;border-radius:2px;
+  background:linear-gradient(90deg,var(--naranja) var(--avance,0%),rgba(255,255,255,.28) var(--avance,0%))}
+.visor-rango::-moz-range-track{height:4px;border-radius:2px;background:rgba(255,255,255,.28)}
+.visor-rango::-moz-range-progress{height:4px;border-radius:2px;background:var(--naranja)}
+.visor-rango::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-6px;
+  border-radius:50%;background:#fff;border:3px solid var(--naranja);box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.visor-rango::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;
+  border:3px solid var(--naranja);box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.visor-rango:focus-visible{outline:2px solid var(--naranja-claro);outline-offset:4px;border-radius:4px}
+
+.visor-btn{flex:none;display:grid;place-items:center;width:38px;height:38px;cursor:pointer;
+  border-radius:50%;border:1px solid var(--borde-oscuro);background:rgba(11,14,18,.6);color:#fff;
+  transition:background .18s,border-color .18s}
+.visor-btn:hover{background:var(--naranja);border-color:var(--naranja)}
+.visor-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round}
+.visor-btn .icono-pausa,.visor.girando .visor-btn .icono-play{display:none}
+.visor.girando .visor-btn .icono-pausa{display:block}
+
+.visor figcaption{margin-top:.9rem;font-size:.84rem;color:#98a0aa;max-width:74ch}
+.visor figcaption b{color:#cfd5dc;font-weight:600}
+
+@media (max-width:600px){
+  .visor-marco{aspect-ratio:4/3}
+  .visor-hud{padding-top:1.8rem}
+}
+
 /* ══════ LLAMADA FINAL ═══════════════════════════════════════════════════ */
 .cierre{--foto:none;position:relative;background-color:var(--tinta-2);color:#fff;
   border-top:3px solid var(--naranja);background-image:var(--foto);background-size:cover;background-position:center}
@@ -672,6 +797,9 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
 @media (max-width:980px){
   .resenas-cab{grid-template-columns:1fr;justify-items:start}
   .portada-in{grid-template-columns:1fr}
+  .portada{background-position:center 38%}
+  .portada.con-foto::before{background:
+    linear-gradient(180deg,rgba(11,13,16,.72),rgba(11,13,16,.86) 55%,rgba(11,13,16,.93))}
   .alquiler-cab,.reparacion-cab{grid-template-columns:1fr;align-items:start}
   .visitanos-grid{grid-template-columns:1fr}
   .catalogo-caja{grid-template-columns:1fr}

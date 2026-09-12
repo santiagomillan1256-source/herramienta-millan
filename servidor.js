@@ -33,6 +33,7 @@ const TIPOS = {
   ".txt": "text/plain; charset=utf-8",
   ".xml": "application/xml; charset=utf-8",
   ".woff2": "font/woff2",
+  ".mp4": "video/mp4",
 };
 
 async function existe(ruta) {
@@ -78,9 +79,32 @@ const servidor = createServer(async (req, res) => {
     return res.end("No encontrado");
   }
 
+  const tipo = TIPOS[extname(archivo).toLowerCase()] || "application/octet-stream";
   const cuerpo = await readFile(archivo);
+
+  /* Pedido por rango: es lo que usa el <video> para saltar a un punto sin
+     bajar el archivo entero. Vercel lo hace solo; acá lo imitamos. */
+  const rango = /^bytes=([0-9]*)-([0-9]*)$/.exec(req.headers.range || "");
+  if (rango) {
+    const fin = rango[2] ? Math.min(Number(rango[2]), cuerpo.length - 1) : cuerpo.length - 1;
+    const inicio = rango[1] ? Number(rango[1]) : 0;
+    if (inicio > fin) {
+      res.writeHead(416, { "Content-Range": `bytes */${cuerpo.length}` });
+      return res.end();
+    }
+    res.writeHead(206, {
+      "Content-Type": tipo,
+      "Content-Range": `bytes ${inicio}-${fin}/${cuerpo.length}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": fin - inicio + 1,
+      "Cache-Control": "no-store",
+    });
+    return res.end(cuerpo.subarray(inicio, fin + 1));
+  }
+
   res.writeHead(200, {
-    "Content-Type": TIPOS[extname(archivo).toLowerCase()] || "application/octet-stream",
+    "Content-Type": tipo,
+    "Accept-Ranges": "bytes",
     "Cache-Control": "no-store",
   });
   res.end(cuerpo);
