@@ -60,6 +60,13 @@ const SIN_MAQUINA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h
 const dibujo = (clave) =>
   `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS[clave] || ICONOS.herramienta}</svg>`;
 
+/** Dónde está una foto de fondo. Va desde la raíz del sitio porque, dentro de
+ *  una variable CSS, una dirección relativa se resuelve contra la hoja de
+ *  estilos (/css/) y no contra la página. En la versión de un solo archivo,
+ *  las fotos vienen incrustadas en globalThis.FOTOS. */
+const rutaFoto = (nombre) =>
+  (globalThis.FOTOS && globalThis.FOTOS[nombre]) || `/img/${nombre}.webp`;
+
 /** Un dato que todavía falta se muestra marcado, para que no quede olvidado. */
 const dato = (v) => (pendiente(v) ? `<span class="falta">${esc(v)}</span>` : esc(v));
 
@@ -168,7 +175,7 @@ function pintarVisitanos() {
   $("#mapa").innerHTML =
     `<a class="mapa-imagen" href="${esc(GOOGLE.ubicacion)}" target="_blank" rel="noopener"
         aria-label="Ver la ubicación de ${esc(SITE.nombre)} en Google Maps">
-      <img src="img/mapa.webp" alt="Mapa con la ubicación del local, en ${esc(d.calle)}" loading="lazy" decoding="async"
+      <img src="${globalThis.MAPA_INCRUSTADO || "/img/mapa.webp"}" alt="Mapa con la ubicación del local, en ${esc(d.calle)}" loading="lazy" decoding="async"
            onerror="this.closest('.mapa-imagen').classList.add('sin-mapa'); this.remove()">
       <span class="mapa-pie">
         <span class="mapa-calle">${esc(d.calle)}</span>
@@ -419,11 +426,11 @@ function pintarRubros() {
     prueba.addEventListener("load", () => {
       const card = $(`#rubro-${r.id}`);
       if (card) {
-        card.style.setProperty("--foto", `url("img/rubros/${r.id}.webp")`);
+        card.style.setProperty("--foto", `url("${rutaFoto("rubros/" + r.id)}")`);
         card.classList.add("con-foto");
       }
     });
-    prueba.src = `img/rubros/${r.id}.webp`;
+    prueba.src = rutaFoto("rubros/" + r.id);
   }
 }
 
@@ -562,9 +569,12 @@ for (const [nombre, selector] of [
     /* En un atributo style la dirección se resuelve desde la página, no
        desde la hoja de estilos: por eso va sin "../". */
     const el = $(selector);
-    if (el) el.style.setProperty("--foto", `url("img/${nombre}.webp")`);
+    if (!el) return;
+    el.style.setProperty("--foto", `url("${rutaFoto(nombre)}")`);
+    /* Con foto de verdad, el velo se aclara: la clase lo dice en la hoja. */
+    el.classList.add("con-foto");
   });
-  prueba.src = `img/${nombre}.webp`;
+  prueba.src = rutaFoto(nombre);
 }
 
 pintarCabecera();

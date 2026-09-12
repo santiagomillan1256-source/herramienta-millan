@@ -5,6 +5,9 @@ Provedor/
 interno/
 *.log
 
-# Los arma herramientas-armar-un-archivo.mjs
-millan.html
-ferreteria-millan.html
+# Las fotos originales que mandás; el sitio usa las convertidas de public/img/
+Imagenes/
+imagenes 2/
+
+# Se regenera con: node herramientas-armar-un-archivo.mjs
+sitio-en-un-archivo.html
