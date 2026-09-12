@@ -168,7 +168,7 @@ aparece sola: no hay que tocar código.
 | `public/img/alquiler.webp` | detrás de la banda oscura de Alquiler |
 | `public/img/cat-<id>.webp` | la foto de cada categoría del catálogo (`cat-explosion`, `cat-electricas`) |
 | `public/img/rubros/<id>.webp` | **la imagen de cada tarjeta de rubro** (bulones, pinturas, pvc, materiales, manuales, repuestos) |
-| `public/img/recorrido.webp` | la tapa del recorrido por el local |
+| `public/img/salon.webp` | **la panorámica del salón**, el recorrido por el local |
 | `public/img/p/<categoria>-<codigo>.webp` | una por producto |
 | `public/img/alq/<id>.webp` | una por equipo de alquiler |
 
@@ -190,25 +190,50 @@ coordenadas de la ficha de Google.
 
 ## El recorrido por el local
 
-`public/video/recorrido.mp4` es una panorámica del salón. La sección
-**El local** no lo reproduce y nada más: el arrastre horizontal maneja el
-tiempo del video, así que mover el dedo equivale a girar la vista. La barra de
-abajo es un `<input type="range">` de verdad, o sea que también se maneja con
-el teclado, y el botón de la izquierda prende y apaga el giro automático.
+La sección **El local** no muestra un video: muestra **una sola imagen
+panorámica del salón entero** (`public/img/salon.webp`, 3336 × 666, 185 KB).
+Se arrastra para girar la vista y se puede acercar con la rueda, con dos dedos
+o con los botones + y −. El video en movimiento es una segunda capa, detrás del
+botón "Ver en movimiento", y **no se descarga hasta que alguien lo pide**.
 
-El video **no se descarga hasta que alguien abre el recorrido** (`preload="none"`
-y el `src` lo pone el JS al abrirlo), así que no le pesa a quien no lo usa.
+### De dónde sale la panorámica
 
-Para cambiarlo por otro video hay que dejarlo en el mismo nombre y volver a
-sacarle la tapa:
+El original es un video de 832 × 464 en el que la cámara barre el salón de
+izquierda a derecha. La panorámica se armó con **slit-scan**: de cada uno de
+los 583 cuadros se toma nada más que una tira de su franja central —la parte
+donde el lente deforma menos— y las tiras se pegan una al lado de la otra.
+
+Cada columna de la panorámica viene de **un solo cuadro**, así que conserva
+exactamente la nitidez del original; no hay promedios ni estirado. Se probó
+antes el camino de apilar cuadros para ganar resolución, y salió **peor**: con
+paralaje y distorsión de lente los cuadros no se superponen de forma perfecta y
+el promedio termina borroneando.
+
+El corrimiento de cada cuadro se mide por correlación cruzada de perfiles 1D
+(las columnas para el movimiento horizontal, las filas para el vertical), con
+el pico interpolado para llegar al subpíxel. En este video el paneo resultó
+monótono, sin retrocesos, con una confianza de correlación de 0,996.
+
+Los scripts quedaron fuera del repositorio porque se usan una sola vez. Si hay
+que rehacer la panorámica con otro video, el procedimiento es: medir el
+corrimiento cuadro a cuadro, repartir las columnas de salida entre los cuadros,
+muestrear cada una con interpolación bilineal, recortar el rectángulo que quede
+cubierto en todas las columnas y recién ahí agrandar al doble y afilar.
+
+### El video en movimiento
 
 ```bash
-ffmpeg -i nuevo.mp4 -an -vf "scale=1248:696:flags=lanczos" -r 24   -c:v libx264 -crf 21 -g 12 -keyint_min 12 -sc_threshold 0   -pix_fmt yuv420p -movflags +faststart public/video/recorrido.mp4
+ffmpeg -i nuevo.mp4 -an   -vf "nlmeans=s=2.2:p=5:r=11,scale=1248:696:flags=lanczos,unsharp=5:5:0.9:5:5:0.0"   -r 24 -c:v libx264 -crf 21 -g 12 -keyint_min 12 -sc_threshold 0   -pix_fmt yuv420p -movflags +faststart public/video/recorrido.mp4
 ```
 
-El `-g 12` es lo que importa: con cuadros clave cada medio segundo el arrastre
-responde al toque. Un video con cuadros clave cada varios segundos se arrastra
-a los saltos.
+Dos cosas importan acá. El `-g 12` pone cuadros clave cada medio segundo: con
+eso el arrastre responde al toque, y con cuadros clave cada varios segundos se
+arrastra a los saltos. Y `nlmeans` limpia el grano mejor que `hqdn3d`
+conservando el detalle: al mismo CRF el archivo salió 500 KB más chico y se ve
+más limpio.
+
+El servidor de prueba responde pedidos por rango, que es lo que necesita el
+`<video>` para saltar de un punto a otro sin bajarlo entero. Vercel ya lo hace.
 
 ## El sitio en un solo archivo
 

@@ -44,7 +44,7 @@ const tablaFotos = `globalThis.FOTOS = ${JSON.stringify(fotos)};`;
 const logo = await dataUri("img/logo.webp");
 const icono = await dataUri("img/logo-256.webp");
 const mapa = await dataUri("img/mapa.webp");
-const tapaRecorrido = await dataUri("img/recorrido.webp");
+const panoramica = await dataUri("img/salon.webp");
 
 /* El video del recorrido viaja en base64 y acá se vuelve a armar como blob.
    Un blob se puede recorrer salteando de un punto a otro; una dirección
@@ -71,7 +71,7 @@ meter(/<script type="module" src="js\/resenas\.js"><\/script>/, "");
 html = html.replace(/src="img\/logo\.webp"/g, () => `src="${logo}"`);
 html = html.replace(/href="img\/logo-256\.webp"/, () => `href="${icono}"`);
 html = html.replace(/href="img\/logo\.webp"/, () => `href="${logo}"`);
-html = html.replace(/src="img\/recorrido\.webp"/g, () => `src="${tapaRecorrido}"`);
+html = html.replace(/src="img\/salon\.webp"/g, () => `src="${panoramica}"`);
 /* El mapa y el video los resuelve el JS con rutas desde la raíz del sitio:
    acá se los deja resueltos antes de que el módulo arranque. */
 html = html.replace(/<\/style>/, () =>

@@ -427,39 +427,62 @@
   <div class="recorrido-cab">
     <p class="rotulo claro">El local por dentro</p>
     <h2 class="titulo-seccion">Recorré la ferretería sin moverte</h2>
-    <p class="bajada">Una panorámica del salón filmada desde el mostrador. Arrastrá con el dedo o con el mouse para girar la vista y mirar hacia donde quieras, como si estuvieras parado adentro.</p>
+    <p class="bajada">Esta es una sola imagen del salón completo, reconstruida a partir de un video filmado desde el mostrador. Arrastrá para girar la vista y acercate con la rueda del mouse o con dos dedos: es el local de verdad, sin retoques.</p>
   </div>
 
   <figure class="visor" id="visor">
     <div class="visor-marco" id="visor-marco">
-      <img class="visor-tapa" src="img/recorrido.webp" alt="Salón de la ferretería visto desde el mostrador: estanterías, mostrador y máquinas" width="1600" height="892" loading="lazy" decoding="async">
-      <video class="visor-video" id="visor-video" playsinline muted preload="none" disablepictureinpicture tabindex="-1"></video>
+      <!-- Capa 1: la panorámica. Es lo que se ve de entrada. -->
+      <img class="visor-pano" id="visor-pano" src="img/salon.webp"
+           alt="Panorámica del salón de la ferretería: el mostrador con el cartel de Millan, las paredes de herramientas y las estanterías de producto"
+           width="3336" height="666" decoding="async" draggable="false">
 
-      <button class="visor-boton" type="button" id="visor-abrir">
-        <span class="visor-circulo" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 8-8 8 8 0 0 1 8 8"/><path d="M20 12a8 8 0 0 1-8 8 8 8 0 0 1-8-8"/><path d="M9 9l-4 3 4 3"/><path d="M15 15l4-3-4-3"/></svg>
-        </span>
-        Ver la ferretería por dentro
-        <small>Arrastrá para girar la vista</small>
-      </button>
+      <!-- Capa 2: el video, sólo si lo piden. -->
+      <video class="visor-video" id="visor-video" playsinline muted preload="none" disablepictureinpicture tabindex="-1"></video>
 
       <div class="visor-cargando" id="visor-cargando">Cargando el recorrido…</div>
 
       <div class="visor-hud">
         <span class="visor-pista" id="visor-pista">Arrastrá para mirar alrededor</span>
-        <div class="visor-fila">
-          <button class="visor-btn" type="button" id="visor-girar" aria-label="Pausar el giro automático">
+
+        <!-- Controles de la panorámica -->
+        <div class="visor-fila" id="visor-mandos-pano">
+          <button class="visor-btn" type="button" id="visor-menos" aria-label="Alejar la vista">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
+          </button>
+          <button class="visor-btn" type="button" id="visor-mas" aria-label="Acercar la vista">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <input class="visor-rango" type="range" id="visor-giro" min="0" max="1000" value="0" step="1"
+                 aria-label="Girar la vista dentro del local">
+          <button class="visor-btn visor-btn-ancho" type="button" id="visor-modo">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l12 8-12 8z" fill="currentColor" stroke="none"/></svg>
+            <span>Ver en movimiento</span>
+          </button>
+          <button class="visor-btn" type="button" id="visor-pantalla" aria-label="Ver a pantalla completa">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+          </button>
+        </div>
+
+        <!-- Controles del video -->
+        <div class="visor-fila" id="visor-mandos-video" hidden>
+          <button class="visor-btn" type="button" id="visor-girar" aria-label="Pausar el giro">
             <svg class="icono-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l12 8-12 8z" fill="currentColor" stroke="none"/></svg>
             <svg class="icono-pausa" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v16M16 4v16"/></svg>
           </button>
-          <input class="visor-rango" type="range" id="visor-rango" min="0" max="1000" value="0" step="1" aria-label="Posición del recorrido dentro del local">
-          <button class="visor-btn" type="button" id="visor-pantalla" aria-label="Ver a pantalla completa">
+          <input class="visor-rango" type="range" id="visor-rango" min="0" max="1000" value="0" step="1"
+                 aria-label="Posición del recorrido dentro del local">
+          <button class="visor-btn visor-btn-ancho" type="button" id="visor-volver">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18M3 12l4-4M3 12l4 4"/></svg>
+            <span>Volver a la panorámica</span>
+          </button>
+          <button class="visor-btn" type="button" id="visor-pantalla-2" aria-label="Ver a pantalla completa">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
           </button>
         </div>
       </div>
     </div>
-    <figcaption><b>Es el local de verdad, sin retoques.</b> El recorrido pesa unos 7 MB y se descarga recién cuando lo abrís. Si preferís verlo en persona, estamos en Mendoza Sur 2357, Villa Krause.</figcaption>
+    <figcaption><b>La panorámica pesa 185 KB y se ve al instante.</b> El video en movimiento son 6 MB y se descarga recién cuando lo pedís. Si preferís verlo en persona, estamos en Mendoza Sur 2357, Villa Krause.</figcaption>
   </figure>
 </div></section>
 

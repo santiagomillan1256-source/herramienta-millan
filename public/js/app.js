@@ -552,10 +552,11 @@ function alternarMegamenu() {
 
 /* ══════ RECORRIDO POR EL LOCAL ═══════════════════════════ */
 
-/* El video es una panorámica: la cámara barre el salón de izquierda a derecha.
-   Arrastrar el dedo hacia la izquierda adelanta el video, o sea que la vista
-   gira hacia la derecha; es el mismo gesto de girar la cabeza. El video no se
-   descarga hasta que alguien abre el recorrido. */
+/* El salón entero está en una sola imagen: la panorámica se armó tomando de
+   cada cuadro del video nada más que su franja central, así que cada columna
+   viene de un cuadro distinto y ninguna quedó estirada ni promediada. Eso
+   permite arrastrar la vista y acercarse de verdad, con 185 KB.
+   El video en movimiento es la segunda capa y se baja sólo si lo piden. */
 
 const VIDEO_RECORRIDO = globalThis.VIDEO_RECORRIDO || "/video/recorrido.mp4";
 
@@ -564,16 +565,116 @@ function armarRecorrido() {
   if (!visor) return;
 
   const marco = $("#visor-marco");
+  const pano = $("#visor-pano");
   const video = $("#visor-video");
+  const giro = $("#visor-giro");
   const rango = $("#visor-rango");
   const aviso = $("#visor-cargando");
-  const botonGirar = $("#visor-girar");
-  let duracion = 0;
-  let abierto = false;
+  const mas = $("#visor-mas");
+  const menos = $("#visor-menos");
+  const quieto = matchMedia("(prefers-reduced-motion: reduce)");
 
-  /* Los saltos de tiempo se encolan: pedir uno nuevo antes de que termine el
-     anterior hace que el navegador descarte pedidos y el arrastre se trabe. */
+  let modo = "pano";
+
+  /* ── La panorámica: mover y acercar ───────────────────── */
+
+  /* Se mueve con transform porque es lo único que el navegador acelera de
+     verdad: el arrastre no se entrecorta ni en un celular viejo. */
+  let AN = Number(pano.getAttribute("width")) || 3336;
+  let AL = Number(pano.getAttribute("height")) || 666;
+  let escala = 0, minEscala = 0, maxEscala = 0, tx = 0, ty = 0;
+
+  function aplicar() {
+    const w = marco.clientWidth, h = marco.clientHeight;
+    const iw = AN * escala, ih = AL * escala;
+    /* La imagen nunca deja ver el fondo: o tapa el marco, o queda centrada. */
+    tx = iw <= w ? (w - iw) / 2 : Math.min(0, Math.max(w - iw, tx));
+    ty = ih <= h ? (h - ih) / 2 : Math.min(0, Math.max(h - ih, ty));
+    pano.style.transform = `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) scale(${escala.toFixed(5)})`;
+
+    const sobra = iw - w;
+    const parte = sobra > 1 ? Math.min(1, Math.max(0, -tx / sobra)) : 0;
+    giro.value = String(Math.round(parte * 1000));
+    giro.style.setProperty("--avance", (parte * 100).toFixed(1) + "%");
+    mas.disabled = escala >= maxEscala - 1e-5;
+    menos.disabled = escala <= minEscala + 1e-5;
+  }
+
+  function medir(primeraVez) {
+    const w = marco.clientWidth, h = marco.clientHeight;
+    if (!w || !h) return;
+    const antes = escala;
+    /* De base la imagen tapa el marco justo; de ahí se puede acercar. */
+    minEscala = Math.max(h / AL, w / AN);
+    maxEscala = Math.max(minEscala * 2.2, 1);
+    escala = primeraVez ? minEscala : Math.min(maxEscala, Math.max(minEscala, escala));
+    if (primeraVez) { tx = 0; ty = -(AL * escala - h) / 2; }
+    else if (antes > 0 && antes !== escala) {
+      const k = escala / antes;
+      tx = w / 2 - (w / 2 - tx) * k;
+      ty = h / 2 - (h / 2 - ty) * k;
+    }
+    aplicar();
+  }
+
+  function acercar(factor, cx, cy) {
+    const nueva = Math.min(maxEscala, Math.max(minEscala, escala * factor));
+    if (Math.abs(nueva - escala) < 1e-6) return;
+    /* El punto que está bajo el dedo o el cursor se queda en su lugar. */
+    const k = nueva / escala;
+    tx = cx - (cx - tx) * k;
+    ty = cy - (cy - ty) * k;
+    escala = nueva;
+    aplicar();
+  }
+
+  const centro = () => [marco.clientWidth / 2, marco.clientHeight / 2];
+
+  pano.addEventListener("load", () => {
+    AN = pano.naturalWidth || AN;
+    AL = pano.naturalHeight || AL;
+    medir(true);
+  });
+  if (pano.complete) medir(true);
+  addEventListener("resize", () => medir(false));
+
+  mas.addEventListener("click", () => { frenarSolo(); acercar(1.45, ...centro()); });
+  menos.addEventListener("click", () => { frenarSolo(); acercar(1 / 1.45, ...centro()); });
+
+  giro.addEventListener("input", () => {
+    frenarSolo();
+    if (modo !== "pano") return;
+    const sobra = AN * escala - marco.clientWidth;
+    if (sobra <= 1) return;
+    tx = -(Number(giro.value) / 1000) * sobra;
+    aplicar();
+  });
+
+  /* La rueda acerca cuando es un gesto de pellizco del trackpad (el navegador
+     lo manda con ctrl) o cuando ya se está mirando de cerca. Si no, la página
+     sigue desplazándose como en cualquier otra sección. */
+  marco.addEventListener("wheel", (e) => {
+    if (modo !== "pano") return;
+    if (!e.ctrlKey && escala <= minEscala + 1e-5) return;
+    e.preventDefault();
+    frenarSolo();
+    const r = marco.getBoundingClientRect();
+    acercar(e.deltaY < 0 ? 1.14 : 1 / 1.14, e.clientX - r.left, e.clientY - r.top);
+  }, { passive: false });
+
+  marco.addEventListener("dblclick", (e) => {
+    if (modo !== "pano") return;
+    frenarSolo();
+    const r = marco.getBoundingClientRect();
+    const cerca = escala > (minEscala + maxEscala) / 2;
+    acercar(cerca ? minEscala / escala : maxEscala / escala, e.clientX - r.left, e.clientY - r.top);
+  });
+
+  /* ── El video: arrastrar mueve el tiempo ──────────────── */
+
+  let duracion = 0, pedido = false;
   let destino = 0, saltando = false;
+
   function irA(t) {
     destino = Math.max(0, Math.min(duracion - 0.05, t));
     if (saltando) return;
@@ -585,70 +686,78 @@ function armarRecorrido() {
       saltando = false;
       if (Math.abs(destino - video.currentTime) > 0.02) irA(destino);
     }
-    pintarAvance();
+    pintarVideo();
   });
 
-  function pintarAvance() {
+  function pintarVideo() {
     if (!duracion) return;
     const parte = video.currentTime / duracion;
     rango.value = String(Math.round(parte * 1000));
     rango.style.setProperty("--avance", (parte * 100).toFixed(1) + "%");
   }
 
-  /* Mientras gira solo, la barra se actualiza cuadro a cuadro. */
   let latido = 0;
-  const seguir = () => {
-    pintarAvance();
-    latido = video.paused ? 0 : requestAnimationFrame(seguir);
-  };
-  const arrancarLatido = () => { if (!latido) latido = requestAnimationFrame(seguir); };
+  const seguir = () => { pintarVideo(); latido = video.paused ? 0 : requestAnimationFrame(seguir); };
 
-  const quieto = matchMedia("(prefers-reduced-motion: reduce)");
+  video.addEventListener("play", () => {
+    visor.classList.add("girando");
+    $("#visor-girar").setAttribute("aria-label", "Pausar el giro");
+    if (!latido) latido = requestAnimationFrame(seguir);
+  });
+  video.addEventListener("pause", () => {
+    visor.classList.remove("girando");
+    $("#visor-girar").setAttribute("aria-label", "Reproducir el giro");
+  });
 
   function girar() {
-    if (video.currentTime >= duracion - 0.1) irA(0);
-    video.play().then(() => {
-      visor.classList.add("girando");
-      botonGirar.setAttribute("aria-label", "Pausar el giro automático");
-      arrancarLatido();
-    }).catch(() => {});
+    if (duracion && video.currentTime >= duracion - 0.1) irA(0);
+    video.play().catch(() => {});
   }
-  function frenar() {
-    video.pause();
-    visor.classList.remove("girando");
-    botonGirar.setAttribute("aria-label", "Reproducir el giro automático");
+  const frenar = () => video.pause();
+
+  function aVideo() {
+    modo = "video";
+    visor.classList.add("video");
+    $("#visor-mandos-pano").hidden = true;
+    $("#visor-mandos-video").hidden = false;
+    $("#visor-pista").textContent = "Arrastrá para adelantar o volver";
+    visor.classList.remove("movido");
+    if (!pedido) {
+      pedido = true;
+      visor.classList.add("cargando");
+      video.preload = "auto";
+      video.src = VIDEO_RECORRIDO;
+      video.load();
+    } else if (!quieto.matches) girar();
   }
 
-  function abrir() {
-    if (abierto) return;
-    abierto = true;
-    visor.classList.add("cargando");
-    video.preload = "auto";
-    video.src = VIDEO_RECORRIDO;
-    video.load();
+  function aPano() {
+    modo = "pano";
+    frenar();
+    visor.classList.remove("video");
+    $("#visor-mandos-pano").hidden = false;
+    $("#visor-mandos-video").hidden = true;
+    $("#visor-pista").textContent = "Arrastrá para mirar alrededor";
   }
 
   video.addEventListener("loadeddata", () => {
     duracion = video.duration || 0;
     visor.classList.remove("cargando");
-    visor.classList.add("andando", "listo");
-    if (quieto.matches) pintarAvance(); else girar();
+    if (quieto.matches) pintarVideo(); else girar();
   }, { once: true });
 
   video.addEventListener("error", () => {
-    visor.classList.remove("cargando");
-    aviso.textContent = "No pudimos cargar el recorrido. Probá de nuevo en un rato.";
+    aviso.textContent = "No pudimos cargar el video. La panorámica sigue andando.";
     visor.classList.add("cargando");
+    setTimeout(() => { visor.classList.remove("cargando"); aPano(); }, 2600);
   });
 
-  video.addEventListener("ended", () => {
-    visor.classList.remove("girando");
-    botonGirar.setAttribute("aria-label", "Volver a empezar el giro");
-  });
+  video.addEventListener("ended", () =>
+    $("#visor-girar").setAttribute("aria-label", "Volver a empezar el giro"));
 
-  $("#visor-abrir").addEventListener("click", abrir);
-  botonGirar.addEventListener("click", () => (video.paused ? girar() : frenar()));
-
+  $("#visor-modo").addEventListener("click", aVideo);
+  $("#visor-volver").addEventListener("click", aPano);
+  $("#visor-girar").addEventListener("click", () => (video.paused ? girar() : frenar()));
   rango.addEventListener("input", () => {
     if (!duracion) return;
     frenar();
@@ -656,44 +765,113 @@ function armarRecorrido() {
     irA(Number(rango.value) / 1000 * duracion);
   });
 
-  $("#visor-pantalla").addEventListener("click", () => {
-    if (document.fullscreenElement) document.exitFullscreen();
-    else if (marco.requestFullscreen) marco.requestFullscreen().catch(() => {});
+  for (const id of ["#visor-pantalla", "#visor-pantalla-2"]) {
+    $(id).addEventListener("click", () => {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (marco.requestFullscreen) marco.requestFullscreen().catch(() => {});
+    });
+  }
+  document.addEventListener("fullscreenchange", () => medir(false));
+
+  /* ── Arrastre, con uno o dos dedos ────────────────────── */
+
+  const dedos = new Map();
+  let agarre = null, pellizco = null;
+
+  marco.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".visor-hud")) return;
+    dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    /* Si el puntero ya se soltó, capturarlo tira error: no vale abortar por eso. */
+    try { marco.setPointerCapture(e.pointerId); } catch { /* seguimos igual */ }
+    frenarSolo();
+
+    if (dedos.size === 2) {
+      const [a, b] = [...dedos.values()];
+      pellizco = { dist: Math.hypot(a.x - b.x, a.y - b.y), escala };
+      agarre = null;
+      return;
+    }
+    agarre = { x: e.clientX, y: e.clientY, tx, ty, t: video.currentTime, movido: false };
+    visor.classList.add("agarrando");
+    if (modo === "video") frenar();
   });
 
-  /* ── Arrastre: un ancho de pantalla recorre todo el giro ── */
-  let agarre = null;
-  marco.addEventListener("pointerdown", (e) => {
-    if (!duracion || e.target.closest(".visor-hud") || e.target.closest(".visor-boton")) return;
-    agarre = { x: e.clientX, t: video.currentTime, movido: false };
-    marco.setPointerCapture(e.pointerId);
-    visor.classList.add("agarrando");
-    frenar();
-  });
   marco.addEventListener("pointermove", (e) => {
+    if (!dedos.has(e.pointerId)) return;
+    dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    /* Dos dedos: pellizcar para acercar, tomando el punto del medio. */
+    if (pellizco && dedos.size === 2) {
+      const [a, b] = [...dedos.values()];
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (pellizco.dist > 8) {
+        const r = marco.getBoundingClientRect();
+        const objetivo = Math.min(maxEscala, Math.max(minEscala, pellizco.escala * (d / pellizco.dist)));
+        acercar(objetivo / escala, (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top);
+      }
+      visor.classList.add("movido");
+      return;
+    }
     if (!agarre) return;
-    const dx = e.clientX - agarre.x;
-    if (!agarre.movido && Math.abs(dx) > 3) {
+
+    const dx = e.clientX - agarre.x, dy = e.clientY - agarre.y;
+    if (!agarre.movido && Math.hypot(dx, dy) > 3) {
       agarre.movido = true;
       visor.classList.add("movido");
     }
-    /* Un ancho completo del visor equivale a un giro completo del salón. */
-    irA(agarre.t - dx / marco.clientWidth * duracion);
+    if (modo === "pano") {
+      tx = agarre.tx + dx;
+      ty = agarre.ty + dy;
+      aplicar();
+    } else if (duracion) {
+      /* Un ancho de marco recorre todo el giro filmado. */
+      irA(agarre.t - dx / marco.clientWidth * duracion);
+    }
   });
+
   const soltar = (e) => {
-    if (!agarre) return;
-    agarre = null;
-    visor.classList.remove("agarrando");
+    dedos.delete(e.pointerId);
+    if (dedos.size < 2) pellizco = null;
+    if (dedos.size === 0) {
+      agarre = null;
+      visor.classList.remove("agarrando");
+    }
     if (marco.hasPointerCapture?.(e.pointerId)) marco.releasePointerCapture(e.pointerId);
   };
   marco.addEventListener("pointerup", soltar);
   marco.addEventListener("pointercancel", soltar);
 
-  /* Fuera de pantalla no tiene sentido que siga girando. */
+  /* ── Un paseo solo la primera vez, para que se note que se mueve ── */
+
+  let solo = 0, desdeCuando = 0, arranque = 0;
+  function frenarSolo() {
+    if (solo) { cancelAnimationFrame(solo); solo = 0; }
+  }
+  function pasear(ahora) {
+    if (!desdeCuando) { desdeCuando = ahora; arranque = tx; }
+    const sobra = AN * escala - marco.clientWidth;
+    if (sobra <= 1) { solo = 0; return; }
+    const avance = (ahora - desdeCuando) / 21000;          // el salón en 21 s
+    tx = arranque - avance * (sobra + arranque);
+    aplicar();
+    solo = avance < 1 ? requestAnimationFrame(pasear) : 0;
+  }
+
   if ("IntersectionObserver" in window) {
+    let paseado = false;
     new IntersectionObserver((entradas) => {
-      for (const en of entradas) if (!en.isIntersecting && !video.paused) frenar();
-    }, { threshold: 0.15 }).observe(marco);
+      for (const en of entradas) {
+        if (en.isIntersecting && modo === "pano" && !paseado && !quieto.matches) {
+          paseado = true;
+          solo = requestAnimationFrame(pasear);
+        }
+        /* Fuera de pantalla no tiene sentido que nada siga andando. */
+        if (!en.isIntersecting) {
+          frenarSolo();
+          if (modo === "video" && !video.paused) frenar();
+        }
+      }
+    }, { threshold: 0.3 }).observe(marco);
   }
 }
 

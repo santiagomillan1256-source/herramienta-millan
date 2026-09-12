@@ -614,60 +614,47 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
 .mapa-pie span:last-child{font-size:.82rem;color:#ccd2d9}
 
 /* ══════ RECORRIDO POR EL LOCAL ══════════════════════════════════════════ */
-/* El video es una panorámica del salón. En vez de reproducirlo y ya, el
-   arrastre horizontal maneja el tiempo del video: mover el dedo equivale a
-   girar la cabeza. La barra de abajo es un <input type=range> de verdad,
-   así el recorrido también se maneja con el teclado. */
+/* El salón entero está en una sola imagen panorámica, armada a partir del
+   video: cada columna de esa imagen sale de un cuadro distinto, tomada de su
+   franja central. Arrastrar mueve la vista; la rueda o dos dedos acercan.
+   El video en movimiento es la segunda capa y se baja sólo si lo piden. */
 .recorrido{position:relative;background:linear-gradient(180deg,#12161b,#1b2129);color:#e8eaed;
   padding-block:clamp(2.8rem,6vw,4.6rem);border-top:1px solid var(--borde-oscuro)}
 .recorrido .titulo-seccion{color:#fff}
 .recorrido .bajada{color:#b3b9c0}
-.recorrido-cab{max-width:70ch;margin-bottom:1.8rem}
+.recorrido-cab{max-width:72ch;margin-bottom:1.8rem}
 
 .visor{position:relative;margin:0}
-.visor-marco{position:relative;overflow:hidden;border-radius:var(--radio-g);background:#000;
+.visor-marco{position:relative;overflow:hidden;border-radius:var(--radio-g);background:#0c0f12;
   border:1px solid var(--borde-oscuro);box-shadow:0 22px 60px rgba(0,0,0,.5);
-  aspect-ratio:1248/696;touch-action:pan-y;user-select:none;-webkit-user-select:none}
-.visor-marco:fullscreen{aspect-ratio:auto;width:100%;height:100%;border-radius:0;border:0}
-.visor-tapa,.visor-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.visor-video{opacity:0;transition:opacity .45s}
-.visor.andando .visor-video{opacity:1}
-.visor.andando .visor-tapa{opacity:0;transition:opacity .45s}
+  aspect-ratio:1000/360;touch-action:pan-y;user-select:none;-webkit-user-select:none;
+  cursor:grab}
 .visor.agarrando .visor-marco{cursor:grabbing}
-.visor.listo .visor-marco{cursor:grab}
+.visor-marco:fullscreen{aspect-ratio:auto;width:100%;height:100%;border-radius:0;border:0}
 
-/* Botón de entrada: ocupa toda la tapa hasta que se abre el recorrido. */
-.visor-boton{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:.55rem;cursor:pointer;color:#fff;
-  border:0;background:linear-gradient(180deg,rgba(11,14,18,.45),rgba(11,14,18,.75));
-  font-family:var(--titulo);font-size:clamp(1.15rem,2.6vw,1.75rem);text-transform:uppercase;
-  letter-spacing:.02em;transition:background .2s}
-.visor-boton:hover{background:linear-gradient(180deg,rgba(11,14,18,.3),rgba(11,14,18,.66))}
-.visor-boton small{font-family:var(--texto);font-size:.76rem;font-weight:500;letter-spacing:.1em;
-  text-transform:uppercase;color:#b9c0c8}
-.visor-boton .visor-circulo{display:grid;place-items:center;width:clamp(58px,9vw,76px);
-  height:clamp(58px,9vw,76px);border-radius:50%;background:var(--naranja);color:#fff;
-  box-shadow:0 10px 30px rgba(232,114,12,.45);transition:transform .2s}
-.visor-boton:hover .visor-circulo{transform:scale(1.07)}
-.visor-boton .visor-circulo svg{width:52%;height:52%;fill:none;stroke:currentColor;stroke-width:1.7;
-  stroke-linecap:round;stroke-linejoin:round}
-.visor.andando .visor-boton,.visor.cargando .visor-boton{display:none}
+/* La panorámica se mueve con transform: es lo único que el navegador acelera
+   de verdad, así que el arrastre no se entrecorta ni en un celular viejo. */
+.visor-pano{position:absolute;top:0;left:0;width:auto;height:auto;max-width:none;
+  transform-origin:0 0;will-change:transform;display:block}
+.visor-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  opacity:0;pointer-events:none;transition:opacity .4s}
+.visor.video .visor-video{opacity:1}
+.visor.video .visor-pano{opacity:0;transition:opacity .4s}
 
 .visor-cargando{position:absolute;inset:0;z-index:3;display:none;place-items:center;
   background:rgba(11,14,18,.72);color:#fff;font-size:.86rem;letter-spacing:.08em;text-transform:uppercase}
 .visor.cargando .visor-cargando{display:grid}
 
-/* Panel de control, abajo, sobre el video. */
-.visor-hud{position:absolute;left:0;right:0;bottom:0;z-index:2;display:none;flex-direction:column;
-  gap:.5rem;padding:2.6rem clamp(.8rem,2vw,1.3rem) clamp(.7rem,1.6vw,1rem);
-  background:linear-gradient(180deg,rgba(11,14,18,0),rgba(11,14,18,.85))}
-.visor.andando .visor-hud{display:flex}
+/* Panel de control, abajo, sobre la imagen. */
+.visor-hud{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;flex-direction:column;
+  gap:.5rem;padding:2.6rem clamp(.7rem,1.8vw,1.1rem) clamp(.65rem,1.4vw,.9rem);
+  background:linear-gradient(180deg,rgba(11,14,18,0),rgba(11,14,18,.88))}
 .visor-pista{align-self:center;padding:.3rem .8rem;border-radius:999px;font-size:.72rem;
   letter-spacing:.11em;text-transform:uppercase;color:#fff;background:rgba(11,14,18,.6);
-  border:1px solid var(--borde-oscuro);transition:opacity .4s}
+  border:1px solid var(--borde-oscuro);transition:opacity .5s}
 .visor.movido .visor-pista{opacity:0;pointer-events:none}
 
-.visor-fila{display:flex;align-items:center;gap:.7rem}
+.visor-fila{display:flex;align-items:center;gap:.5rem}
 .visor-rango{flex:1;min-width:0;appearance:none;-webkit-appearance:none;height:22px;background:none;cursor:pointer}
 .visor-rango::-webkit-slider-runnable-track{height:4px;border-radius:2px;
   background:linear-gradient(90deg,var(--naranja) var(--avance,0%),rgba(255,255,255,.28) var(--avance,0%))}
@@ -679,21 +666,37 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   border:3px solid var(--naranja);box-shadow:0 2px 8px rgba(0,0,0,.5)}
 .visor-rango:focus-visible{outline:2px solid var(--naranja-claro);outline-offset:4px;border-radius:4px}
 
-.visor-btn{flex:none;display:grid;place-items:center;width:38px;height:38px;cursor:pointer;
-  border-radius:50%;border:1px solid var(--borde-oscuro);background:rgba(11,14,18,.6);color:#fff;
-  transition:background .18s,border-color .18s}
+.visor-btn{flex:none;display:grid;place-items:center;width:36px;height:36px;cursor:pointer;
+  border-radius:999px;border:1px solid var(--borde-oscuro);background:rgba(11,14,18,.62);color:#fff;
+  transition:background .18s,border-color .18s,opacity .18s}
 .visor-btn:hover{background:var(--naranja);border-color:var(--naranja)}
-.visor-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;
+.visor-btn:disabled{opacity:.35;cursor:default}
+.visor-btn:disabled:hover{background:rgba(11,14,18,.62);border-color:var(--borde-oscuro)}
+.visor-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;
   stroke-linecap:round;stroke-linejoin:round}
+/* El que lleva texto crece y deja de ser redondo. */
+.visor-btn-ancho{width:auto;grid-auto-flow:column;gap:.45rem;padding:0 .9rem;border-radius:var(--radio);
+  font-family:var(--texto);font-size:.78rem;font-weight:600;letter-spacing:.02em;white-space:nowrap}
 .visor-btn .icono-pausa,.visor.girando .visor-btn .icono-play{display:none}
 .visor.girando .visor-btn .icono-pausa{display:block}
 
-.visor figcaption{margin-top:.9rem;font-size:.84rem;color:#98a0aa;max-width:74ch}
+.visor figcaption{margin-top:.9rem;font-size:.84rem;color:#98a0aa;max-width:76ch}
 .visor figcaption b{color:#cfd5dc;font-weight:600}
 
 @media (max-width:600px){
+  /* En el celular el marco va casi cuadrado: se ve menos ancho del salón,
+     pero con alto suficiente para que la vuelta se sienta. */
+  .visor-marco{aspect-ratio:1/1}
+}
+
+@media (max-width:860px){
+  /* En pantalla angosta el marco se pone más alto: se ve una tajada más
+     chica del salón, pero con altura suficiente para que valga la pena. */
   .visor-marco{aspect-ratio:4/3}
-  .visor-hud{padding-top:1.8rem}
+  .visor-hud{gap:.4rem}
+  .visor-hud{padding-top:1.6rem}
+  .visor-btn-ancho span{display:none}
+  .visor-btn-ancho{width:36px;padding:0;border-radius:999px}
 }
 
 /* ══════ LLAMADA FINAL ═══════════════════════════════════════════════════ */
