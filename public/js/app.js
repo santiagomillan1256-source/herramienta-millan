@@ -114,12 +114,16 @@ function pintarCabecera() {
 }
 
 function pintarPortada() {
-  const subs = CATEGORIAS.reduce((t, c) => t + Object.keys(c.sub).length, 0);
-  const datos = CATALOGO.length
-    ? [[CATALOGO.length, "productos publicados"], [CATEGORIAS.length, "categorías"], [subs, "subcategorías"]]
-    : [[CATEGORIAS.length, "categorías del catálogo"], [subs, "subcategorías"], [2, "números que atienden"]];
+  const abiertos = SITE.horariosTexto.filter((h) => h.horas !== "Cerrado");
+  const dias = abiertos.some((h) => /s[aá]bado/i.test(h.dia)) ? "Lunes a sábado" : abiertos[0]?.dia;
+  const nombres = SITE.numeros.map((n) => n.persona.split(" ")[0]);
+  const datos = [
+    HAY_DIRECCION && [d.calle, [d.barrio, d.provincia].filter((x) => !pendiente(x)).join(" · ")],
+    dias && [dias, abiertos.every((h) => h.horas.includes("·")) ? "Mañana y tarde" : abiertos[0].horas],
+    nombres.length && [nombres.join(" y "), "Atienden por WhatsApp"],
+  ].filter(Boolean);
   $("#portada-datos").innerHTML = datos.map(([v, t]) =>
-    `<li><b>${v}</b><span>${esc(t)}</span></li>`).join("");
+    `<li><b>${esc(v)}</b><span>${esc(t)}</span></li>`).join("");
 
   $("#horario-hoy").textContent = horarioDeHoy();
   $("#ficha-nums").innerHTML = SITE.numeros.map((n) => `<div class="ficha-num">
@@ -142,7 +146,7 @@ function pintarVisitanos() {
   $("#dato-contactos").innerHTML = [
     ...SITE.numeros.map((n) => `<div class="contacto-fila es-wa">
       <i class="wa"></i>
-      <span class="contacto-txt"><span>WhatsApp o llamada · ${esc(n.persona)}</span><b>${esc(n.visible)}</b></span>
+      <span class="contacto-txt"><span>${esc(n.persona)}</span><b>${esc(n.visible)}</b></span>
       <span class="contacto-acciones">
         <a class="boton boton-wa boton-chico" href="${waLink(n, mensajeGeneral())}" target="_blank" rel="noopener">${WA_SVG} WhatsApp</a>
         <a class="boton boton-linea boton-chico" href="tel:${esc(n.tel)}">${TEL_SVG} Llamar</a>
@@ -427,7 +431,7 @@ function pintarRubros() {
     <div class="rubro-cuerpo">
       <h3>${esc(r.nombre)}</h3>
       <p>${esc(r.texto)}</p>
-      <button class="boton boton-wa boton-chico" type="button" data-consulta-rubro="${r.id}">${WA_SVG} Consultar por WhatsApp</button>
+      <button class="boton boton-linea boton-chico" type="button" data-consulta-rubro="${r.id}">${WA_SVG} Consultar por WhatsApp</button>
     </div>
   </article>`).join("");
 }
@@ -636,7 +640,7 @@ function armarRecorrido() {
     medir(true);
   });
   if (pano.complete) medir(true);
-  addEventListener("resize", () => medir(false));
+  new ResizeObserver(() => medir(false)).observe(marco);
 
   mas.addEventListener("click", () => { frenarSolo(); acercar(1.45, ...centro()); });
   menos.addEventListener("click", () => { frenarSolo(); acercar(1 / 1.45, ...centro()); });
@@ -1089,18 +1093,5 @@ if (secciones.length) {
   }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
   secciones.forEach((s) => spy.observe(s));
 }
-
-/* Aparición al desplazar */
-const revelables = $$(".servicio-fila, .valor, .paso, .extra, .catalogo-caja, .rubro, .equipo, .datos-caja, .mapa");
-revelables.forEach((el) => el.classList.add("aparece"));
-const obs = new IntersectionObserver((es, o) => {
-  es.forEach((e, i) => {
-    if (!e.isIntersecting) return;
-    e.target.style.transitionDelay = `${Math.min(i * 45, 180)}ms`;
-    e.target.classList.add("visible");
-    o.unobserve(e.target);
-  });
-}, { rootMargin: "0px 0px -6% 0px", threshold: 0.05 });
-revelables.forEach((el) => obs.observe(el));
 
 $$(".wa").forEach((el) => { el.innerHTML = WA_SVG; });

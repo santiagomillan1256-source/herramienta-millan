@@ -87,8 +87,8 @@ function tarjeta(r) {
 }
 
 function sinApi() {
-  ESTADO.innerHTML = `Las opiniones se leen y se escriben en la ficha de
-    <b>${esc(SITE.google.nombre)}</b> en Google Maps.`;
+  ESTADO.innerHTML = `${G_SVG}<span>Las opiniones se leen y se escriben en la ficha de
+    <b>${esc(SITE.google.nombre)}</b> en Google Maps.</span>`;
   ESTADO.hidden = false;
   LISTA.hidden = true;
   RESUMEN.hidden = true;
