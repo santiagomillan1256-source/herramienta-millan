@@ -91,14 +91,13 @@
     <div class="buscador">
       <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <label class="oculto" for="buscar">Buscar en todo el catálogo</label>
-      <input type="search" id="buscar" placeholder="Buscar en el catálogo: producto, marca, modelo o código…" autocomplete="off">
+      <input type="search" id="buscar" placeholder="Buscar producto, marca, modelo o código…" autocomplete="off" enterkeyhint="search">
       <button type="button" class="limpiar" id="buscar-x" aria-label="Borrar búsqueda" hidden>&times;</button>
     </div>
 
     <div class="barra-acciones">
       <a class="barra-tel" data-tel="0" href="#"><span></span><b></b></a>
       <button class="boton boton-wa boton-chico" type="button" data-consulta="general"><i class="wa"></i>WhatsApp</button>
-      <button class="abrir-menu" id="abrir-menu" aria-expanded="false" aria-controls="tira-links" aria-label="Abrir menú"><span></span><span></span><span></span></button>
     </div>
   </div></div>
 
@@ -120,6 +119,11 @@
       <a href="#recorrido">El local</a>
       <a href="#visitanos">Dónde estamos</a>
     </nav>
+    <!-- Sólo en pantallas chicas: las secciones de la página. -->
+    <button class="abrir-menu" id="abrir-menu" type="button" aria-expanded="false" aria-controls="tira-links">
+      Menú
+      <svg class="icono chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
   </div>
 
   <!-- Menú desplegado con todas las categorías y subcategorías -->

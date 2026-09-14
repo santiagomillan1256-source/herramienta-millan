@@ -149,7 +149,7 @@ function pintarVisitanos() {
       <span class="contacto-txt"><span>${esc(n.persona)}</span><b>${esc(n.visible)}</b></span>
       <span class="contacto-acciones">
         <a class="boton boton-wa boton-chico" href="${waLink(n, mensajeGeneral())}" target="_blank" rel="noopener">${WA_SVG} WhatsApp</a>
-        <a class="boton boton-linea boton-chico" href="tel:${esc(n.tel)}">${TEL_SVG} Llamar</a>
+        <a class="boton boton-linea boton-chico" href="tel:${esc(n.tel)}" aria-label="Llamar a ${esc(n.persona)}">${TEL_SVG}<span class="solo-ancho">Llamar</span></a>
       </span>
     </div>`),
     SITE.fijo
@@ -431,7 +431,7 @@ function pintarRubros() {
     <div class="rubro-cuerpo">
       <h3>${esc(r.nombre)}</h3>
       <p>${esc(r.texto)}</p>
-      <button class="boton boton-linea boton-chico" type="button" data-consulta-rubro="${r.id}">${WA_SVG} Consultar por WhatsApp</button>
+      <button class="boton boton-linea boton-chico" type="button" data-consulta-rubro="${r.id}" aria-label="Consultar por WhatsApp: ${esc(r.nombre)}">${WA_SVG} Consultar<span class="solo-ancho">&nbsp;por WhatsApp</span></button>
     </div>
   </article>`).join("");
 }
@@ -549,9 +549,19 @@ function cerrarMegamenu() {
 
 function alternarMegamenu() {
   const abierto = botonMega.getAttribute("aria-expanded") === "true";
+  if (!abierto) cerrarMenu();
   mega.hidden = abierto;
   tapa.hidden = abierto;
   botonMega.setAttribute("aria-expanded", String(!abierto));
+}
+
+/* El menú de secciones de las pantallas chicas. */
+const abrirMenu = $("#abrir-menu");
+const links = $("#tira-links");
+
+function cerrarMenu() {
+  links.classList.remove("abierto");
+  abrirMenu.setAttribute("aria-expanded", "false");
 }
 
 /* ══════ RECORRIDO POR EL LOCAL ═══════════════════════════ */
@@ -930,14 +940,28 @@ pintarEstado();
 setInterval(pintarEstado, 60000);
 
 /* Menú de pantallas chicas */
-const abrirMenu = $("#abrir-menu");
-const links = $("#tira-links");
 abrirMenu.addEventListener("click", () => {
-  abrirMenu.setAttribute("aria-expanded", String(links.classList.toggle("abierto")));
+  const abre = !links.classList.contains("abierto");
+  if (abre) cerrarMegamenu();
+  links.classList.toggle("abierto", abre);
+  abrirMenu.setAttribute("aria-expanded", String(abre));
 });
 links.addEventListener("click", (e) => {
-  if (e.target.tagName === "A") { links.classList.remove("abierto"); abrirMenu.setAttribute("aria-expanded", "false"); }
+  if (e.target.tagName === "A") cerrarMenu();
 });
+/* Tocar fuera del menú lo cierra, como cualquier desplegable. */
+document.addEventListener("click", (e) => {
+  if (links.classList.contains("abierto") && !links.contains(e.target) && !abrirMenu.contains(e.target)) cerrarMenu();
+});
+
+/* En el celular el buscador es angosto: el texto de ayuda se acorta para que
+   no quede cortado a la mitad. */
+const angosto = matchMedia("(max-width: 640px)");
+const ayudaBuscar = () => {
+  $("#buscar").placeholder = angosto.matches ? "Buscar en el catálogo…" : "Buscar producto, marca, modelo o código…";
+};
+ayudaBuscar();
+angosto.addEventListener("change", ayudaBuscar);
 
 botonMega.addEventListener("click", alternarMegamenu);
 tapa.addEventListener("click", cerrarMegamenu);
@@ -1052,6 +1076,7 @@ document.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
   if (!mega.hidden) { cerrarMegamenu(); botonMega.focus(); return; }
+  if (links.classList.contains("abierto")) { cerrarMenu(); abrirMenu.focus(); return; }
   if (!$("#elegir").hidden) cerrarCartel("#elegir");
   else if (!$("#cartel-producto").hidden) cerrarCartel("#cartel-producto");
 });

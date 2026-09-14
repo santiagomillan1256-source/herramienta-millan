@@ -109,8 +109,11 @@ export const GOOGLE = {
   comoLlegar:
     `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(SITE.google.nombre)}` +
     `&destination_place_id=${LUGAR}`,
-  /** Todas las opiniones publicadas en Google. */
-  resenas: `https://search.google.com/local/reviews?placeid=${LUGAR}`,
+  /** La ficha en Google Maps, donde se leen todas las opiniones.
+   *  (La vieja dirección search.google.com/local/reviews ya da error 404.) */
+  resenas:
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SITE.google.nombre)}` +
+    `&query_place_id=${LUGAR}`,
   /** El formulario de Google para escribir una opinión. */
   dejarResena: `https://search.google.com/local/writereview?placeid=${LUGAR}`,
   /** El mapa incrustado. No necesita clave de API. */
