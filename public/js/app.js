@@ -69,6 +69,11 @@ const dibujo = (clave) =>
 const rutaFoto = (nombre) =>
   (globalThis.FOTOS && globalThis.FOTOS[nombre]) || `/img/${nombre}.webp`;
 
+/* Carteles de categoría con nombre propio: las imágenes se guardan en caché
+   por un año, así que una imagen nueva necesita un nombre nuevo para que el
+   navegador no siga mostrando la anterior. */
+const CARTELES = { explosion: "cat-explosion-cartel", electricas: "cat-electricas-cartel" };
+
 /** Un dato que todavía falta se muestra marcado, para que no quede olvidado. */
 const dato = (v) => (pendiente(v) ? `<span class="falta">${esc(v)}</span>` : esc(v));
 
@@ -252,7 +257,7 @@ function pintarIndice() {
      entera, y el nombre se repite abajo en texto para que se lea siempre. */
   $("#indice").innerHTML = CATEGORIAS.map((c) => `<div class="indice-bloque" id="indice-${c.id}">
     <button class="indice-foto" type="button" data-cat="${c.id}" aria-label="Ver ${esc(c.nombre.toLowerCase())}">
-      <img src="${rutaFoto("cat-" + c.id)}" alt="" loading="lazy" decoding="async" width="1312" height="1199"
+      <img src="${rutaFoto(CARTELES[c.id] || "cat-" + c.id)}" alt="" loading="lazy" decoding="async" width="1312" height="1199"
            onerror="this.closest('.indice-bloque').classList.add('sin-foto')">
     </button>
     <h4 class="indice-nombre"><span class="indice-ico" aria-hidden="true">${dibujo(c.icono)}</span>${esc(c.nombre)}</h4>
@@ -618,7 +623,6 @@ if (DEMO) $("#demo").hidden = false;
    con una imagen que no está. Subir la foto a public/img/ alcanza. */
 for (const [nombre, selector] of [
   ["frente", ".portada"],
-  ["fotos/salon-entrada", ".cierre"],
 ]) {
   const prueba = new Image();
   prueba.addEventListener("load", () => {

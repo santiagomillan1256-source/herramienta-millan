@@ -673,10 +673,8 @@ a.contacto-fila:hover .contacto-accion{border-color:var(--naranja);color:var(--n
 .mapa-pie span:last-child{font-size:.82rem;color:#ccd2d9}
 
 /* ══════ LLAMADA FINAL ═══════════════════════════════════════════════════ */
-.cierre{--foto:none;position:relative;background-color:var(--tinta-2);color:#fff;
-  border-top:3px solid var(--naranja);background-image:var(--foto);background-size:cover;background-position:center}
-.cierre::before{content:"";position:absolute;inset:0;background:rgba(21,24,28,.86)}
-.cierre.con-foto::before{background:linear-gradient(180deg,rgba(21,24,28,.86),rgba(21,24,28,.74))}
+/* Fondo negro liso, sin foto. */
+.cierre{position:relative;background:#000;color:#fff;border-top:3px solid var(--naranja)}
 .cierre-in{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;gap:1.4rem 2.4rem;padding-block:clamp(2rem,4vw,3rem)}
 .cierre h2{font-size:clamp(1.6rem,3.4vw,2.4rem);text-transform:uppercase;max-width:22ch}
 .cierre p{color:#b3b9c0;font-size:.95rem;margin-top:.5rem;max-width:56ch}

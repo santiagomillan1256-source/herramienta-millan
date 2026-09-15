@@ -198,9 +198,9 @@ aparece sola: no hay que tocar código.
 | Archivo | Dónde se ve |
 |---|---|
 | `public/img/frente.webp` | **el fondo de la portada** (el celular viejo pintado en el cartel está difuminado) |
-| `public/img/cat-<id>.webp` | el cartel de cada categoría del catálogo (`cat-explosion`, `cat-electricas`, `cat-manuales`), de 1312 × 1199 (la de herramientas de mano, 1000 × 914) |
+| `public/img/cat-<id>.webp` | el cartel de cada categoría del catálogo (`cat-explosion-cartel`, `cat-electricas-cartel`, `cat-manuales`), de 1312 × 1199 (la de herramientas de mano, 1000 × 914). Las imágenes quedan en caché un año: para cambiar un cartel, subilo con un nombre nuevo y actualizá `CARTELES` en `app.js` |
 | `public/img/rubros/<id>.webp` | **la imagen de cada tarjeta de rubro** (bulones, pinturas, pvc, materiales, repuestos) |
-| `public/img/fotos/*.webp` | **las fotos reales del local**: la galería de la sección **Nuestro local** (`frente-dia`, `salon-estanteria`, `jardin`, `frente-noche`, con el celular viejo del cartel difuminado) y el fondo de la banda final (`salon-entrada`) |
+| `public/img/fotos/*.webp` | **las fotos reales del local**: la galería de la sección **Nuestro local** (`frente-dia`, `salon-estanteria`, `jardin`, `frente-noche`, con el celular viejo del cartel difuminado) |
 | `public/img/p/<categoria>-<codigo>.webp` | una por producto |
 | `public/img/alq/<id>.webp` | una por equipo de alquiler, 800 × 600 sobre fondo blanco |
 
