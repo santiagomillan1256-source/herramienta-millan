@@ -10,7 +10,7 @@ import {
   SITE, GOOGLE, CATEGORIAS, RUBROS, ICONOS, PRODUCTOS, armarProductos, categoriaPorId,
   rubroPorId, productosDe, marcasDe, nombreSub, pendiente, waLink, mensajeGeneral,
   mensajeProducto, mensajeCategoria, mensajeRubro, mensajeReparacion, mensajeAlquiler,
-  mensajePresupuesto, estadoActual, PARADAS,
+  mensajePresupuesto, estadoActual, correoLink,
 } from "./datos.js";
 import { ALQUILER, ALQUILER_EJEMPLO, GRUPOS, nombreGrupo, mensajeAlquilerMaquina } from "./alquiler.js";
 
@@ -53,7 +53,8 @@ const TEL_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path
 const PIN_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>';
 const RUTA_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.4 12-9.4 9.4L2.6 12 12 2.6z"/><path d="M8.6 14v-2.2a2 2 0 0 1 2-2h4.2"/><path d="m13 8 2 2-2 2"/></svg>';
 const IG_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/></svg>';
-const TT_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3.2v9.9a3.7 3.7 0 1 1-3.1-3.65"/><path d="M15.2 3.2a5 5 0 0 0 4.6 4.2"/></svg>';
+const MAIL_SVG = '<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3.6 6.2 8.4 6.6 8.4-6.6"/></svg>';
+const TT_SVG ='<svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3.2v9.9a3.7 3.7 0 1 1-3.1-3.65"/><path d="M15.2 3.2a5 5 0 0 0 4.6 4.2"/></svg>';
 /* Marcador para lo que todavía no tiene foto: mejor un dibujo que una imagen rota. */
 const SIN_FOTO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0 5.3 5.3l-8 8a2.5 2.5 0 0 1-3.5-3.5l8-8z"/><path d="M14.7 6.3 17.3 3.7a4 4 0 0 0-5 5"/></svg>';
 const SIN_MAQUINA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M6 20v-6l4-2 4 3 4-4v9M10 12V7l4-2v4"/><circle cx="8" cy="17" r="1.4"/><circle cx="16" cy="17" r="1.4"/></svg>';
@@ -81,16 +82,21 @@ function horarioDeHoy() {
   return `Hoy ${franjas.map(([a, b]) => `${hhmm(a)}–${hhmm(b)}`).join(" · ")}`;
 }
 
-/* ── Los dos números, para escribir o para llamar ─────────── */
+/* ── Los medios de contacto ───────────────────────────────── */
 
-function bloqueNumeros(mensaje) {
+/** Magali y Marcelo: WhatsApp y llamada. Debajo, el fijo y el correo, cada uno por separado. */
+function bloqueNumeros(mensaje, asunto) {
   return `<div class="numeros">${SITE.numeros.map((n) => `<div class="numero">
-    <span class="numero-txt"><span>${esc(n.persona)}</span><b>${esc(n.visible)}</b></span>
+    <span class="numero-txt"><span>${esc(n.persona)} · WhatsApp y celular</span><b>${esc(n.visible)}</b></span>
     <span class="numero-acciones">
-      <a class="boton boton-wa boton-chico" href="${waLink(n, mensaje)}" target="_blank" rel="noopener">${WA_SVG} WhatsApp</a>
-      <a class="boton boton-linea boton-chico" href="tel:${esc(n.tel)}">${TEL_SVG} Llamar</a>
+      <a class="boton boton-wa boton-chico" href="${waLink(n, mensaje)}" target="_blank" rel="noopener" aria-label="WhatsApp a ${esc(n.persona)}">${WA_SVG} WhatsApp</a>
+      <a class="boton boton-linea boton-chico" href="tel:${esc(n.tel)}" aria-label="Llamar a ${esc(n.persona)}">${TEL_SVG} Llamar</a>
     </span>
-  </div>`).join("")}</div>`;
+  </div>`).join("")}
+  <div class="otros-medios">
+    <a class="otro-medio" href="tel:${esc(SITE.fijo.tel)}">${TEL_SVG}<span><span>Teléfono fijo</span><b>${esc(SITE.fijo.visible)}</b></span><em>Llamar</em></a>
+    <a class="otro-medio" href="${esc(correoLink(mensaje, asunto))}">${MAIL_SVG}<span><span>Correo electrónico</span><b>${esc(SITE.correo)}</b></span><em>Enviar correo</em></a>
+  </div></div>`;
 }
 
 /* ══════ CABECERA Y DATOS FIJOS ═══════════════════════════ */
@@ -101,10 +107,17 @@ const LINEA_CORTA = [d.calle, d.barrio].filter((x) => !pendiente(x)).join(", ");
 const LINEA_LARGA = [d.localidad, d.provincia].filter((x) => !pendiente(x)).join(" — ");
 
 function pintarCabecera() {
-  const n = SITE.numeros[0];
-  const tel = $('[data-tel="0"]');
-  tel.href = `tel:${n.tel}`;
-  tel.innerHTML = `<span>${esc(n.persona.split(" ")[0])} · WhatsApp o llamada</span><b>${esc(n.visible)}</b>`;
+  /* Los dos celulares, uno debajo del otro, en la barra del logo (computadora)
+     y en la fila de servicio (tablet y celular). */
+  const lineas = SITE.numeros.map((n) =>
+    `<a href="tel:${esc(n.tel)}" aria-label="Llamar a ${esc(n.persona)}: ${esc(n.visible)}"><span>${esc(n.persona)}</span><b>${esc(n.visible)}</b></a>`).join("");
+  $("#barra-tels").innerHTML = lineas;
+  $("#servicio-tels").innerHTML = lineas.replaceAll("<a ", `<a class="servicio-tel" `).replaceAll("<span>", `${TEL_SVG}<span>`);
+
+  $("#servicio-fijo").innerHTML =
+    `<a href="tel:${esc(SITE.fijo.tel)}">${TEL_SVG}Teléfono fijo <b>${esc(SITE.fijo.visible)}</b></a>`;
+  $("#servicio-correo").innerHTML =
+    `<a href="${esc(correoLink())}">${MAIL_SVG}${esc(SITE.correo)}</a>`;
 
   $("#servicio-redes").innerHTML =
     `<a href="${esc(SITE.instagram)}" target="_blank" rel="noopener" aria-label="Instagram">${IG_SVG}</a>
@@ -117,7 +130,7 @@ function pintarCabecera() {
 function pintarPortada() {
   const abiertos = SITE.horariosTexto.filter((h) => h.horas !== "Cerrado");
   const dias = abiertos.some((h) => /s[aá]bado/i.test(h.dia)) ? "Lunes a sábado" : abiertos[0]?.dia;
-  const nombres = SITE.numeros.map((n) => n.persona.split(" ")[0]);
+  const nombres = SITE.numeros.map((n) => n.persona);
   const datos = [
     HAY_DIRECCION && [d.calle, [d.barrio, d.provincia].filter((x) => !pendiente(x)).join(" · ")],
     dias && [dias, abiertos.every((h) => h.horas.includes("·")) ? "Mañana y tarde" : abiertos[0].horas],
@@ -128,9 +141,15 @@ function pintarPortada() {
 
   $("#horario-hoy").textContent = horarioDeHoy();
   $("#ficha-nums").innerHTML = SITE.numeros.map((n) => `<div class="ficha-num">
-    <span class="ficha-num-txt"><span>${esc(n.persona)}</span><b>${esc(n.visible)}</b></span>
-    <a class="boton boton-wa boton-chico" href="${waLink(n, mensajeGeneral())}" target="_blank" rel="noopener">${WA_SVG} WhatsApp</a>
-  </div>`).join("");
+    <span class="ficha-num-txt"><span>${esc(n.persona)} · WhatsApp y celular</span><b>${esc(n.visible)}</b></span>
+    <span class="ficha-num-acciones">
+      <a class="boton boton-wa boton-chico" href="${waLink(n, mensajeGeneral())}" target="_blank" rel="noopener" aria-label="WhatsApp a ${esc(n.persona)}">${WA_SVG} WhatsApp</a>
+      <a class="boton boton-linea boton-chico boton-cuadrado" href="tel:${esc(n.tel)}" aria-label="Llamar a ${esc(n.persona)}">${TEL_SVG}</a>
+    </span>
+  </div>`).join("") + `<div class="ficha-otros">
+    <a href="tel:${esc(SITE.fijo.tel)}">${TEL_SVG}<span><span>Teléfono fijo</span><b>${esc(SITE.fijo.visible)}</b></span></a>
+    <a href="${esc(correoLink())}">${MAIL_SVG}<span><span>Correo electrónico</span><b>Enviar correo</b></span></a>
+  </div>`;
 }
 
 function pintarVisitanos() {
@@ -147,17 +166,20 @@ function pintarVisitanos() {
   $("#dato-contactos").innerHTML = [
     ...SITE.numeros.map((n) => `<div class="contacto-fila es-wa">
       <i class="wa"></i>
-      <span class="contacto-txt"><span>${esc(n.persona)}</span><b>${esc(n.visible)}</b></span>
+      <span class="contacto-txt"><span>${esc(n.persona)} · WhatsApp y celular</span><b>${esc(n.visible)}</b></span>
       <span class="contacto-acciones">
-        <a class="boton boton-wa boton-chico" href="${waLink(n, mensajeGeneral())}" target="_blank" rel="noopener">${WA_SVG} WhatsApp</a>
+        <a class="boton boton-wa boton-chico" href="${waLink(n, mensajeGeneral())}" target="_blank" rel="noopener" aria-label="WhatsApp a ${esc(n.persona)}">${WA_SVG} WhatsApp</a>
         <a class="boton boton-linea boton-chico" href="tel:${esc(n.tel)}" aria-label="Llamar a ${esc(n.persona)}">${TEL_SVG}<span class="solo-ancho">Llamar</span></a>
       </span>
     </div>`),
-    SITE.fijo
-      ? `<a class="contacto-fila" href="tel:${esc(SITE.fijo.tel)}">
-          ${TEL_SVG}<span class="contacto-txt"><span>Teléfono del local</span><b>${esc(SITE.fijo.visible)}</b></span>${FLECHA}
-        </a>`
-      : "",
+    `<a class="contacto-fila" href="tel:${esc(SITE.fijo.tel)}">
+      ${TEL_SVG}<span class="contacto-txt"><span>Teléfono fijo · sólo llamadas</span><b>${esc(SITE.fijo.visible)}</b></span>
+      <span class="contacto-accion">Llamar</span>
+    </a>`,
+    `<a class="contacto-fila" href="${esc(correoLink())}">
+      ${MAIL_SVG}<span class="contacto-txt"><span>Correo electrónico</span><b class="contacto-correo">${esc(SITE.correo)}</b></span>
+      <span class="contacto-accion">Enviar correo</span>
+    </a>`,
     `<a class="contacto-fila" href="${esc(SITE.instagram)}" target="_blank" rel="noopener">
       ${IG_SVG}<span class="contacto-txt"><span>Instagram</span><b>${esc(SITE.instagramUsuario)}</b></span>${FLECHA}
     </a>`,
@@ -197,7 +219,9 @@ function pintarPie() {
   ].join("");
 
   $("#pie-contacto").innerHTML = [
-    ...SITE.numeros.map((n) => `<li><a href="tel:${esc(n.tel)}">${esc(n.visible)} · ${esc(n.persona)}</a></li>`),
+    ...SITE.numeros.map((n) => `<li><a href="tel:${esc(n.tel)}">${esc(n.persona)} · ${esc(n.visible)}</a></li>`),
+    `<li><a href="tel:${esc(SITE.fijo.tel)}">Teléfono fijo · ${esc(SITE.fijo.visible)}</a></li>`,
+    `<li><a class="pie-correo" href="${esc(correoLink())}">${esc(SITE.correo)}</a></li>`,
     `<li><a href="${esc(SITE.instagram)}" target="_blank" rel="noopener">Instagram ${esc(SITE.instagramUsuario)}</a></li>`,
     `<li><a href="${esc(SITE.tiktok)}" target="_blank" rel="noopener">TikTok ${esc(SITE.tiktokUsuario)}</a></li>`,
   ].join("");
@@ -454,19 +478,51 @@ function pintarAlquiler() {
     .map((g) => `<button class="grupo-chip${g.id === estado.grupo ? " activa" : ""}" type="button" data-grupo="${esc(g.id)}" aria-pressed="${g.id === estado.grupo}">${esc(g.txt)}</button>`)
     .join("");
 
-  const lista = estado.grupo === "todos" ? EQUIPOS : EQUIPOS.filter((m) => m.grupo === estado.grupo);
-  $("#equipos").innerHTML = lista.map((m) => `<article class="equipo">
+  const tarjeta = (m) => `<article class="equipo">
     <div class="equipo-foto">${m.foto
-      ? `<img src="img/alq/${esc(m.id)}.webp" alt="${esc(m.nombre)}" loading="lazy" decoding="async">`
+      ? `<img src="${rutaFoto("alq/" + m.id)}" alt="${esc(m.nombre)}" loading="lazy" decoding="async" width="800" height="600">`
       : SIN_MAQUINA}</div>
     <div class="equipo-cuerpo">
-      <p class="equipo-grupo">${esc(nombreGrupo(m.grupo))}</p>
       <h4>${esc(m.nombre)}</h4>
       <p>${esc(m.descripcion)}</p>
+      ${m.caracteristicas?.length ? `<ul class="equipo-carac">${m.caracteristicas.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
       <p class="para"><b>Para:</b> ${esc(m.uso)}</p>
-      <button class="boton boton-wa boton-chico" type="button" data-consulta-alquiler="${esc(m.id)}">${WA_SVG} Consultar</button>
+      <button class="boton boton-wa boton-chico" type="button" data-consulta-alquiler="${esc(m.id)}" aria-label="Consultar por WhatsApp el alquiler de ${esc(m.nombre.toLowerCase())}">${WA_SVG} Consultar</button>
     </div>
-  </article>`).join("");
+  </article>`;
+
+  /* Con "Todos los equipos", un bloque por categoría con su título y los
+     equipos en una fila que se desliza de costado (con flechas en pantallas
+     grandes). Con una categoría elegida, todos sus equipos en grilla. */
+  const todos = estado.grupo === "todos";
+  const grupos = todos ? usados : [estado.grupo];
+  $("#equipos").innerHTML = grupos.map((id) => {
+    const deEste = EQUIPOS.filter((m) => m.grupo === id);
+    return `<section class="equipos-grupo" aria-labelledby="alq-${esc(id)}">
+      <div class="equipos-grupo-cab">
+        <h3 id="alq-${esc(id)}">${esc(nombreGrupo(id))}</h3>
+        <p>${esc(GRUPOS[id]?.texto || "")}</p>
+        <span class="equipos-cuenta">${deEste.length} ${deEste.length === 1 ? "equipo" : "equipos"}${todos ? '<span class="solo-toque"> · deslizá para ver todos</span>' : ""}</span>
+        ${todos ? `<span class="equipos-flechas">
+          <button class="equipos-flecha" type="button" data-desplazar="-1" aria-controls="fila-${esc(id)}" aria-label="Ver los equipos anteriores de ${esc(nombreGrupo(id).toLowerCase())}" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="equipos-flecha" type="button" data-desplazar="1" aria-controls="fila-${esc(id)}" aria-label="Ver más equipos de ${esc(nombreGrupo(id).toLowerCase())}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </span>` : ""}
+      </div>
+      <div class="equipos-grilla${todos ? " fila" : ""}" id="fila-${esc(id)}">${deEste.map(tarjeta).join("")}</div>
+    </section>`;
+  }).join("");
+  $$("#equipos .fila").forEach(actualizarFlechas);
+}
+
+/** Habilita o apaga las flechas de una fila según hasta dónde se deslizó. */
+function actualizarFlechas(fila) {
+  const cab = fila.previousElementSibling;
+  const [atras, adelante] = $$(".equipos-flecha", cab);
+  if (!atras) return;
+  const max = fila.scrollWidth - fila.clientWidth - 2;
+  atras.disabled = fila.scrollLeft <= 2;
+  adelante.disabled = fila.scrollLeft >= max;
+  cab.classList.toggle("sin-desplazar", max <= 0);
 }
 
 /* ══════ CARTELES ═════════════════════════════════════════ */
@@ -509,7 +565,7 @@ function abrirFicha(id) {
       ${p.caracteristicas ? `<p class="ficha-prod-t">Características</p><p class="ficha-prod-specs">${esc(p.caracteristicas)}</p>` : ""}
       <div class="ficha-prod-cta">
         <p class="ficha-prod-t">Consultanos por este producto</p>
-        ${bloqueNumeros(mensajeProducto(p))}
+        ${bloqueNumeros(mensajeProducto(p), `Consulta por ${p.nombre}`)}
       </div>
     </div>
   </div>
@@ -537,7 +593,8 @@ const DETALLES = {
 
 function abrirElegir(mensaje, detalle) {
   $("#elegir-detalle").textContent = detalle;
-  $("#elegir-numeros").innerHTML = bloqueNumeros(mensaje);
+  /* Si el detalle ya dice por qué es la consulta, sirve de asunto del correo. */
+  $("#elegir-numeros").innerHTML = bloqueNumeros(mensaje, /^Consulta/.test(detalle) ? detalle.replace(/\.$/, "") : undefined);
   abrirCartel("#elegir");
 }
 
@@ -570,347 +627,6 @@ function cerrarMenu() {
   abrirMenu.setAttribute("aria-expanded", "false");
 }
 
-/* ══════ EL LOCAL POR DENTRO ══════════════════════════════ */
-
-/* Dos piezas que se mueven juntas:
-   · el paseo: el video del salón, que avanza caminando de una parada a la
-     siguiente y se detiene justo en el cuadro de cada parada;
-   · la vista general: las dos panorámicas del salón en una tira, con un punto
-     por parada. Tocar un punto lleva el paseo hasta ahí.
-   El video (6 MB) se empieza a bajar recién cuando la sección está cerca. */
-
-const VIDEO_LOCAL = globalThis.VIDEO_LOCAL || "/video/local.mp4";
-const VISTA_ANCHO = 3206, VISTA_ALTO = 308;
-const VIDEO_ANCHO = 464, VIDEO_ALTO = 832;
-const MAX_ZOOM = 2.4;
-
-function armarPaseo() {
-  const paseo = $("#paseo");
-  if (!paseo || !PARADAS.length) return;
-
-  const marco = $("#paseo-marco");
-  const capa = $("#paseo-capa");
-  const video = $("#paseo-video");
-  const aviso = $("#paseo-aviso");
-  const mas = $("#paseo-mas");
-  const menos = $("#paseo-menos");
-  const planoMarco = $("#plano-marco");
-  const tira = $("#plano-tira");
-  const quieto = matchMedia("(prefers-reduced-motion: reduce)");
-
-  let actual = 0;          // la parada en la que está (o desde la que salió)
-  let destino = -1;        // la parada hacia la que camina, -1 si está quieto
-  let pedido = false;
-
-  /* ── La vista general ─────────────────────────────────── */
-
-  tira.insertAdjacentHTML("beforeend", PARADAS.map((p, i) =>
-    `<button class="pin" type="button" data-parada="${i}" style="left:${(p.x / VISTA_ANCHO * 100).toFixed(3)}%;top:${(p.y / VISTA_ALTO * 100).toFixed(3)}%"
-       aria-label="Ir a ${esc(p.nombre)}"><span class="pin-n">${i + 1}</span><span class="pin-nombre">${esc(p.nombre)}</span></button>`).join(""));
-
-  let escalaPlano = 1, txPlano = 0;
-
-  function medirPlano() {
-    const h = planoMarco.clientHeight;
-    escalaPlano = h / VISTA_ALTO;
-    tira.style.width = `${VISTA_ANCHO * escalaPlano}px`;
-    tira.style.height = `${h}px`;
-    moverPlano(txPlano, false);
-  }
-
-  function moverPlano(tx, suave) {
-    const w = planoMarco.clientWidth, ancho = VISTA_ANCHO * escalaPlano;
-    txPlano = Math.min(0, Math.max(w - ancho, tx));
-    tira.classList.toggle("suave", Boolean(suave) && !quieto.matches);
-    tira.style.transform = `translateX(${txPlano.toFixed(1)}px)`;
-    $("#plano-izq").disabled = txPlano >= -1;
-    $("#plano-der").disabled = txPlano <= w - ancho + 1;
-    for (const pin of $$(".pin", tira)) {
-      const x = PARADAS[Number(pin.dataset.parada)].x * escalaPlano + txPlano;
-      pin.classList.toggle("borde-izq", x < 110);
-      pin.classList.toggle("borde-der", x > w - 110);
-    }
-  }
-
-  const centrarEnParada = (i) =>
-    moverPlano(planoMarco.clientWidth / 2 - PARADAS[i].x * escalaPlano, true);
-
-  $("#plano-izq").addEventListener("click", () => moverPlano(txPlano + planoMarco.clientWidth * 0.6, true));
-  $("#plano-der").addEventListener("click", () => moverPlano(txPlano - planoMarco.clientWidth * 0.6, true));
-
-  /* Arrastrar la tira. Si el dedo se movió, el toque no cuenta como clic en un punto. */
-  let arrastrePlano = null;
-  planoMarco.addEventListener("pointerdown", (e) => {
-    if (e.target.closest(".plano-flecha")) return;
-    arrastrePlano = { x: e.clientX, tx: txPlano, movido: false, id: e.pointerId };
-    planoMarco.classList.add("agarrando");
-  });
-  planoMarco.addEventListener("pointermove", (e) => {
-    if (!arrastrePlano || e.pointerId !== arrastrePlano.id) return;
-    const dx = e.clientX - arrastrePlano.x;
-    if (!arrastrePlano.movido && Math.abs(dx) > 5) {
-      arrastrePlano.movido = true;
-      try { planoMarco.setPointerCapture(e.pointerId); } catch { /* seguimos igual */ }
-    }
-    if (arrastrePlano.movido) moverPlano(arrastrePlano.tx + dx, false);
-  });
-  const soltarPlano = (e) => {
-    if (!arrastrePlano || e.pointerId !== arrastrePlano.id) return;
-    planoMarco.classList.toggle("recien-arrastrado", arrastrePlano.movido);
-    arrastrePlano = null;
-    planoMarco.classList.remove("agarrando");
-  };
-  planoMarco.addEventListener("pointerup", soltarPlano);
-  planoMarco.addEventListener("pointercancel", soltarPlano);
-  tira.addEventListener("click", (e) => {
-    const pin = e.target.closest(".pin");
-    if (planoMarco.classList.contains("recien-arrastrado")) {
-      planoMarco.classList.remove("recien-arrastrado");
-      return;
-    }
-    if (pin) irA(Number(pin.dataset.parada));
-  });
-
-  /* ── El paseo: acercar y mover la imagen ──────────────── */
-
-  let z = 1, tx = 0, ty = 0;
-
-  function aplicar(suave) {
-    const w = marco.clientWidth, h = marco.clientHeight;
-    const altoCapa = w * VIDEO_ALTO / VIDEO_ANCHO;
-    capa.style.width = `${w}px`;
-    capa.style.height = `${altoCapa}px`;
-    tx = Math.min(0, Math.max(w - w * z, tx));
-    ty = Math.min(0, Math.max(h - altoCapa * z, ty));
-    capa.classList.toggle("suave", Boolean(suave) && !quieto.matches);
-    capa.style.transform = `translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px) scale(${z.toFixed(4)})`;
-    mas.disabled = z >= MAX_ZOOM - 0.01;
-    menos.disabled = z <= 1.01;
-    paseo.classList.toggle("acercado", z > 1.01);
-  }
-
-  function encuadreInicial() {
-    const w = marco.clientWidth, h = marco.clientHeight;
-    z = 1; tx = 0; ty = (h - w * VIDEO_ALTO / VIDEO_ANCHO) / 2;
-  }
-
-  function acercar(factor, cx, cy) {
-    const nuevo = Math.min(MAX_ZOOM, Math.max(1, z * factor));
-    const k = nuevo / z;
-    tx = cx - (cx - tx) * k;
-    ty = cy - (cy - ty) * k;
-    z = nuevo;
-    if (z <= 1.01) { encuadreInicial(); }
-    aplicar(true);
-  }
-
-  const centro = () => [marco.clientWidth / 2, marco.clientHeight / 2];
-  mas.addEventListener("click", () => acercar(1.5, ...centro()));
-  menos.addEventListener("click", () => acercar(1 / 1.5, ...centro()));
-
-  marco.addEventListener("wheel", (e) => {
-    if (!e.ctrlKey && z <= 1.01) return;
-    e.preventDefault();
-    const r = marco.getBoundingClientRect();
-    acercar(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX - r.left, e.clientY - r.top);
-  }, { passive: false });
-
-  marco.addEventListener("dblclick", (e) => {
-    if (e.target.closest("button")) return;
-    const r = marco.getBoundingClientRect();
-    if (z > 1.01) { encuadreInicial(); aplicar(true); }
-    else acercar(2, e.clientX - r.left, e.clientY - r.top);
-  });
-
-  new ResizeObserver(() => { encuadreInicial(); aplicar(false); medirPlano(); centrarEnParada(actual); })
-    .observe(marco);
-  new ResizeObserver(() => medirPlano()).observe(planoMarco);
-
-  /* ── El paseo: caminar de parada en parada ─────────────── */
-
-  function cargar() {
-    if (pedido) return;
-    pedido = true;
-    video.preload = "auto";
-    video.src = VIDEO_LOCAL;
-    video.load();
-  }
-
-  function pintarParada(i) {
-    $("#paseo-n").textContent = `${i + 1} de ${PARADAS.length}`;
-    $("#paseo-nombre").textContent = PARADAS[i].nombre;
-    $$(".pin", tira).forEach((p) => p.classList.toggle("activo", Number(p.dataset.parada) === i));
-  }
-
-  /* Espera a que el video tenga datos antes de moverlo. */
-  function listo() {
-    cargar();
-    if (video.readyState >= 2) return Promise.resolve();
-    aviso.hidden = false;
-    return new Promise((ok) => video.addEventListener("loadeddata", () => { aviso.hidden = true; ok(); }, { once: true }));
-  }
-
-  let latido = 0;
-  function vigilar() {
-    if (destino < 0) return;
-    const meta = PARADAS[destino].t;
-    if (video.currentTime >= meta - 0.02 || video.ended) {
-      video.pause();
-      video.currentTime = meta;          // queda en el cuadro exacto de la parada
-      actual = destino;
-      destino = -1;
-      paseo.classList.remove("caminando");
-      return;
-    }
-    latido = requestAnimationFrame(vigilar);
-  }
-
-  async function caminarHasta(i) {
-    await listo();
-    paseo.classList.add("empezado");
-    if (z > 1.01) { encuadreInicial(); aplicar(true); }
-    destino = i;
-    pintarParada(i);
-    centrarEnParada(i);
-    paseo.classList.add("caminando");
-    video.playbackRate = 1.25;
-    try { await video.play(); } catch { saltarA(i); return; }
-    cancelAnimationFrame(latido);
-    latido = requestAnimationFrame(vigilar);
-  }
-
-  /* Para ir hacia atrás o lejos: un fundido corto y aparece en la parada. */
-  async function saltarA(i) {
-    await listo();
-    paseo.classList.add("empezado");
-    cancelAnimationFrame(latido);
-    video.pause();
-    destino = -1;
-    paseo.classList.remove("caminando");
-    encuadreInicial(); aplicar(false);
-    actual = i;
-    pintarParada(i);
-    centrarEnParada(i);
-    paseo.classList.add("fundido");
-    setTimeout(() => {
-      video.addEventListener("seeked", () => paseo.classList.remove("fundido"), { once: true });
-      video.currentTime = PARADAS[i].t;
-    }, quieto.matches ? 0 : 160);
-  }
-
-  function avanzar() {
-    const desde = destino >= 0 ? destino : actual;
-    if (desde >= PARADAS.length - 1) saltarA(0);
-    else caminarHasta(desde + 1);
-  }
-
-  function retroceder() {
-    if (destino >= 0) { saltarA(actual); return; }
-    saltarA(actual === 0 ? PARADAS.length - 1 : actual - 1);
-  }
-
-  function irA(i) {
-    if (i === actual && destino < 0) return;
-    if (destino < 0 && i === actual + 1) caminarHasta(i);
-    else saltarA(i);
-  }
-
-  $("#paseo-adelante").addEventListener("click", avanzar);
-  $("#paseo-atras").addEventListener("click", retroceder);
-
-  marco.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight") { e.preventDefault(); avanzar(); }
-    else if (e.key === "ArrowLeft") { e.preventDefault(); retroceder(); }
-    else if (e.key === "+" || e.key === "=") acercar(1.5, ...centro());
-    else if (e.key === "-") acercar(1 / 1.5, ...centro());
-  });
-
-  /* ── El paseo: dedos y mouse ──────────────────────────── */
-
-  /* Sin acercar, deslizar de costado cambia de parada y el dedo hacia arriba
-     sigue moviendo la página. Acercado, arrastrar recorre la imagen. */
-  const dedos = new Map();
-  let agarre = null, pellizco = null;
-
-  marco.addEventListener("pointerdown", (e) => {
-    if (e.target.closest("button")) return;
-    dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    try { marco.setPointerCapture(e.pointerId); } catch { /* seguimos igual */ }
-    if (dedos.size === 2) {
-      const [a, b] = [...dedos.values()];
-      pellizco = { dist: Math.hypot(a.x - b.x, a.y - b.y), z };
-      agarre = null;
-      return;
-    }
-    agarre = { x: e.clientX, y: e.clientY, tx, ty };
-    paseo.classList.add("agarrando");
-  });
-
-  marco.addEventListener("pointermove", (e) => {
-    if (!dedos.has(e.pointerId)) return;
-    dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pellizco && dedos.size === 2) {
-      const [a, b] = [...dedos.values()];
-      const d = Math.hypot(a.x - b.x, a.y - b.y);
-      if (pellizco.dist > 8) {
-        const r = marco.getBoundingClientRect();
-        const objetivo = Math.min(MAX_ZOOM, Math.max(1, pellizco.z * d / pellizco.dist));
-        const k = objetivo / z, cx = (a.x + b.x) / 2 - r.left, cy = (a.y + b.y) / 2 - r.top;
-        tx = cx - (cx - tx) * k; ty = cy - (cy - ty) * k; z = objetivo;
-        aplicar(false);
-      }
-      return;
-    }
-    if (agarre && z > 1.01) {
-      tx = agarre.tx + (e.clientX - agarre.x);
-      ty = agarre.ty + (e.clientY - agarre.y);
-      aplicar(false);
-    }
-  });
-
-  const soltar = (e) => {
-    if (!dedos.has(e.pointerId)) return;
-    if (agarre && dedos.size === 1 && z <= 1.01) {
-      const dx = e.clientX - agarre.x, dy = e.clientY - agarre.y;
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) (dx < 0 ? avanzar : retroceder)();
-    }
-    dedos.delete(e.pointerId);
-    if (dedos.size < 2) pellizco = null;
-    if (dedos.size === 0) {
-      agarre = null;
-      paseo.classList.remove("agarrando");
-      if (z <= 1.01) { encuadreInicial(); aplicar(true); }
-    }
-  };
-  marco.addEventListener("pointerup", soltar);
-  marco.addEventListener("pointercancel", soltar);
-
-  /* ── Cuándo bajar el video y cuándo frenarlo ───────────── */
-
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver((entradas) => {
-      if (entradas.some((en) => en.isIntersecting)) cargar();
-    }, { rootMargin: "700px 0px" }).observe(paseo);
-    new IntersectionObserver((entradas) => {
-      for (const en of entradas) if (!en.isIntersecting && destino >= 0) saltarA(destino);
-    }, { threshold: 0 }).observe(marco);
-  } else {
-    cargar();
-  }
-
-  video.addEventListener("error", () => {
-    aviso.textContent = "No pudimos cargar el video del recorrido. La vista general sigue andando.";
-    aviso.hidden = false;
-  });
-
-  encuadreInicial();
-  aplicar(false);
-  medirPlano();
-  pintarParada(0);
-  centrarEnParada(0);
-}
-
-
 /* ══════ ARRANQUE ═════════════════════════════════════════ */
 
 if (DEMO) $("#demo").hidden = false;
@@ -921,7 +637,7 @@ if (DEMO) $("#demo").hidden = false;
 for (const [nombre, selector] of [
   ["frente", ".portada"],
   ["alquiler", ".alquiler"],
-  ["frente", ".cierre"],
+  ["fotos/salon-entrada", ".cierre"],
 ]) {
   const prueba = new Image();
   prueba.addEventListener("load", () => {
@@ -946,7 +662,6 @@ pintarRubros();
 pintarAlquiler();
 pintarVisitanos();
 pintarPie();
-armarPaseo();
 
 /* Estado abierto / cerrado, en la barra de servicio y en la ficha */
 const pintarEstado = () => {
@@ -1042,6 +757,13 @@ document.addEventListener("click", (e) => {
 
   const grupo = t.closest?.("[data-grupo]");
   if (grupo) { estado.grupo = grupo.dataset.grupo; pintarAlquiler(); return; }
+
+  const flecha = t.closest?.("[data-desplazar]");
+  if (flecha) {
+    const fila = document.getElementById(flecha.getAttribute("aria-controls"));
+    fila?.scrollBy({ left: Number(flecha.dataset.desplazar) * fila.clientWidth * 0.9, behavior: "smooth" });
+    return;
+  }
 
   const consulta = t.closest?.("[data-consulta]");
   if (consulta) { const c = consulta.dataset.consulta; abrirElegir(MENSAJES[c](), DETALLES[c]); return; }
@@ -1139,5 +861,11 @@ if (secciones.length) {
   }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
   secciones.forEach((s) => spy.observe(s));
 }
+
+/* Las flechas de las filas de alquiler siguen al desplazamiento (también con el dedo). */
+$("#equipos").addEventListener("scroll", (e) => {
+  if (e.target.classList?.contains("fila")) actualizarFlechas(e.target);
+}, { capture: true, passive: true });
+addEventListener("resize", () => $$("#equipos .fila").forEach(actualizarFlechas));
 
 $$(".wa").forEach((el) => { el.innerHTML = WA_SVG; });

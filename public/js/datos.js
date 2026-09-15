@@ -24,29 +24,32 @@ export const SITE = {
   despues: "S.A.S.",
   bajada: "FERRETERÍA · HERRAMIENTAS",
 
-  /* Los dos números atienden por WhatsApp y por llamada. */
+  /* Los dos celulares: atienden por WhatsApp y por llamada. */
   numeros: [
     {
-      persona: "Magalí Millán",
-      visible: "264 506-1440",
-      wa: "5492645061440",
-      tel: "+5492645061440",
+      persona: "Magali",
+      visible: "264 527-3909",
+      wa: "5492645273909",
+      tel: "+5492645273909",
     },
     {
-      persona: "Marcelo Millán",
-      visible: "264 661-9688",
-      wa: "5492646619688",
-      tel: "+5492646619688",
+      persona: "Marcelo",
+      visible: "264 418-2730",
+      wa: "5492644182730",
+      tel: "+5492644182730",
     },
   ],
+
+  /* El teléfono fijo: sólo llamadas, no tiene WhatsApp. */
+  fijo: { visible: "424-2212", tel: "+542644242212" },
+
+  /* El correo electrónico, un medio aparte de los teléfonos. */
+  correo: "millanmariomarcelo@hotmail.com",
 
   instagram: "https://www.instagram.com/herramientasmillan/",
   instagramUsuario: "@herramientasmillan",
   tiktok: "https://www.tiktok.com/@ferreteriamillan",
   tiktokUsuario: "@ferreteriamillan",
-
-  /* El teléfono fijo del local, tal como figura en la ficha de Google. */
-  fijo: { visible: "0264 424-2212", tel: "+542644242212" },
 
   direccion: {
     calle: "Mendoza Sur 2357",
@@ -240,26 +243,6 @@ export const RUBROS = [
 
 export const rubroPorId = (id) => RUBROS.find((r) => r.id === id) || null;
 
-/* ── El local por dentro ──────────────────────────────────────────────────
-   Las paradas del paseo en video, en el orden en que se recorre el salón.
-   `t`    segundo del video (public/video/local.mp4) donde se detiene.
-   `x, y` dónde va el punto en la vista general
-          (public/img/local/vista-general.webp, 3206 × 308 píxeles).
-   ───────────────────────────────────────────────────────────────────────── */
-
-export const PARADAS = [
-  { nombre: "Vitrina de la entrada", t: 0, x: 880, y: 135 },
-  { nombre: "Palas y herramientas de jardín", t: 8, x: 1000, y: 70 },
-  { nombre: "Sanitarios y vitrina", t: 13.75, x: 1110, y: 115 },
-  { nombre: "Generadores y cajas de herramientas", t: 22.25, x: 1390, y: 165 },
-  { nombre: "Motosierras y pinturas", t: 32.5, x: 85, y: 95 },
-  { nombre: "Estantería del fondo", t: 38.75, x: 205, y: 50 },
-  { nombre: "Compresores y escaleras", t: 44, x: 215, y: 180 },
-  { nombre: "Mostrador y discos", t: 50.5, x: 450, y: 50 },
-  { nombre: "Pasillo del fondo", t: 63, x: 1726, y: 95 },
-  { nombre: "Herramientas de mano", t: 66.75, x: 1990, y: 70 },
-];
-
 /* Dibujos de las tarjetas de categoría: trazo simple, toman el color del texto.
    Para una categoría nueva, sumá acá su dibujo y nombralo en `icono`. */
 export const ICONOS = {
@@ -340,6 +323,11 @@ export function marcasDe(catId, lista = PRODUCTOS) {
 /** Enlace de WhatsApp a uno de los dos números, con el mensaje ya escrito. */
 export function waLink(numero, mensaje) {
   return `https://wa.me/${numero.wa}?text=${encodeURIComponent(mensaje)}`;
+}
+
+/** Enlace para escribir un correo, con el asunto y el mensaje ya escritos. */
+export function correoLink(mensaje = mensajeGeneral(), asunto = "Consulta desde la página web") {
+  return `mailto:${SITE.correo}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(mensaje)}`;
 }
 
 export function mensajeGeneral() {

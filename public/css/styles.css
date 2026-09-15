@@ -123,7 +123,7 @@ li{list-style:none}
 /* Fila de servicio */
 .servicio-barra{background:var(--tinta);color:#c9cdd3;font-size:.76rem}
 .servicio-in{display:flex;align-items:center;gap:1.4rem;height:var(--servicio)}
-.estado{display:inline-flex;align-items:center;gap:.45rem;font-weight:600}
+.estado{display:inline-flex;align-items:center;gap:.45rem;font-weight:600;white-space:nowrap}
 .estado .punto{width:7px;height:7px;border-radius:50%;background:var(--gris-2);flex:none}
 .estado.abierto{color:#5fdc93}
 .estado.abierto .punto{background:#3ccb78;box-shadow:0 0 0 3px rgba(60,203,120,.2)}
@@ -134,6 +134,13 @@ li{list-style:none}
 .servicio-barra a:hover{color:#fff}
 .servicio-redes{display:inline-flex;gap:.9rem;align-items:center}
 .servicio-redes .icono{width:16px;height:16px}
+/* Fijo y correo en la fila de servicio (computadora); los dos celulares van
+   acá sólo en tablet y celular, donde la barra del logo no tiene lugar. */
+.servicio-fijo a,.servicio-correo a,.servicio-tel{display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap}
+.servicio-fijo .icono,.servicio-correo .icono,.servicio-tel .icono{width:14px;height:14px;color:var(--naranja-claro)}
+.servicio-fijo b,.servicio-tel b{color:#fff;font-weight:600;font-variant-numeric:tabular-nums}
+.servicio-tels{display:none;align-items:center;gap:1.1rem}
+.servicio-tel span{color:#aeb4bc}
 
 /* Fila principal */
 .barra{background:var(--blanco);border-bottom:1px solid var(--borde)}
@@ -155,10 +162,12 @@ li{list-style:none}
 .buscador .limpiar{position:absolute;right:.45rem;width:26px;height:26px;border:0;border-radius:var(--radio);
   background:var(--borde);cursor:pointer;font-size:1rem;line-height:1;color:var(--gris)}
 .barra-acciones{display:flex;align-items:center;gap:.5rem;margin-left:auto}
-.barra-tel{display:flex;flex-direction:column;line-height:1.15;text-decoration:none;padding-right:.4rem}
-.barra-tel span{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gris-2)}
-.barra-tel b{font-family:var(--titulo);font-size:1.15rem;letter-spacing:.01em}
-.barra-tel:hover b{color:var(--naranja)}
+/* Los dos celulares, uno debajo del otro: nombre y número, cada renglón llama. */
+.barra-tels{display:flex;flex-direction:column;gap:.1rem;padding-right:.5rem}
+.barra-tels a{display:grid;grid-template-columns:4.4rem auto;align-items:baseline;column-gap:.4rem;line-height:1.15;text-decoration:none}
+.barra-tels span{font-size:.66rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--gris-2)}
+.barra-tels b{font-family:var(--titulo);font-size:1.12rem;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.barra-tels a:hover b{color:var(--naranja)}
 /* El botón del menú de secciones vive en la tira y sólo aparece en pantallas chicas. */
 .abrir-menu{display:none;align-items:center;gap:.45rem;flex:none;padding:0 1rem;
   border:0;border-left:1px solid var(--borde-oscuro);background:transparent;color:#fff;cursor:pointer;
@@ -267,7 +276,28 @@ li{list-style:none}
 .ficha-num-txt{display:flex;flex-direction:column;line-height:1.2;min-width:0}
 .ficha-num-txt span{font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:#a3aab3}
 .ficha-num-txt b{font-family:var(--titulo);font-size:1.3rem;letter-spacing:.01em}
-.ficha-num .boton{margin-left:auto}
+.ficha-num-acciones{display:flex;gap:.4rem;margin-left:auto;flex:none}
+.boton-cuadrado{padding-inline:.62rem}
+.boton-cuadrado .icono{width:1.1em;height:1.1em}
+/* El fijo y el correo, aparte de los celulares. */
+.ficha-otros{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.35rem;padding-top:.9rem;border-top:1px solid var(--borde-oscuro)}
+.ficha-otros a{display:flex;align-items:center;gap:.6rem;min-width:0;padding:.55rem .65rem;border:1px solid var(--borde-oscuro);
+  border-radius:var(--radio);text-decoration:none;transition:border-color .15s,background .15s}
+.ficha-otros a:hover{border-color:#fff;background:rgba(255,255,255,.06)}
+.ficha-otros .icono{width:1.15rem;height:1.15rem;color:var(--naranja-claro)}
+.ficha-otros a>span{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.ficha-otros a>span span{font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;color:#a3aab3;white-space:nowrap}
+.ficha-otros b{font-family:var(--titulo);font-size:1.08rem;letter-spacing:.01em;color:#fff}
+
+/* ══════ FOTOS DEL LOCAL ═══════════════════════════════════════════════════ */
+/* Fotos reales del salón repartidas por la página, con un rótulo corto abajo. */
+.foto-local{position:relative;margin:0;overflow:hidden;border-radius:var(--radio-g);background:var(--tinta-3);
+  border:1px solid var(--borde)}
+.foto-local img{width:100%;height:100%;object-fit:cover}
+.foto-local figcaption{position:absolute;left:0;right:0;bottom:0;padding:1.6rem .85rem .6rem;
+  font-size:.7rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:#fff;
+  background:linear-gradient(180deg,rgba(15,18,22,0),rgba(15,18,22,.82))}
+.foto-oscura{border-color:var(--borde-oscuro)}
 
 /* ══════ LOS TRES SERVICIOS ═══════════════════════════════════════════════ */
 .servicios{background:var(--blanco);border-bottom:1px solid var(--borde)}
@@ -291,7 +321,10 @@ li{list-style:none}
 
 /* ══════ CATÁLOGO ════════════════════════════════════════════════════════ */
 .catalogo{padding-block:clamp(2.6rem,6vw,4.4rem)}
-.catalogo-cab{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1.2rem;margin-bottom:1.8rem}
+.catalogo-cab{display:grid;grid-template-columns:minmax(0,1fr) clamp(260px,30vw,380px);align-items:end;gap:1.2rem clamp(1.4rem,4vw,3rem);margin-bottom:1.8rem}
+.foto-cab img{aspect-ratio:16/10}
+.rubros-cab{display:grid;grid-template-columns:minmax(0,1fr) clamp(260px,30vw,380px);align-items:end;gap:1.2rem clamp(1.4rem,4vw,3rem)}
+.foto-cab.foto-alta img{object-position:center 62%}
 .catalogo-caja{display:grid;grid-template-columns:274px minmax(0,1fr);
   background:var(--blanco);border:1px solid var(--borde)}
 
@@ -466,18 +499,42 @@ li{list-style:none}
 .alquiler-cab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:clamp(1.2rem,4vw,3rem);
   align-items:start;padding-bottom:1.8rem;margin-bottom:1.8rem;border-bottom:1px solid var(--borde-oscuro)}
 .alquiler-cab .boton{margin-top:1.2rem}
-.equipos{display:grid;gap:1px;grid-template-columns:repeat(auto-fill,minmax(min(228px,100%),1fr));
+.alquiler-cab .foto-local{margin-top:1.4rem;max-width:520px}
+.alquiler-cab .foto-local img{aspect-ratio:16/9;object-position:center 40%}
+.equipos-grupo+.equipos-grupo{margin-top:2.4rem}
+.equipos-grupo-cab{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem 1rem;margin-bottom:1rem;
+  padding-left:.8rem;border-left:3px solid var(--naranja)}
+.equipos-grupo-cab h3{font-size:clamp(1.4rem,2.6vw,1.8rem);text-transform:uppercase;color:#fff}
+.equipos-grupo-cab p{flex:1 1 30ch;font-size:.86rem;color:#a9b0b8;line-height:1.5}
+.equipos-cuenta{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--naranja-claro)}
+.solo-toque{display:none}
+/* Con "Todos los equipos", cada categoría es una fila que se desliza de costado. */
+.equipos-grilla.fila{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 4px) / 5);
+  overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--tinta-3) transparent}
+.equipos-grilla.fila>.equipo{scroll-snap-align:start}
+.equipos-flechas{display:inline-flex;gap:.4rem;margin-left:.2rem}
+.equipos-flecha{display:grid;place-items:center;width:38px;height:38px;padding:0;border:1px solid var(--borde-oscuro);
+  border-radius:50%;background:transparent;color:#fff;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s}
+.equipos-flecha:hover:not(:disabled){background:var(--naranja);border-color:var(--naranja);color:var(--tinta)}
+.equipos-flecha:disabled{opacity:.3;cursor:default}
+.equipos-flecha svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.sin-desplazar .equipos-flechas{display:none}
+.equipos-grilla{display:grid;gap:1px;grid-template-columns:repeat(auto-fill,minmax(min(236px,100%),1fr));
   background:var(--borde-oscuro);border:1px solid var(--borde-oscuro)}
+.equipo-carac{display:flex;flex-direction:column;gap:.2rem;margin:.25rem 0 .15rem}
+.equipo-carac li{position:relative;padding-left:.95rem;font-size:.8rem;line-height:1.45;color:#d4d8dd}
+.equipo-carac li::before{content:"";position:absolute;left:0;top:.55em;width:.42rem;height:2px;background:var(--naranja)}
+
 .equipo{display:flex;flex-direction:column;background:var(--tinta-2)}
-.equipo-foto{background:var(--tinta-3);aspect-ratio:1/.68;display:grid;place-items:center;overflow:hidden}
-.equipo-foto img{width:100%;height:100%;object-fit:contain;padding:.7rem}
+.equipo-foto{background:#fff;aspect-ratio:4/3;display:grid;place-items:center;overflow:hidden}
+.equipo-foto img{width:100%;height:100%;object-fit:contain}
 .equipo-foto svg{width:44px;height:44px;color:rgba(255,255,255,.24);fill:none;stroke:currentColor;stroke-width:1.3}
 .equipo-cuerpo{display:flex;flex-direction:column;gap:.3rem;padding:.9rem .95rem 1rem;flex:1}
-.equipo-grupo{font-size:.7rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--naranja-claro)}
-.equipo h4{font-family:var(--texto);font-size:.95rem;font-weight:700}
+.equipo h4{font-family:var(--texto);font-size:.95rem;font-weight:700;line-height:1.3}
 .equipo p{font-size:.82rem;color:#a9b0b8;line-height:1.5}
 .equipo .para{color:#d4d8dd}
 .equipo .para b{color:#fff;font-weight:600}
+.equipo .para{margin-bottom:.55rem}
 .equipo .boton{margin-top:auto;align-self:flex-start;padding-top:.5rem;padding-bottom:.5rem}
 .grupos{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.4rem}
 .grupo-chip{padding:.45rem .9rem;border:1px solid var(--borde-oscuro);border-radius:var(--radio);
@@ -509,6 +566,7 @@ li{list-style:none}
 .reparacion-extra{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:1px;
   margin-top:2.4rem;background:var(--borde);border:1px solid var(--borde)}
 .extra{background:var(--papel-2);padding:1.5rem}
+.extra-foto{width:calc(100% + 3rem);height:auto;max-width:none;margin:-1.5rem -1.5rem 1.2rem;aspect-ratio:16/8;object-fit:cover}
 .extra h3{font-size:1.2rem;text-transform:uppercase;margin-bottom:.5rem}
 .extra p{font-size:.9rem;color:var(--gris);line-height:1.6;margin-bottom:1.1rem}
 
@@ -517,6 +575,11 @@ li{list-style:none}
 .valores{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:1px;
   margin-top:2rem;background:var(--borde);border:1px solid var(--borde)}
 .valor{background:var(--blanco);padding:1.5rem 1.4rem}
+.mosaico{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);grid-template-rows:auto auto;gap:.8rem;margin-top:2rem}
+.mosaico-alta{grid-row:1 / span 2}
+.mosaico .foto-local:not(.mosaico-alta):not(.mosaico-ancha) img{aspect-ratio:16/8}
+.mosaico-ancha img{aspect-ratio:1600/370}
+.mosaico-alta img{object-position:center 60%}
 .valor-ico{display:block;width:26px;height:26px;margin-bottom:.85rem;color:var(--naranja-osc)}
 .valor-ico svg{display:block;width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .valor h3{font-family:var(--texto);font-size:1rem;font-weight:700;margin-bottom:.4rem}
@@ -586,7 +649,7 @@ li{list-style:none}
 .contacto-fila>.icono,.contacto-fila>.wa{width:1.5rem;height:1.5rem;color:var(--naranja);flex:none}
 .contacto-fila.es-wa>.wa{color:var(--verde)}
 .contacto-txt{display:flex;flex-direction:column;line-height:1.25;min-width:0}
-.contacto-txt span{font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--gris-2)}
+.contacto-txt span{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gris-2)}
 .contacto-txt b{font-family:var(--titulo);font-size:1.25rem;letter-spacing:.01em;overflow-wrap:anywhere}
 .contacto-fila.es-wa{display:grid;grid-template-columns:auto minmax(0,1fr) auto}
 .contacto-acciones{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.4rem;margin-left:auto}
@@ -595,8 +658,15 @@ a.contacto-fila:hover{border-color:var(--naranja);background:var(--naranja-papel
 a.contacto-fila .flecha{margin-left:auto;color:var(--gris-2)}
 a.contacto-fila:hover .flecha{color:var(--naranja)}
 .ubi-acciones{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.2rem}
+.visitanos-der{display:flex;flex-direction:column;gap:.9rem;min-width:0}
+.foto-frente img{aspect-ratio:16/9;object-position:center 55%}
+.visitanos-der .mapa{flex:1}
+.contacto-accion{margin-left:auto;padding:.42rem .75rem;border:1px solid var(--borde-fuerte);border-radius:var(--radio);
+  font-size:.74rem;font-weight:700;letter-spacing:.03em;white-space:nowrap;color:var(--tinta)}
+a.contacto-fila:hover .contacto-accion{border-color:var(--naranja);color:var(--naranja-osc)}
+.contacto-txt b.contacto-correo{font-family:var(--texto);font-size:.95rem;font-weight:600;letter-spacing:0}
 .direccion-calle{font-family:var(--titulo);font-size:1.35rem;letter-spacing:.01em}
-.mapa{position:relative;border:1px solid var(--borde);background:var(--papel-2);min-height:clamp(320px,52vh,540px);overflow:hidden}
+.mapa{position:relative;border:1px solid var(--borde);background:var(--papel-2);min-height:clamp(300px,40vh,420px);overflow:hidden}
 .mapa iframe{position:absolute;inset:0;display:block;width:100%;height:100%;border:0}
 /* La imagen del mapa: se ve siempre, y el marco de Google la tapa si carga. */
 .mapa-imagen{position:absolute;inset:0;display:block;text-decoration:none;background:var(--papel-2)}
@@ -609,97 +679,6 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   background:linear-gradient(180deg,rgba(18,21,26,0),rgba(18,21,26,.9))}
 .mapa-calle{font-family:var(--titulo);font-size:1.3rem;letter-spacing:.01em}
 .mapa-pie span:last-child{font-size:.82rem;color:#ccd2d9}
-
-/* ══════ EL LOCAL POR DENTRO ═════════════════════════════════════════════ */
-/* A la derecha, el paseo: el video del salón, que se recorre parada por
-   parada. A la izquierda, abajo, la vista general: las dos panorámicas del
-   salón en una tira con un punto por parada. */
-.recorrido{position:relative;background:linear-gradient(180deg,#12161b,#1b2129);color:#e8eaed;
-  padding-block:clamp(2.8rem,6vw,4.6rem);border-top:1px solid var(--borde-oscuro)}
-.recorrido .titulo-seccion{color:#fff}
-.recorrido .bajada{color:#b3b9c0}
-/* El texto y la vista general quedan centrados en altura al lado del paseo. */
-.recorrido-in{display:grid;grid-template-columns:minmax(0,1fr) clamp(290px,31vw,400px);
-  grid-template-areas:". paseo" "cab paseo" "plano paseo" ". paseo";grid-template-rows:1fr auto auto 1fr;
-  column-gap:clamp(1.6rem,4vw,3.2rem);row-gap:1.6rem}
-.recorrido-cab{grid-area:cab;max-width:60ch}
-.paseo{grid-area:paseo;position:relative;min-width:0}
-.plano{grid-area:plano;min-width:0;margin:0}
-
-.paseo-btn svg,.paseo-flecha svg,.plano-flecha svg{width:18px;height:18px;fill:none;stroke:currentColor;
-  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-
-/* El paseo */
-.paseo-marco{position:relative;overflow:hidden;aspect-ratio:3/4;border-radius:var(--radio-g);background:#0c0f12;
-  border:1px solid var(--borde-oscuro);box-shadow:0 22px 60px rgba(0,0,0,.5);touch-action:pan-y;
-  user-select:none;-webkit-user-select:none;cursor:grab}
-.paseo-marco:focus-visible{outline:2px solid var(--naranja-claro);outline-offset:3px}
-.paseo.acercado .paseo-marco{touch-action:none}
-.paseo.agarrando .paseo-marco{cursor:grabbing}
-/* La imagen se mueve y se acerca con transform, que el navegador acelera. */
-.paseo-capa{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;transition:opacity .16s}
-.paseo-capa.suave{transition:transform .32s cubic-bezier(.2,.7,.2,1),opacity .16s}
-.paseo.fundido .paseo-capa{opacity:0}
-.paseo-capa video{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}
-
-.paseo-zoom{position:absolute;top:.7rem;right:.7rem;z-index:2;display:flex;flex-direction:column;gap:.4rem}
-.paseo-btn{display:grid;place-items:center;width:38px;height:38px;padding:0;border-radius:50%;cursor:pointer;
-  border:1px solid rgba(255,255,255,.2);background:rgba(11,14,18,.62);color:#fff;transition:background .15s,opacity .15s}
-.paseo-btn:hover{background:rgba(11,14,18,.88)}
-.paseo-btn:disabled{opacity:.3;cursor:default}
-
-.paseo-barra{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:center;gap:.6rem;
-  padding:2.6rem .75rem .75rem;background:linear-gradient(180deg,rgba(11,14,18,0),rgba(11,14,18,.88));pointer-events:none}
-.paseo-flecha{flex:none;display:grid;place-items:center;width:46px;height:46px;padding:0;border-radius:50%;cursor:pointer;
-  pointer-events:auto;border:1px solid rgba(255,255,255,.24);background:rgba(11,14,18,.62);color:#fff;
-  transition:background .15s,border-color .15s}
-.paseo-flecha:hover{background:rgba(11,14,18,.9);border-color:#fff}
-.paseo-adelante{background:var(--naranja);border-color:var(--naranja);color:var(--tinta)}
-.paseo-adelante:hover{background:var(--naranja-claro);border-color:var(--naranja-claro)}
-.paseo-lugar{flex:1;min-width:0;display:flex;flex-direction:column-reverse;align-items:center;gap:.15rem;
-  margin:0;text-align:center;line-height:1.1}
-.paseo-lugar b{font-family:var(--titulo);font-size:1.2rem;font-weight:700;text-transform:uppercase;color:#fff;text-wrap:balance}
-.paseo-lugar span{font-size:.7rem;color:#aeb5bd;font-variant-numeric:tabular-nums}
-.paseo-aviso{position:absolute;left:50%;top:50%;z-index:3;transform:translate(-50%,-50%);max-width:82%;margin:0;
-  padding:.5rem .95rem;border-radius:var(--radio);background:rgba(11,14,18,.86);color:#fff;font-size:.82rem;text-align:center}
-
-/* La vista general */
-.plano-marco{position:relative;overflow:hidden;height:clamp(150px,18vw,250px);border-radius:var(--radio-g);
-  background:#0c0f12;border:1px solid var(--borde-oscuro);touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}
-.plano-marco.agarrando{cursor:grabbing}
-.plano-tira{position:absolute;top:0;left:0;will-change:transform}
-.plano-tira.suave{transition:transform .55s cubic-bezier(.2,.7,.2,1)}
-.plano-tira img{display:block;width:100%;height:100%;max-width:none;pointer-events:none}
-.plano-rotulo{position:absolute;bottom:.55rem;margin-left:.55rem;padding:.22rem .55rem;border-radius:var(--radio);
-  background:rgba(11,14,18,.74);color:#e8eaed;font-size:.7rem;font-weight:600;white-space:nowrap;pointer-events:none}
-.plano-flecha{position:absolute;top:50%;z-index:3;transform:translateY(-50%);display:grid;place-items:center;
-  width:36px;height:36px;padding:0;border-radius:50%;cursor:pointer;border:1px solid rgba(255,255,255,.22);
-  background:rgba(11,14,18,.72);color:#fff;transition:opacity .15s,background .15s}
-.plano-flecha:hover{background:rgba(11,14,18,.92)}
-.plano-flecha:disabled{opacity:0;pointer-events:none}
-.plano-izq{left:.5rem}
-.plano-der{right:.5rem}
-
-.pin{position:absolute;z-index:1;transform:translate(-50%,-50%);display:block;padding:0;border:0;background:none;cursor:pointer}
-.pin::before{content:"";position:absolute;inset:-8px}
-.pin-n{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid #fff;
-  background:var(--naranja);color:var(--tinta);font-family:var(--titulo);font-size:.95rem;font-weight:700;line-height:1;
-  box-shadow:0 2px 8px rgba(0,0,0,.45);transition:transform .15s,background .15s}
-.pin-nombre{position:absolute;left:50%;top:calc(100% + .3rem);transform:translateX(-50%);padding:.2rem .5rem;
-  border-radius:var(--radio);background:rgba(11,14,18,.88);color:#fff;font-size:.74rem;font-weight:600;white-space:nowrap;
-  opacity:0;pointer-events:none;transition:opacity .15s}
-.pin:hover .pin-nombre,.pin:focus-visible .pin-nombre,.pin.activo .pin-nombre{opacity:1}
-/* Cerca de un borde del recuadro, el nombre se alinea para adentro y no se corta. */
-.pin.borde-izq .pin-nombre{left:-.2rem;transform:none}
-.pin.borde-der .pin-nombre{left:auto;right:-.2rem;transform:none}
-.pin.activo{z-index:2}
-.pin.activo .pin-n{background:#fff;border-color:var(--naranja);transform:scale(1.15)}
-
-@media (max-width:699px){
-  .recorrido-in{grid-template-columns:minmax(0,1fr);grid-template-areas:"cab" "paseo" "plano";grid-template-rows:auto;row-gap:1rem}
-  .paseo{justify-self:center;width:100%;max-width:480px}
-  .paseo-marco{aspect-ratio:1/1}
-}
 
 /* ══════ LLAMADA FINAL ═══════════════════════════════════════════════════ */
 .cierre{--foto:none;position:relative;background-color:var(--tinta-2);color:#fff;
@@ -728,6 +707,7 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
 .pie-abajo{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;align-items:center;
   margin-top:2.2rem;padding-top:1.2rem;border-top:1px solid var(--borde-oscuro);font-size:.8rem;color:#7f868f}
 .pie-abajo .legal{max-width:70ch}
+.pie-correo{overflow-wrap:anywhere}
 
 /* ══════ BOTÓN FLOTANTE ══════════════════════════════════════════════════ */
 .flotante{
@@ -759,6 +739,15 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
 .numero-txt span{font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--gris-2)}
 .numero-txt b{font-family:var(--titulo);font-size:1.25rem;letter-spacing:.01em}
 .numero-acciones{display:flex;flex-wrap:wrap;gap:.4rem;margin-left:auto}
+.otros-medios{display:grid;grid-template-columns:1fr;gap:.45rem;margin-top:.2rem}
+.otro-medio{display:flex;align-items:center;gap:.75rem;padding:.6rem .9rem;border:1px solid var(--borde);
+  text-decoration:none;transition:border-color .15s,background .15s}
+.otro-medio:hover{border-color:var(--naranja);background:var(--naranja-papel)}
+.otro-medio>.icono{width:1.25rem;height:1.25rem;color:var(--naranja)}
+.otro-medio>span{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.otro-medio>span span{font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--gris-2)}
+.otro-medio b{font-size:.92rem;font-weight:600;overflow-wrap:anywhere}
+.otro-medio em{margin-left:auto;font-style:normal;font-size:.74rem;font-weight:700;color:var(--naranja-osc);white-space:nowrap}
 
 .ficha-prod{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
 .ficha-prod-foto{background:var(--papel-2);display:grid;place-items:center;padding:1.5rem;border-right:1px solid var(--borde)}
@@ -794,7 +783,13 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
 .relacionado span:last-child{padding-inline:.55rem;font-size:.76rem;line-height:1.35;color:var(--gris)}
 
 /* ══════ PANTALLAS CHICAS ════════════════════════════════════════════════ */
+@media (max-width:1180px){
+  [data-ubicacion-corta]{display:none}
+  .tira-catalogo{white-space:nowrap;padding:0 .9rem}
+  .tira-links a{padding:0 .6rem;font-size:.8rem}
+}
 @media (max-width:1120px){
+  .equipos-grilla.fila{grid-auto-columns:calc((100% - 3px) / 3.6)}
   .megamenu-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .pie-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pasos{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.6rem}
@@ -830,9 +825,12 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .servicio-redes{gap:0}
   .servicio-redes a{display:grid;place-items:center;width:34px;height:var(--servicio)}
   /* En pantallas táctiles, cada enlace con altura cómoda para el dedo. */
-  [data-ubicacion-corta]{display:inline-flex;align-items:center;height:var(--servicio)}
+  [data-ubicacion-corta]{display:none}
   .indice-lista button,.mm-subs button{padding-block:.45rem}
-  .barra-tel{display:none}
+  .barra-tels{display:none}
+  .servicio-fijo,.servicio-correo{display:none}
+  .servicio-tels{display:inline-flex}
+  .servicio-tel{height:var(--servicio)}
   .tira{position:relative}
   .tira-in{gap:0}
   .tira-links{
@@ -854,6 +852,9 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
 /* Las tres categorías de a una: el cartel como franja, con el nombre impreso
    entero a la vista, y las subcategorías en columnas. */
 @media (max-width:760px){
+  .catalogo-cab,.rubros-cab{grid-template-columns:1fr}
+  .equipos-grilla.fila{grid-auto-columns:calc((100% - 2px) / 2.3)}
+  .foto-cab img{aspect-ratio:16/7}
   .indice{grid-template-columns:1fr}
   .indice-foto img{aspect-ratio:16/10}
   .indice-lista{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 .9rem}
@@ -871,6 +872,11 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   html{scroll-padding-top:calc(var(--barra) + var(--tira) + 14px)}
   .servicio-in{font-size:.72rem;justify-content:space-between}
   [data-ubicacion-corta],.servicio-barra .empuje,.barra-acciones{display:none}
+  /* Arriba de todo, los dos celulares a lo ancho: Magali y Marcelo. */
+  .servicio-barra .estado,.servicio-redes{display:none}
+  .servicio-in{justify-content:center}
+  .servicio-tels{width:100%;justify-content:space-around;gap:.6rem}
+  .servicio-tel{font-size:.74rem}
   .barra-in{flex-wrap:nowrap;padding-block:.45rem;gap:.6rem}
   .logo img{width:40px;height:40px}
   .logo-txt{display:none}
@@ -890,7 +896,7 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .megamenu-pie{margin-top:1rem}
 
   /* Secciones: menos aire arriba y abajo, títulos y bajadas algo más chicos. */
-  .catalogo,.rubros,.reparacion,.confianza,.opiniones,.visitanos,.recorrido{padding-block:2.2rem}
+  .catalogo,.rubros,.reparacion,.confianza,.opiniones,.visitanos{padding-block:2.2rem}
   .alquiler-in{padding-block:2.2rem}
   .titulo-seccion{font-size:1.75rem}
   .bajada{font-size:.94rem;line-height:1.55}
@@ -912,6 +918,10 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .ficha-hoy{padding-block:0 .8rem}
   .ficha-nums{padding-top:.8rem;gap:.55rem}
   .ficha-num-txt b{font-size:1.2rem}
+  .ficha-num-txt span{letter-spacing:.04em}
+  .ficha-otros{gap:.4rem}
+  .ficha-otros a{padding:.5rem .55rem;gap:.45rem}
+  .ficha-otros a>span span{font-size:.6rem;letter-spacing:.06em}
 
   /* Los tres servicios: ícono, título y flecha en un renglón, y el texto
      debajo a todo el ancho. La fila entera ya es el enlace: la flecha alcanza. */
@@ -963,7 +973,20 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .alquiler-in:has(> .alquiler-vacio:not([hidden])) .alquiler-cab{padding-bottom:0;border-bottom:0}
   .alquiler-vacio{padding:1.3rem 1rem}
   .alquiler-vacio h3{font-size:1rem}
-  .equipos{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .equipos-grilla{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  /* En el celular la fila asoma la tarjeta siguiente: se entiende que se desliza. */
+  .equipos-grilla.fila{grid-auto-columns:62%;margin-right:calc(-1 * clamp(1rem,3.5vw,2rem));border-right:0}
+  .equipos-flechas{display:none}
+  .solo-toque{display:inline}
+  .equipos-grupo+.equipos-grupo{margin-top:1.8rem}
+  .equipos-grupo-cab{margin-bottom:.75rem}
+  .equipos-grupo-cab p{font-size:.8rem}
+  .equipo h4{font-size:.88rem;line-height:1.3}
+  .equipo p{font-size:.78rem}
+  .equipo-carac li{font-size:.75rem}
+  .alquiler-cab .foto-local{margin-top:1rem}
+  .grupos{flex-wrap:nowrap;overflow-x:auto;margin-inline:calc(-1 * clamp(1rem,3.5vw,2rem));padding-inline:clamp(1rem,3.5vw,2rem);scrollbar-width:none}
+  .grupo-chip{flex:none}
   .equipo-cuerpo{padding:.75rem .7rem .8rem}
   .equipo .boton{align-self:stretch}
 
@@ -979,8 +1002,14 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .extra{padding:1.05rem 1rem 1.1rem}
   .extra h3{font-size:1.1rem;margin-bottom:.35rem}
   .extra p{font-size:.86rem;line-height:1.55;margin-bottom:.8rem}
+  .extra-foto{width:calc(100% + 2rem);margin:-1.05rem -1rem .9rem}
 
   /* Nosotros: el ícono al costado del título. */
+  .mosaico{grid-template-columns:1fr 1fr;gap:.5rem;margin-top:1.3rem}
+  .mosaico-alta{grid-row:auto}
+  .mosaico .foto-local:not(.mosaico-ancha) img{aspect-ratio:4/5}
+  .mosaico .mosaico-ancha{grid-column:1 / -1}
+  .foto-local figcaption{padding:1.2rem .6rem .45rem;font-size:.6rem;letter-spacing:.07em}
   .valores{grid-template-columns:1fr;margin-top:1.3rem}
   .valor{display:grid;grid-template-columns:22px minmax(0,1fr);column-gap:.75rem;padding:1rem 1rem 1.05rem}
   .valor-ico,.valor-ico svg{width:22px;height:22px}
@@ -994,11 +1023,6 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .resenas-estado:not([hidden]) ~ .resenas-acciones{margin-top:.8rem}
   .resenas-acciones .boton{flex:1 1 100%}
   .resenas{margin-top:1.2rem}
-
-  /* El local por dentro */
-  .plano-marco{height:150px}
-  .paseo-flecha{width:44px;height:44px}
-  .paseo-lugar b{font-size:1.05rem}
 
   /* Dónde estamos: los números con sus dos botones en la misma fila. */
   .visitanos-grid{margin-top:1.3rem;gap:1rem}
@@ -1017,6 +1041,17 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .ubi-acciones{margin-top:.9rem;gap:.5rem}
   .ubi-acciones .boton{flex:1 1 100%}
   .mapa{min-height:260px}
+  .contacto-accion{padding:.4rem .55rem;font-size:.7rem}
+  .contacto-txt b.contacto-correo{font-size:.84rem}
+  /* El correo es largo: el botón baja a su renglón y la dirección entra entera. */
+  .contacto-fila:has(.contacto-correo){flex-wrap:wrap;row-gap:.45rem}
+  .contacto-fila:has(.contacto-correo) .contacto-accion{margin-left:calc(1.3rem + .7rem)}
+  .contacto-txt b.contacto-correo{white-space:nowrap}
+  .otro-medio{padding:.55rem .7rem}
+  .otro-medio b{font-size:.84rem}
+  .otro-medio{flex-wrap:wrap;row-gap:.3rem}
+  .otro-medio b{overflow-wrap:normal;white-space:nowrap}
+  .ficha-num-txt span{font-size:.6rem}
 
   /* Llamada final y pie */
   .cierre-in{padding-block:1.8rem;gap:1rem}

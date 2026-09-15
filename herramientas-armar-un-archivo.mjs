@@ -1,7 +1,7 @@
 /**
  * Junta todo el sitio en un solo .html que se abre con doble clic:
- * estilos, scripts, logo, mapa, todas las fotos y el video del local
- * van incrustados.
+ * estilos, scripts, logo, mapa y las fotos del local y del alquiler van
+ * incrustados (las fotos de los productos del catálogo, no).
  *
  *   node herramientas-armar-un-archivo.mjs
  */
@@ -36,30 +36,16 @@ const fotos = {};
 for (const n of ["frente", "alquiler", "cat-explosion", "cat-electricas", "cat-manuales"]) {
   fotos[n] = await dataUri(`img/${n}.webp`);
 }
-for (const f of await readdir(P + "img/rubros")) {
-  if (f.endsWith(".webp")) fotos["rubros/" + f.replace(".webp", "")] = await dataUri("img/rubros/" + f);
+for (const carpeta of ["rubros", "fotos", "alq"]) {
+  for (const f of await readdir(P + "img/" + carpeta)) {
+    if (f.endsWith(".webp")) fotos[`${carpeta}/${f.replace(".webp", "")}`] = await dataUri(`img/${carpeta}/${f}`);
+  }
 }
 const tablaFotos = `globalThis.FOTOS = ${JSON.stringify(fotos)};`;
 
 const logo = await dataUri("img/logo.webp");
 const icono = await dataUri("img/logo-256.webp");
 const mapa = await dataUri("img/mapa.webp");
-const vistaGeneral = await dataUri("img/local/vista-general.webp");
-const parada1 = await dataUri("img/local/parada-1.webp");
-
-/* El video del local viaja en base64 y acá se vuelve a armar como blob.
-   Un blob se puede recorrer salteando de un punto a otro; una dirección
-   data: larguísima, en algunos navegadores, no. */
-const videoB64 = await base64("video/local.mp4");
-const puenteVideo = `<script>
-(() => {
-  const b64 = "${videoB64}";
-  const crudo = atob(b64);
-  const bytes = new Uint8Array(crudo.length);
-  for (let i = 0; i < crudo.length; i++) bytes[i] = crudo.charCodeAt(i);
-  globalThis.VIDEO_LOCAL = URL.createObjectURL(new Blob([bytes], { type: "video/mp4" }));
-})();
-</script>`;
 
 /* Ojo: en replace, un "$$" del código fuente se interpreta como "$".
    Por eso todos los reemplazos van con función, que no hace sustituciones. */
@@ -72,14 +58,12 @@ meter(/<script type="module" src="js\/resenas\.js"><\/script>/, "");
 html = html.replace(/src="img\/logo\.webp"/g, () => `src="${logo}"`);
 html = html.replace(/href="img\/logo-256\.webp"/, () => `href="${icono}"`);
 html = html.replace(/href="img\/logo\.webp"/, () => `href="${logo}"`);
-html = html.replace(/src="img\/local\/vista-general\.webp"/g, () => `src="${vistaGeneral}"`);
-html = html.replace(/poster="img\/local\/parada-1\.webp"/g, () => `poster="${parada1}"`);
-/* El mapa y el video los resuelve el JS con rutas desde la raíz del sitio:
-   acá se los deja resueltos antes de que el módulo arranque. */
+html = html.replace(/src="img\/fotos\/([a-z-]+)\.webp"/g, (_, n) => `src="${fotos["fotos/" + n]}"`);
+/* El mapa lo resuelve el JS con una ruta desde la raíz del sitio: acá se lo
+   deja resuelto antes de que el módulo arranque. */
 html = html.replace(/<\/style>/, () =>
-  `</style>\n<script>globalThis.MAPA_INCRUSTADO = ${JSON.stringify(mapa)};</script>\n${puenteVideo}`);
+  `</style>\n<script>globalThis.MAPA_INCRUSTADO = ${JSON.stringify(mapa)};</script>`);
 
 await writeFile("sitio-en-un-archivo.html", html);
 console.log("sitio-en-un-archivo.html:", Math.round(html.length / 1024), "KB");
 console.log("fotos incrustadas:", Object.keys(fotos).length + 4);
-console.log("video incrustado:", Math.round(videoB64.length / 1024), "KB en base64");

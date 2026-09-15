@@ -1,1 +1,1 @@
-Acá van las fotos de los equipos de alquiler: <id>.webp
+Fotos de los equipos de alquiler: <id>.webp, 800x600, fondo blanco.

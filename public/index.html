@@ -34,7 +34,8 @@
   "image": "https://herramienta-millan.vercel.app/img/logo.webp",
   "logo": "https://herramienta-millan.vercel.app/img/logo.webp",
   "description": "Ferretería y casa de herramientas: máquinas a explosión y eléctricas, bulones, pinturas, PVC, cemento y membranas. Alquiler de equipos y servicio de reparación.",
-  "telephone": ["+542644242212", "+5492645061440", "+5492646619688"],
+  "telephone": ["+5492645273909", "+5492644182730", "+542644242212"],
+  "email": "millanmariomarcelo@hotmail.com",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Mendoza Sur 2357",
@@ -78,6 +79,9 @@
     <span class="estado" data-estado><span class="punto" aria-hidden="true"></span><span data-estado-texto>Venta · Alquiler · Reparación</span></span>
     <span class="empuje" aria-hidden="true"></span>
     <a href="#visitanos" data-ubicacion-corta>Dónde estamos</a>
+    <span class="servicio-fijo" id="servicio-fijo"></span>
+    <span class="servicio-correo" id="servicio-correo"></span>
+    <span class="servicio-tels" id="servicio-tels"></span>
     <span class="servicio-redes" id="servicio-redes"></span>
   </div></div>
 
@@ -96,7 +100,7 @@
     </div>
 
     <div class="barra-acciones">
-      <a class="barra-tel" data-tel="0" href="#"><span></span><b></b></a>
+      <div class="barra-tels" id="barra-tels"></div>
       <button class="boton boton-wa boton-chico" type="button" data-consulta="general"><i class="wa"></i>WhatsApp</button>
     </div>
   </div></div>
@@ -116,7 +120,6 @@
       <a href="#reparacion">Reparación</a>
       <a href="#nosotros">Nosotros</a>
       <a href="#opiniones">Opiniones</a>
-      <a href="#recorrido">El local</a>
       <a href="#visitanos">Dónde estamos</a>
     </nav>
     <!-- Sólo en pantallas chicas: las secciones de la página. -->
@@ -220,6 +223,10 @@
       <h2 class="titulo-seccion">Catálogo de máquinas y herramientas</h2>
       <p class="bajada">Las máquinas y las herramientas de mano llevan catálogo completo: ficha, foto, modelo y código. Elegí una categoría en la lista y filtrá por tipo, o usá el buscador de arriba. Los demás rubros están más abajo.</p>
     </div>
+    <figure class="foto-local foto-cab">
+      <img src="img/fotos/generadores.webp" width="1440" height="1080" alt="Generadores, cajas de herramientas y escaleras de aluminio exhibidos junto a la vidriera del local" loading="lazy" decoding="async">
+      <figcaption>Generadores y cajas de herramientas en el salón</figcaption>
+    </figure>
   </div>
 
   <div class="catalogo-caja">
@@ -277,8 +284,14 @@
 <!-- ══════ OTROS RUBROS ══════ -->
 <section class="rubros" id="rubros"><div class="contenedor">
   <div class="rubros-cab">
-    <h2 class="titulo-seccion">Otros rubros que trabajamos</h2>
-    <p class="bajada">Estos rubros no llevan lista de productos: se resuelven mejor en el mostrador o por WhatsApp. Decinos la medida, el color o mandanos la foto de la pieza y te decimos si lo tenemos.</p>
+    <div>
+      <h2 class="titulo-seccion">Otros rubros que trabajamos</h2>
+      <p class="bajada">Estos rubros no llevan lista de productos: se resuelven mejor en el mostrador o por WhatsApp. Decinos la medida, el color o mandanos la foto de la pieza y te decimos si lo tenemos.</p>
+    </div>
+    <figure class="foto-local foto-cab foto-alta">
+      <img src="img/fotos/sanitarios.webp" width="1080" height="1440" alt="Rincón del local con sanitarios, estantes de mercadería y una escalera de madera" loading="lazy" decoding="async">
+      <figcaption>Sanitarios, estantes y escaleras</figcaption>
+    </figure>
   </div>
   <div class="rubros-grid" id="rubros-grid"></div>
 </div></section>
@@ -288,14 +301,18 @@
   <div class="alquiler-cab">
     <div>
       <h2 class="titulo-seccion">Alquiler de equipos</h2>
+      <figure class="foto-local foto-oscura">
+      <img src="img/fotos/vidriera-alquiler.webp" width="1440" height="1080" alt="Vidriera del local con los carteles de alquiler y reparación y motosierras exhibidas adelante" loading="lazy" decoding="async">
+      <figcaption>La vidriera de alquiler y reparación</figcaption>
+    </figure>
     </div>
     <div>
-      <p class="bajada">Contanos qué trabajo tenés que hacer y te decimos qué equipo te sirve, si está disponible y cómo son las condiciones. En las fichas no ponemos marca ni modelo porque el parque se renueva: lo importante es qué resuelve cada máquina.</p>
+      <p class="bajada">Contanos qué trabajo tenés que hacer y te decimos qué equipo te sirve, si está disponible y cómo son las condiciones. Tocá “Consultar” en cualquier máquina y nos escribís por WhatsApp con el pedido ya armado.</p>
       <button class="boton boton-wa" type="button" data-consulta="alquiler"><i class="wa"></i>Consultar disponibilidad</button>
     </div>
   </div>
 
-  <div class="grupos" id="grupos"></div>
+  <div class="grupos" id="grupos" role="group" aria-label="Categorías de alquiler"></div>
   <div class="equipos" id="equipos"></div>
 
   <div class="alquiler-vacio" id="alquiler-vacio" hidden>
@@ -304,7 +321,7 @@
     <button class="boton boton-wa" type="button" data-consulta="alquiler"><i class="wa"></i>Consultar por WhatsApp</button>
   </div>
 
-  <p class="aclaracion">Las condiciones, la disponibilidad y el precio del alquiler te los pasamos al momento por WhatsApp o por teléfono.</p>
+  <p class="aclaracion">Las fotos muestran el tipo de máquina y son ilustrativas: la marca y el modelo del equipo que alquilamos pueden variar. Las condiciones, la disponibilidad y el precio del alquiler te los pasamos al momento por WhatsApp o por teléfono.</p>
 </div></section>
 
 <!-- ══════ REPARACIÓN ══════ -->
@@ -328,6 +345,7 @@
 
   <div class="reparacion-extra">
     <article class="extra">
+      <img class="extra-foto" src="img/fotos/repuestos.webp" width="1440" height="1080" alt="Exhibidor con cadenas y espadas de motosierra, cabezales de desmalezadora y accesorios" loading="lazy" decoding="async">
       <h3>Repuestos y consumibles</h3>
       <p>Cadenas, espadas, filtros, bujías, discos, mechas, tanza y todo lo que se gasta con el uso. Traé la pieza usada o el modelo de la máquina y te decimos si lo tenemos o lo pedimos.</p>
       <button class="boton boton-linea boton-chico" type="button" data-consulta-rubro="repuestos">Consultar por un repuesto
@@ -335,6 +353,7 @@
       </button>
     </article>
     <article class="extra">
+      <img class="extra-foto" src="img/fotos/maquinas-mostrador.webp" width="1280" height="960" alt="Motosierras en exhibición sobre el mostrador del local, con pinturas debajo" loading="lazy" decoding="async">
       <h3>Garantía y respaldo</h3>
       <p>Las máquinas que vendemos tienen la garantía del fabricante y nosotros te ayudamos a hacerla valer. Guardá la factura y escribinos: nos ocupamos del trámite con la marca.</p>
       <button class="boton boton-linea boton-chico" type="button" data-consulta="reparacion">Consultar por una garantía
@@ -348,6 +367,21 @@
 <section class="confianza" id="nosotros"><div class="contenedor">
   <h2 class="titulo-seccion">Un mostrador que conoce el oficio</h2>
   <p class="bajada">Somos una ferretería de barrio con mentalidad de casa de máquinas: primero escuchamos el trabajo que tenés que hacer y recién después te recomendamos la herramienta.</p>
+
+  <div class="mosaico">
+    <figure class="foto-local mosaico-alta">
+      <img src="img/fotos/salon-estanteria.webp" width="1080" height="1440" alt="Estantería del salón con herramientas, escaleras de aluminio y máquinas en el piso" loading="lazy" decoding="async">
+      <figcaption>La estantería del salón</figcaption>
+    </figure>
+    <figure class="foto-local">
+      <img src="img/fotos/jardin.webp" width="1440" height="1080" alt="Pared de jardín con bordeadoras colgadas, cortadoras de césped y fumigadora" loading="lazy" decoding="async">
+      <figcaption>Bordeadoras y cortadoras de césped</figcaption>
+    </figure>
+    <figure class="foto-local mosaico-ancha">
+      <img src="img/fotos/salon-mostrador.webp" width="1600" height="370" alt="Vista panorámica del salón de la ferretería tomada desde el mostrador" loading="lazy" decoding="async">
+      <figcaption>El salón, desde el mostrador</figcaption>
+    </figure>
+  </div>
 
   <div class="valores">
     <article class="valor">
@@ -368,7 +402,7 @@
     <article class="valor">
       <span class="valor-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12.6 3.4 4.8 12h5.4l-1.2 8.6L19.2 12h-5.4z"/></svg></span>
       <h3>Respuesta rápida</h3>
-      <p>Dos números de WhatsApp atendidos por Magalí y por Marcelo. Mandá la foto de la pieza o el modelo de la máquina y te contestamos.</p>
+      <p>Magali y Marcelo atienden por WhatsApp y por llamada, y también tenés el teléfono fijo y el correo. Mandá la foto de la pieza o el modelo de la máquina y te contestamos.</p>
     </article>
   </div>
 </div></section>
@@ -389,51 +423,10 @@
   <div class="resenas-acciones" id="resenas-acciones"></div>
 </div></section>
 
-<!-- ══════ EL LOCAL POR DENTRO ══════ -->
-<section class="recorrido" id="recorrido"><div class="contenedor recorrido-in">
-  <div class="recorrido-cab">
-    <h2 class="titulo-seccion">Recorré el local por dentro</h2>
-    <p class="bajada">Caminá por el salón con las flechas: cada parada es un rincón real de la ferretería. Para mirar algo de cerca, tocá + o usá dos dedos. En la vista general, arrastrá para mirar alrededor y tocá un punto para ir directo a esa zona.</p>
-  </div>
-
-  <!-- El paseo: el video del salón, parada por parada. -->
-  <div class="paseo" id="paseo">
-    <div class="paseo-marco" id="paseo-marco" tabindex="0" aria-label="Recorrido en video por el local. Con las flechas del teclado avanzás o retrocedés.">
-      <div class="paseo-capa" id="paseo-capa">
-        <video id="paseo-video" muted playsinline preload="none" poster="img/local/parada-1.webp" width="464" height="832" disablepictureinpicture disableremoteplayback tabindex="-1"></video>
-      </div>
-      <div class="paseo-zoom">
-        <button class="paseo-btn" type="button" id="paseo-mas" aria-label="Acercar la imagen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <button class="paseo-btn" type="button" id="paseo-menos" aria-label="Alejar la imagen" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
-      </div>
-      <p class="paseo-aviso" id="paseo-aviso" hidden>Cargando el recorrido…</p>
-      <div class="paseo-barra">
-        <button class="paseo-flecha" type="button" id="paseo-atras" aria-label="Retroceder a la parada anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <p class="paseo-lugar" aria-live="polite"><span id="paseo-n">1 de 10</span><b id="paseo-nombre">Vitrina de la entrada</b></p>
-        <button class="paseo-flecha paseo-adelante" type="button" id="paseo-adelante" aria-label="Avanzar a la próxima parada"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- La vista general: las dos panorámicas del salón, una al lado de la otra. -->
-  <figure class="plano" id="plano">
-    <div class="plano-marco" id="plano-marco">
-      <div class="plano-tira" id="plano-tira">
-        <img src="img/local/vista-general.webp" width="3206" height="308" decoding="async" draggable="false"
-             alt="Vista general del salón de la ferretería: primero desde la entrada, mirando el mostrador; después desde el mostrador, mirando la pared de herramientas de mano y la puerta">
-        <span class="plano-rotulo" style="left:0">Desde la entrada</span>
-        <span class="plano-rotulo" style="left:50.09%">Desde el mostrador</span>
-      </div>
-      <button class="plano-flecha plano-izq" type="button" id="plano-izq" aria-label="Mirar hacia la izquierda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-      <button class="plano-flecha plano-der" type="button" id="plano-der" aria-label="Mirar hacia la derecha"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-    </div>
-  </figure>
-</div></section>
-
 <!-- ══════ DÓNDE ESTAMOS ══════ -->
 <section class="visitanos" id="visitanos"><div class="contenedor">
   <h2 class="titulo-seccion">Pasá por el local</h2>
-  <p class="bajada">La mayoría de las consultas se resuelven mejor con la pieza en la mano. Y si no podés venir, escribinos: los dos números atienden por WhatsApp y por llamada.</p>
+  <p class="bajada">La mayoría de las consultas se resuelven mejor con la pieza en la mano. Y si no podés venir, escribinos: Magali y Marcelo atienden por WhatsApp y por llamada, y también podés llamar al fijo o mandar un correo.</p>
 
   <div class="visitanos-grid">
     <div>
@@ -453,7 +446,13 @@
       </dl>
       <div class="ubi-acciones" id="ubi-acciones"></div>
     </div>
-    <div class="mapa" id="mapa"></div>
+    <div class="visitanos-der">
+      <figure class="foto-local foto-frente">
+      <img src="img/fotos/frente-dia.webp" width="1440" height="1080" alt="Frente del local de día, en la esquina, con máquinas exhibidas en la vereda" loading="lazy" decoding="async">
+      <figcaption>Así nos encontrás</figcaption>
+    </figure>
+      <div class="mapa" id="mapa"></div>
+    </div>
   </div>
 </div></section>
 
@@ -511,10 +510,10 @@
   <div class="cartel-fondo" data-cerrar-elegir></div>
   <div class="cartel-hoja cartel-chico" role="dialog" aria-modal="true" aria-labelledby="elegir-titulo">
     <button class="cartel-x" data-cerrar-elegir aria-label="Cerrar">&times;</button>
-    <h3 id="elegir-titulo">Elegí un número</h3>
+    <h3 id="elegir-titulo">¿Cómo nos contactás?</h3>
     <p class="detalle" id="elegir-detalle"></p>
     <div id="elegir-numeros"></div>
-    <p class="pista">Los dos números atienden por WhatsApp y por llamada.</p>
+    <p class="pista">Magali y Marcelo atienden por WhatsApp y por llamada. El fijo es sólo para llamadas.</p>
   </div>
 </div>
 

@@ -1,6 +1,8 @@
-Fotos de fondo del sitio (opcionales, se activan solas al subirlas):
-  hero.webp      detras de la ficha de atencion de la portada
+Fotos del sitio:
+  frente.webp    fondo de la portada
   alquiler.webp  detras de la banda oscura de Alquiler
-  local.webp     detras de la banda final
+  fotos/         fotos reales del local repartidas por la pagina
+  alq/           una foto por equipo de alquiler (800x600)
+  rubros/        carteles de los rubros
 
 logo.webp y logo-256.webp ya estan cargados.
