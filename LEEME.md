@@ -111,8 +111,10 @@ En `public/js/alquiler.js`, dentro de `ALQUILER`. Hay 36 equipos cargados en
 9 rubros (`GRUPOS`), ordenados por el tipo de trabajo y no por si la máquina es
 a explosión o eléctrica: demolición, hormigón, compactación, corte, perforación,
 jardinería, poda y riego, energía y aire comprimido, soldadura y termofusión, y
-elevación y traslado. Cada rubro se muestra en su propio panel, con sus equipos
-en cuadros. Cada uno lleva nombre, descripción, características,
+elevación y traslado. La sección muestra primero una tarjeta por rubro (con
+la foto de la máquina indicada en `foto`); al tocarla aparecen sólo los equipos
+de ese rubro, con un botón para volver a las categorías. Cada rubro tiene su
+enlace directo: `#alquiler-corte`, `#alquiler-jardineria`, etc. Cada uno lleva nombre, descripción, características,
 para qué sirve y su foto en `public/img/alq/<id>.webp`. El botón "Consultar"
 abre la ventana con Magali y Marcelo (WhatsApp y llamada), el fijo y el correo,
 con el mensaje ya escrito.
