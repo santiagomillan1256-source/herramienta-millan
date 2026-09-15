@@ -39,25 +39,28 @@ En `public/js/filas.js`, dentro de la categoría que corresponda:
 
 ```js
 explosion: [
-  "MS250|Motosierra 45 cc espada 18\"|Stihl|MS-250|motosierras||45 cc · Espada 18\" · 2 tiempos",
+  "MS250|Motosierra 45 cc espada 18\"|Stihl|MS-250|motosierras||45 cc · Espada 18\" · 2 tiempos|",
 ],
 ```
 
 El orden de los campos es:
 
 ```
-codigo | nombre | marca | modelo | subcategoria | foto | caracteristicas
+codigo | nombre | marca | modelo | subcategoria | foto | caracteristicas | medidas
 ```
 
 - **codigo** — el código interno. También nombra la foto.
 - **marca** — se puede dejar vacío. Cuando hay dos o más marcas cargadas,
   aparece solo el filtro por marca.
-- **modelo** — si va vacío, se usa el código.
+- **modelo** — se puede dejar vacío.
 - **subcategoria** — una de las claves `sub` de esa categoría, en `datos.js`.
-- **foto** — dejalo **vacío** si la foto está en `public/img/p/`; poné **`-`** si
-  todavía no hay foto. Con `-` la tarjeta dibuja una herramienta en lugar de
+- **foto** — el nombre del archivo en `public/img/p/`; dejalo **vacío** si se llama
+  `<categoria>-<codigo>.webp`; poné **`-`** si todavía no hay foto. Con `-` la tarjeta dibuja una herramienta en lugar de
   mostrar una imagen rota.
 - **caracteristicas** — texto corto, con las partes separadas por ` · `.
+- **medidas** — cuando el mismo producto viene en varias medidas, cada una con
+  su código: `codigo=medida;codigo=medida`. La ficha las muestra en una tabla.
+  Si no, queda vacío.
 
 La foto de ese producto va en `public/img/p/explosion-MS250.webp`
 (`img/p/<categoria>-<codigo>.webp`).
@@ -72,7 +75,7 @@ configura en su propia lista dentro de `public/js/datos.js`:
 
 ### 1. `CATEGORIAS` — las que llevan catálogo
 
-Sólo **Máquinas a explosión** y **Máquinas eléctricas**. Son las que tienen
+**Máquinas a explosión**, **Máquinas eléctricas** y **Herramientas de mano**. Son las que tienen
 riel, subcategorías, buscador, ficha de producto con foto, modelo y código.
 Los productos van en `filas.js`.
 
@@ -84,7 +87,7 @@ Los productos van en `filas.js`.
 
 ### 2. `RUBROS` — las secciones informativas
 
-**Bulones, Pinturas, PVC, Materiales, Herramientas manuales y Repuestos.**
+**Bulones, Pinturas, PVC, Materiales y Repuestos.**
 No llevan lista de productos: cada uno es una tarjeta con foto de fondo,
 nombre, un texto corto y un botón de **Consultar por WhatsApp**.
 
@@ -166,9 +169,10 @@ aparece sola: no hay que tocar código.
 |---|---|
 | `public/img/frente.webp` | **el fondo de la portada** y el de la banda final |
 | `public/img/alquiler.webp` | detrás de la banda oscura de Alquiler |
-| `public/img/cat-<id>.webp` | la foto de cada categoría del catálogo (`cat-explosion`, `cat-electricas`) |
-| `public/img/rubros/<id>.webp` | **la imagen de cada tarjeta de rubro** (bulones, pinturas, pvc, materiales, manuales, repuestos) |
-| `public/img/salon.webp` | **la panorámica del salón**, el recorrido por el local |
+| `public/img/cat-<id>.webp` | el cartel de cada categoría del catálogo (`cat-explosion`, `cat-electricas`, `cat-manuales`), de 1000 × 914 |
+| `public/img/rubros/<id>.webp` | **la imagen de cada tarjeta de rubro** (bulones, pinturas, pvc, materiales, repuestos) |
+| `public/img/local/vista-general.webp` | **la vista general del salón**, en la sección El local |
+| `public/img/local/parada-1.webp` | el primer cuadro del paseo, que se ve mientras carga el video |
 | `public/img/p/<categoria>-<codigo>.webp` | una por producto |
 | `public/img/alq/<id>.webp` | una por equipo de alquiler |
 
@@ -188,49 +192,36 @@ correcto, aparece sola. Lo mismo con las categorías del catálogo.
 Si alguna vez hay que rehacerlo, está el script que lo arma a partir de las
 coordenadas de la ficha de Google.
 
-## El recorrido por el local
+## El local por dentro
 
-La sección **El local** no muestra un video: muestra **una sola imagen
-panorámica del salón entero** (`public/img/salon.webp`, 3336 × 666, 185 KB).
-Se arrastra para girar la vista y se puede acercar con la rueda, con dos dedos
-o con los botones + y −. El video en movimiento es una segunda capa, detrás del
-botón "Ver en movimiento", y **no se descarga hasta que alguien lo pide**.
+La sección **El local** tiene dos piezas que se mueven juntas:
 
-### De dónde sale la panorámica
+- **El paseo** (`public/video/local.mp4`, 464 × 832, 6 MB): el video del salón,
+  que se recorre **parada por parada** con las flechas. Al avanzar, el video
+  camina hasta la parada siguiente y se detiene en su cuadro exacto; al
+  retroceder o saltar lejos, hace un fundido corto. Se acerca con + y −, con
+  la rueda o con dos dedos, y acercado se arrastra para mirar el detalle. En el
+  celular, deslizar de costado también cambia de parada. El video se empieza a
+  bajar recién cuando la sección está cerca.
+- **La vista general** (`public/img/local/vista-general.webp`): las dos
+  panorámicas del salón, una desde la entrada y otra desde el mostrador, en una
+  tira que se arrastra. Cada parada es un punto: tocarlo lleva el paseo hasta ahí.
 
-El original es un video de 832 × 464 en el que la cámara barre el salón de
-izquierda a derecha. La panorámica se armó con **slit-scan**: de cada uno de
-los 583 cuadros se toma nada más que una tira de su franja central —la parte
-donde el lente deforma menos— y las tiras se pegan una al lado de la otra.
+Las paradas están en `PARADAS`, en `public/js/datos.js`: el nombre, el segundo
+del video donde se detiene y dónde va su punto en la vista general.
 
-Cada columna de la panorámica viene de **un solo cuadro**, así que conserva
-exactamente la nitidez del original; no hay promedios ni estirado. Se probó
-antes el camino de apilar cuadros para ganar resolución, y salió **peor**: con
-paralaje y distorsión de lente los cuadros no se superponen de forma perfecta y
-el promedio termina borroneando.
+### Cómo se prepararon los archivos
 
-El corrimiento de cada cuadro se mide por correlación cruzada de perfiles 1D
-(las columnas para el movimiento horizontal, las filas para el vertical), con
-el pico interpolado para llegar al subpíxel. En este video el paneo resultó
-monótono, sin retrocesos, con una confianza de correlación de 0,996.
+Las panorámicas originales traían bordes negros arriba y abajo (la parte que el
+celular no llegó a cubrir al girar): se recortó a la franja que está completa en
+todo el ancho, se afiló apenas y se pegaron las dos en una sola tira.
 
-Los scripts quedaron fuera del repositorio porque se usan una sola vez. Si hay
-que rehacer la panorámica con otro video, el procedimiento es: medir el
-corrimiento cuadro a cuadro, repartir las columnas de salida entre los cuadros,
-muestrear cada una con interpolación bilineal, recortar el rectángulo que quede
-cubierto en todas las columnas y recién ahí agrandar al doble y afilar.
-
-### El video en movimiento
+El video se limpió de grano, se pasó a 24 cuadros por segundo con un cuadro
+clave por segundo (para que salte rápido a cada parada) y se le sacó el audio:
 
 ```bash
-ffmpeg -i nuevo.mp4 -an   -vf "nlmeans=s=2.2:p=5:r=11,scale=1248:696:flags=lanczos,unsharp=5:5:0.9:5:5:0.0"   -r 24 -c:v libx264 -crf 21 -g 12 -keyint_min 12 -sc_threshold 0   -pix_fmt yuv420p -movflags +faststart public/video/recorrido.mp4
+ffmpeg -i original.mp4 -an -vf "hqdn3d=2.5:2.5:7:7,fps=24" -c:v libx264 -preset slow -tune film -crf 28 -g 24 -keyint_min 24 -sc_threshold 0 -pix_fmt yuv420p -movflags +faststart public/video/local.mp4
 ```
-
-Dos cosas importan acá. El `-g 12` pone cuadros clave cada medio segundo: con
-eso el arrastre responde al toque, y con cuadros clave cada varios segundos se
-arrastra a los saltos. Y `nlmeans` limpia el grano mejor que `hqdn3d`
-conservando el detalle: al mismo CRF el archivo salió 500 KB más chico y se ve
-más limpio.
 
 El servidor de prueba responde pedidos por rango, que es lo que necesita el
 `<video>` para saltar de un punto a otro sin bajarlo entero. Vercel ya lo hace.

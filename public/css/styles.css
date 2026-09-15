@@ -321,38 +321,30 @@ li{list-style:none}
 .indice-intro{padding-bottom:1.2rem;margin-bottom:1.4rem;border-bottom:1px solid var(--borde)}
 .indice-intro h3{font-size:1.45rem;text-transform:uppercase;margin-bottom:.4rem}
 .indice-intro p{color:var(--gris);font-size:.92rem;max-width:70ch}
-.indice{display:grid;gap:1.4rem;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
+.indice{display:grid;gap:1.1rem;grid-template-columns:repeat(3,minmax(0,1fr))}
 
-/* Cada categoría con catálogo se presenta con una foto real del local y,
-   debajo, la lista de subcategorías. */
+/* Cada categoría se presenta con su cartel entero —trae el nombre impreso,
+   así que no se recorta ni se tapa— y debajo el nombre y las subcategorías. */
 .indice-bloque{display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--borde);
   border-radius:var(--radio-g);background:var(--blanco);transition:box-shadow .18s,border-color .18s}
 .indice-bloque:hover{border-color:var(--borde-fuerte);box-shadow:0 10px 26px rgba(21,24,28,.09)}
 
-.indice-foto{position:relative;display:block;line-height:0;background:var(--tinta);overflow:hidden}
-.indice-foto img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;
+.indice-foto{display:block;width:100%;padding:0;border:0;line-height:0;background:var(--tinta);overflow:hidden;cursor:pointer}
+.indice-foto img{width:100%;height:auto;display:block;aspect-ratio:1000/914;object-fit:cover;object-position:top;
   transition:transform .5s ease}
-.indice-bloque:hover .indice-foto img{transform:scale(1.035)}
-.indice-foto::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(15,18,22,.1) 0%,rgba(15,18,22,.55) 58%,rgba(15,18,22,.9) 100%)}
-.indice-foto h4{position:absolute;left:1rem;right:1rem;bottom:.8rem;z-index:1;line-height:1.1;
-  display:flex;align-items:center;gap:.55rem;color:#fff;
-  font-size:clamp(1.25rem,2.2vw,1.6rem);text-transform:uppercase;text-shadow:0 2px 12px rgba(0,0,0,.55)}
-.indice-foto .indice-ico{display:grid;place-items:center;width:26px;height:26px;color:var(--naranja-claro);flex:none}
-.indice-foto .indice-ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.indice-bloque:hover .indice-foto img{transform:scale(1.03)}
+.indice-nombre{display:flex;align-items:center;gap:.5rem;margin:0 1rem;padding:.85rem 0 .5rem;
+  border-bottom:2px solid var(--naranja);font-size:clamp(1.1rem,1.5vw,1.3rem);text-transform:uppercase;line-height:1.1}
+.indice-nombre .indice-ico{display:grid;place-items:center;width:22px;height:22px;color:var(--naranja);flex:none}
+.indice-nombre .indice-ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 
-/* Sin foto la ficha no se rompe: el título vuelve arriba, sobre la línea naranja. */
-.indice-bloque.sin-foto .indice-foto{aspect-ratio:auto;background:none;padding:1rem 1.1rem 0}
-.indice-bloque.sin-foto .indice-foto img,
-.indice-bloque.sin-foto .indice-foto::after{display:none}
-.indice-bloque.sin-foto .indice-foto h4{position:static;color:var(--tinta);text-shadow:none;
-  padding-bottom:.45rem;border-bottom:2px solid var(--naranja)}
-.indice-bloque.sin-foto .indice-foto .indice-ico{color:var(--naranja)}
+/* Sin foto la ficha no se rompe: queda el nombre sobre la línea naranja. */
+.indice-bloque.sin-foto .indice-foto{display:none}
 
-.indice-lista{display:flex;flex-direction:column;gap:.05rem;padding:.9rem 1.1rem 1.1rem}
-.indice-bloque button{border:0;background:none;padding:.24rem 0;text-align:left;cursor:pointer;
+.indice-lista{display:flex;flex-direction:column;gap:.05rem;padding:.6rem 1rem 1rem}
+.indice-lista button{border:0;background:none;padding:.24rem 0;text-align:left;cursor:pointer;
   font-size:.86rem;color:var(--gris);line-height:1.45}
-.indice-bloque button:hover{color:var(--naranja);text-decoration:underline}
+.indice-lista button:hover{color:var(--naranja);text-decoration:underline}
 
 /* Barra de la categoría abierta */
 .panel-cab{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1rem;
@@ -416,7 +408,9 @@ li{list-style:none}
 
 /* ══════ OTROS RUBROS ═════════════════════════════════════════════════════ */
 .rubros{background:var(--papel);padding-block:clamp(2.6rem,6vw,4.4rem);border-bottom:1px solid var(--borde)}
-.rubros-grid{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));margin-top:2.2rem}
+/* Con cinco rubros, el renglón que queda incompleto va centrado, sin hueco al costado. */
+.rubros-grid{--col:3;--sep:1.1rem;display:flex;flex-wrap:wrap;justify-content:center;gap:var(--sep);margin-top:2.2rem}
+.rubros-grid>.rubro{flex:0 1 calc((100% - (var(--col) - 1) * var(--sep)) / var(--col))}
 
 /* Cada rubro es una tarjeta de dos pisos: arriba la foto entera del rubro,
    abajo el texto y el botón. La foto no se recorta: el cartel del rubro que
@@ -616,87 +610,95 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
 .mapa-calle{font-family:var(--titulo);font-size:1.3rem;letter-spacing:.01em}
 .mapa-pie span:last-child{font-size:.82rem;color:#ccd2d9}
 
-/* ══════ RECORRIDO POR EL LOCAL ══════════════════════════════════════════ */
-/* El salón entero está en una sola imagen panorámica, armada a partir del
-   video: cada columna de esa imagen sale de un cuadro distinto, tomada de su
-   franja central. Arrastrar mueve la vista; la rueda o dos dedos acercan.
-   El video en movimiento es la segunda capa y se baja sólo si lo piden. */
+/* ══════ EL LOCAL POR DENTRO ═════════════════════════════════════════════ */
+/* A la derecha, el paseo: el video del salón, que se recorre parada por
+   parada. A la izquierda, abajo, la vista general: las dos panorámicas del
+   salón en una tira con un punto por parada. */
 .recorrido{position:relative;background:linear-gradient(180deg,#12161b,#1b2129);color:#e8eaed;
   padding-block:clamp(2.8rem,6vw,4.6rem);border-top:1px solid var(--borde-oscuro)}
 .recorrido .titulo-seccion{color:#fff}
 .recorrido .bajada{color:#b3b9c0}
-.recorrido-cab{max-width:72ch;margin-bottom:1.8rem}
+/* El texto y la vista general quedan centrados en altura al lado del paseo. */
+.recorrido-in{display:grid;grid-template-columns:minmax(0,1fr) clamp(290px,31vw,400px);
+  grid-template-areas:". paseo" "cab paseo" "plano paseo" ". paseo";grid-template-rows:1fr auto auto 1fr;
+  column-gap:clamp(1.6rem,4vw,3.2rem);row-gap:1.6rem}
+.recorrido-cab{grid-area:cab;max-width:60ch}
+.paseo{grid-area:paseo;position:relative;min-width:0}
+.plano{grid-area:plano;min-width:0;margin:0}
 
-.visor{position:relative;margin:0}
-.visor-marco{position:relative;overflow:hidden;border-radius:var(--radio-g);background:#0c0f12;
-  border:1px solid var(--borde-oscuro);box-shadow:0 22px 60px rgba(0,0,0,.5);
-  aspect-ratio:1000/360;touch-action:pan-y;user-select:none;-webkit-user-select:none;
-  cursor:grab}
-.visor.agarrando .visor-marco{cursor:grabbing}
-.visor-marco:fullscreen{aspect-ratio:auto;width:100%;height:100%;border-radius:0;border:0}
+.paseo-btn svg,.paseo-flecha svg,.plano-flecha svg{width:18px;height:18px;fill:none;stroke:currentColor;
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
-/* La panorámica se mueve con transform: es lo único que el navegador acelera
-   de verdad, así que el arrastre no se entrecorta ni en un celular viejo. */
-.visor-pano{position:absolute;top:0;left:0;width:auto;height:auto;max-width:none;
-  transform-origin:0 0;will-change:transform;display:block}
-.visor-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
-  opacity:0;pointer-events:none;transition:opacity .4s}
-.visor.video .visor-video{opacity:1}
-.visor.video .visor-pano{opacity:0;transition:opacity .4s}
+/* El paseo */
+.paseo-marco{position:relative;overflow:hidden;aspect-ratio:3/4;border-radius:var(--radio-g);background:#0c0f12;
+  border:1px solid var(--borde-oscuro);box-shadow:0 22px 60px rgba(0,0,0,.5);touch-action:pan-y;
+  user-select:none;-webkit-user-select:none;cursor:grab}
+.paseo-marco:focus-visible{outline:2px solid var(--naranja-claro);outline-offset:3px}
+.paseo.acercado .paseo-marco{touch-action:none}
+.paseo.agarrando .paseo-marco{cursor:grabbing}
+/* La imagen se mueve y se acerca con transform, que el navegador acelera. */
+.paseo-capa{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;transition:opacity .16s}
+.paseo-capa.suave{transition:transform .32s cubic-bezier(.2,.7,.2,1),opacity .16s}
+.paseo.fundido .paseo-capa{opacity:0}
+.paseo-capa video{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}
 
-.visor-cargando{position:absolute;inset:0;z-index:3;display:none;place-items:center;
-  background:rgba(11,14,18,.72);color:#fff;font-size:.86rem;letter-spacing:.08em;text-transform:uppercase}
-.visor.cargando .visor-cargando{display:grid}
+.paseo-zoom{position:absolute;top:.7rem;right:.7rem;z-index:2;display:flex;flex-direction:column;gap:.4rem}
+.paseo-btn{display:grid;place-items:center;width:38px;height:38px;padding:0;border-radius:50%;cursor:pointer;
+  border:1px solid rgba(255,255,255,.2);background:rgba(11,14,18,.62);color:#fff;transition:background .15s,opacity .15s}
+.paseo-btn:hover{background:rgba(11,14,18,.88)}
+.paseo-btn:disabled{opacity:.3;cursor:default}
 
-/* Panel de control, abajo, sobre la imagen. */
-.visor-hud{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;flex-direction:column;
-  gap:.5rem;padding:2.6rem clamp(.7rem,1.8vw,1.1rem) clamp(.65rem,1.4vw,.9rem);
-  background:linear-gradient(180deg,rgba(11,14,18,0),rgba(11,14,18,.88))}
-.visor-pista{align-self:center;padding:.3rem .8rem;border-radius:999px;font-size:.72rem;
-  letter-spacing:.11em;text-transform:uppercase;color:#fff;background:rgba(11,14,18,.6);
-  border:1px solid var(--borde-oscuro);transition:opacity .5s}
-.visor.movido .visor-pista{opacity:0;pointer-events:none}
+.paseo-barra{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:center;gap:.6rem;
+  padding:2.6rem .75rem .75rem;background:linear-gradient(180deg,rgba(11,14,18,0),rgba(11,14,18,.88));pointer-events:none}
+.paseo-flecha{flex:none;display:grid;place-items:center;width:46px;height:46px;padding:0;border-radius:50%;cursor:pointer;
+  pointer-events:auto;border:1px solid rgba(255,255,255,.24);background:rgba(11,14,18,.62);color:#fff;
+  transition:background .15s,border-color .15s}
+.paseo-flecha:hover{background:rgba(11,14,18,.9);border-color:#fff}
+.paseo-adelante{background:var(--naranja);border-color:var(--naranja);color:var(--tinta)}
+.paseo-adelante:hover{background:var(--naranja-claro);border-color:var(--naranja-claro)}
+.paseo-lugar{flex:1;min-width:0;display:flex;flex-direction:column-reverse;align-items:center;gap:.15rem;
+  margin:0;text-align:center;line-height:1.1}
+.paseo-lugar b{font-family:var(--titulo);font-size:1.2rem;font-weight:700;text-transform:uppercase;color:#fff;text-wrap:balance}
+.paseo-lugar span{font-size:.7rem;color:#aeb5bd;font-variant-numeric:tabular-nums}
+.paseo-aviso{position:absolute;left:50%;top:50%;z-index:3;transform:translate(-50%,-50%);max-width:82%;margin:0;
+  padding:.5rem .95rem;border-radius:var(--radio);background:rgba(11,14,18,.86);color:#fff;font-size:.82rem;text-align:center}
 
-.visor-fila{display:flex;align-items:center;gap:.5rem}
-.visor-rango{flex:1;min-width:0;appearance:none;-webkit-appearance:none;height:22px;background:none;cursor:pointer}
-.visor-rango::-webkit-slider-runnable-track{height:4px;border-radius:2px;
-  background:linear-gradient(90deg,var(--naranja) var(--avance,0%),rgba(255,255,255,.28) var(--avance,0%))}
-.visor-rango::-moz-range-track{height:4px;border-radius:2px;background:rgba(255,255,255,.28)}
-.visor-rango::-moz-range-progress{height:4px;border-radius:2px;background:var(--naranja)}
-.visor-rango::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-6px;
-  border-radius:50%;background:#fff;border:3px solid var(--naranja);box-shadow:0 2px 8px rgba(0,0,0,.5)}
-.visor-rango::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;
-  border:3px solid var(--naranja);box-shadow:0 2px 8px rgba(0,0,0,.5)}
-.visor-rango:focus-visible{outline:2px solid var(--naranja-claro);outline-offset:4px;border-radius:4px}
+/* La vista general */
+.plano-marco{position:relative;overflow:hidden;height:clamp(150px,18vw,250px);border-radius:var(--radio-g);
+  background:#0c0f12;border:1px solid var(--borde-oscuro);touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}
+.plano-marco.agarrando{cursor:grabbing}
+.plano-tira{position:absolute;top:0;left:0;will-change:transform}
+.plano-tira.suave{transition:transform .55s cubic-bezier(.2,.7,.2,1)}
+.plano-tira img{display:block;width:100%;height:100%;max-width:none;pointer-events:none}
+.plano-rotulo{position:absolute;bottom:.55rem;margin-left:.55rem;padding:.22rem .55rem;border-radius:var(--radio);
+  background:rgba(11,14,18,.74);color:#e8eaed;font-size:.7rem;font-weight:600;white-space:nowrap;pointer-events:none}
+.plano-flecha{position:absolute;top:50%;z-index:3;transform:translateY(-50%);display:grid;place-items:center;
+  width:36px;height:36px;padding:0;border-radius:50%;cursor:pointer;border:1px solid rgba(255,255,255,.22);
+  background:rgba(11,14,18,.72);color:#fff;transition:opacity .15s,background .15s}
+.plano-flecha:hover{background:rgba(11,14,18,.92)}
+.plano-flecha:disabled{opacity:0;pointer-events:none}
+.plano-izq{left:.5rem}
+.plano-der{right:.5rem}
 
-.visor-btn{flex:none;display:grid;place-items:center;width:36px;height:36px;cursor:pointer;
-  border-radius:999px;border:1px solid var(--borde-oscuro);background:rgba(11,14,18,.62);color:#fff;
-  transition:background .18s,border-color .18s,opacity .18s}
-.visor-btn:hover{background:var(--naranja);border-color:var(--naranja)}
-.visor-btn:disabled{opacity:.35;cursor:default}
-.visor-btn:disabled:hover{background:rgba(11,14,18,.62);border-color:var(--borde-oscuro)}
-.visor-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;
-  stroke-linecap:round;stroke-linejoin:round}
-/* El que lleva texto crece y deja de ser redondo. */
-.visor-btn-ancho{width:auto;grid-auto-flow:column;gap:.45rem;padding:0 .9rem;border-radius:var(--radio);
-  font-family:var(--texto);font-size:.78rem;font-weight:600;letter-spacing:.02em;white-space:nowrap}
-.visor-btn .icono-pausa,.visor.girando .visor-btn .icono-play{display:none}
-.visor.girando .visor-btn .icono-pausa{display:block}
+.pin{position:absolute;z-index:1;transform:translate(-50%,-50%);display:block;padding:0;border:0;background:none;cursor:pointer}
+.pin::before{content:"";position:absolute;inset:-8px}
+.pin-n{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid #fff;
+  background:var(--naranja);color:var(--tinta);font-family:var(--titulo);font-size:.95rem;font-weight:700;line-height:1;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);transition:transform .15s,background .15s}
+.pin-nombre{position:absolute;left:50%;top:calc(100% + .3rem);transform:translateX(-50%);padding:.2rem .5rem;
+  border-radius:var(--radio);background:rgba(11,14,18,.88);color:#fff;font-size:.74rem;font-weight:600;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .15s}
+.pin:hover .pin-nombre,.pin:focus-visible .pin-nombre,.pin.activo .pin-nombre{opacity:1}
+/* Cerca de un borde del recuadro, el nombre se alinea para adentro y no se corta. */
+.pin.borde-izq .pin-nombre{left:-.2rem;transform:none}
+.pin.borde-der .pin-nombre{left:auto;right:-.2rem;transform:none}
+.pin.activo{z-index:2}
+.pin.activo .pin-n{background:#fff;border-color:var(--naranja);transform:scale(1.15)}
 
-.visor figcaption{margin-top:.9rem;font-size:.84rem;color:#98a0aa;max-width:76ch}
-.visor figcaption b{color:#cfd5dc;font-weight:600}
-
-@media (max-width:860px){
-  /* En pantalla angosta el marco se pone más alto: se ve una tajada más
-     chica del salón, pero con altura suficiente para que valga la pena. */
-  .visor-marco{aspect-ratio:4/3}
-  .visor-hud{gap:.4rem;padding-top:1.6rem}
-  .visor-btn-ancho span{display:none}
-  .visor-btn-ancho{width:36px;padding:0;border-radius:999px}
-}
-/* Va después de la regla de 860px para ganarle: en el celular, cuadrado. */
-@media (max-width:600px){
-  .visor-marco{aspect-ratio:1/1}
+@media (max-width:699px){
+  .recorrido-in{grid-template-columns:minmax(0,1fr);grid-template-areas:"cab" "paseo" "plano";grid-template-rows:auto;row-gap:1rem}
+  .paseo{justify-self:center;width:100%;max-width:480px}
+  .paseo-marco{aspect-ratio:1/1}
 }
 
 /* ══════ LLAMADA FINAL ═══════════════════════════════════════════════════ */
@@ -772,6 +774,11 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
 .tabla-datos dd{font-weight:600;overflow-wrap:anywhere}
 .ficha-prod-t{margin-top:1.3rem;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gris-2)}
 .ficha-prod-specs{margin-top:.4rem;font-size:.92rem;line-height:1.7;color:var(--gris)}
+.ficha-medidas{margin-top:.45rem;max-height:13.5rem;overflow:auto;border:1px solid var(--borde);font-size:.86rem}
+.ficha-medidas li{display:flex;justify-content:space-between;gap:1rem;padding:.42rem .85rem;border-bottom:1px solid var(--borde)}
+.ficha-medidas li:last-child{border-bottom:0}
+.ficha-medidas li:nth-child(even){background:var(--papel-2)}
+.ficha-medidas b{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
 .ficha-prod-cta{margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--borde)}
 .relacionados{padding:0 clamp(1.3rem,3vw,2rem) clamp(1.3rem,3vw,2rem)}
 .relacionados h4{font-family:var(--texto);font-size:.7rem;font-weight:700;letter-spacing:.15em;
@@ -800,6 +807,7 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .portada.con-foto::before{background:
     linear-gradient(180deg,rgba(11,13,16,.72),rgba(11,13,16,.86) 55%,rgba(11,13,16,.93))}
   .alquiler-cab,.reparacion-cab{grid-template-columns:1fr;align-items:start}
+  .rubros-grid{--col:2}
   .visitanos-grid{grid-template-columns:1fr}
   /* De a tres quedaba la cuarta tarjeta sola, con un hueco al lado. */
   .valores{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -823,7 +831,7 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .servicio-redes a{display:grid;place-items:center;width:34px;height:var(--servicio)}
   /* En pantallas táctiles, cada enlace con altura cómoda para el dedo. */
   [data-ubicacion-corta]{display:inline-flex;align-items:center;height:var(--servicio)}
-  .indice-bloque button,.mm-subs button{padding-block:.45rem}
+  .indice-lista button,.mm-subs button{padding-block:.45rem}
   .barra-tel{display:none}
   .tira{position:relative}
   .tira-in{gap:0}
@@ -842,6 +850,13 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .servicio-ico{grid-row:1 / span 2;width:46px;height:46px}
   .servicio-ico svg{width:23px;height:23px}
   .servicio-txt,.servicio-flecha{grid-column:2}
+}
+/* Las tres categorías de a una: el cartel como franja, con el nombre impreso
+   entero a la vista, y las subcategorías en columnas. */
+@media (max-width:760px){
+  .indice{grid-template-columns:1fr}
+  .indice-foto img{aspect-ratio:16/10}
+  .indice-lista{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 .9rem}
 }
 /* ══════ CELULAR ═════════════════════════════════════════════════════════
    No es la página achicada: cada sección se reordena para que entre en menos
@@ -914,7 +929,7 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .riel-item{flex:1 1 0;justify-content:center;text-align:center;padding:.75rem .5rem}
   .riel-item:last-child{border-right:0}
   .riel-item .riel-ico{display:none}
-  .riel-item b{flex:none;font-size:.82rem}
+  .riel-item b{flex:1 1 auto;min-width:0;font-size:.78rem;line-height:1.2}
   .panel{padding:.9rem}
   .indice-intro{padding-bottom:.9rem;margin-bottom:1rem}
   .indice-intro h3{font-size:1.2rem;margin-bottom:.3rem}
@@ -923,7 +938,8 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .indice-foto img{aspect-ratio:2/1}
   .indice-lista{display:grid;grid-template-columns:1fr 1fr;gap:0 .9rem;padding:.35rem .9rem .5rem}
   .indice-lista li:nth-child(n+3){border-top:1px solid var(--borde)}
-  .indice-bloque button{width:100%;padding:.6rem 0;font-size:.84rem;line-height:1.3}
+  .indice-lista button{width:100%;padding:.6rem 0;font-size:.84rem;line-height:1.3}
+  .indice-nombre{margin:0 .9rem;padding-top:.75rem}
   .productos{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
   /* De a dos por fila, "Consultar" y "Ficha" no entran lado a lado. */
   .producto-cuerpo{padding:.7rem .7rem .75rem}
@@ -931,7 +947,7 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .producto-acciones .boton,.producto-acciones .boton-linea{flex:none;padding:.5rem .4rem}
 
   /* Otros rubros: de a dos, con la foto entera y el botón a lo ancho. */
-  .rubros-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem;margin-top:1.3rem}
+  .rubros-grid{--col:2;--sep:.6rem;margin-top:1.3rem}
   .rubro-cuerpo{padding:.7rem .7rem .75rem;gap:.3rem}
   .rubro-cuerpo h3{font-size:1.08rem}
   .rubro-cuerpo p{font-size:.78rem;line-height:1.45;margin-bottom:.35rem}
@@ -979,9 +995,10 @@ a.contacto-fila:hover .flecha{color:var(--naranja)}
   .resenas-acciones .boton{flex:1 1 100%}
   .resenas{margin-top:1.2rem}
 
-  /* Recorrido */
-  .recorrido-cab{margin-bottom:1.2rem}
-  .visor figcaption{margin-top:.7rem;font-size:.8rem}
+  /* El local por dentro */
+  .plano-marco{height:150px}
+  .paseo-flecha{width:44px;height:44px}
+  .paseo-lugar b{font-size:1.05rem}
 
   /* Dónde estamos: los números con sus dos botones en la misma fila. */
   .visitanos-grid{margin-top:1.3rem;gap:1rem}

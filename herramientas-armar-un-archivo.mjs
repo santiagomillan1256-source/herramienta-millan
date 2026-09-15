@@ -1,6 +1,6 @@
 /**
  * Junta todo el sitio en un solo .html que se abre con doble clic:
- * estilos, scripts, logo, mapa, todas las fotos y el video del recorrido
+ * estilos, scripts, logo, mapa, todas las fotos y el video del local
  * van incrustados.
  *
  *   node herramientas-armar-un-archivo.mjs
@@ -33,7 +33,7 @@ const js = [
 
 /* Las fotos de fondo, incrustadas: app.js las busca en globalThis.FOTOS. */
 const fotos = {};
-for (const n of ["frente", "alquiler", "cat-explosion", "cat-electricas"]) {
+for (const n of ["frente", "alquiler", "cat-explosion", "cat-electricas", "cat-manuales"]) {
   fotos[n] = await dataUri(`img/${n}.webp`);
 }
 for (const f of await readdir(P + "img/rubros")) {
@@ -44,19 +44,20 @@ const tablaFotos = `globalThis.FOTOS = ${JSON.stringify(fotos)};`;
 const logo = await dataUri("img/logo.webp");
 const icono = await dataUri("img/logo-256.webp");
 const mapa = await dataUri("img/mapa.webp");
-const panoramica = await dataUri("img/salon.webp");
+const vistaGeneral = await dataUri("img/local/vista-general.webp");
+const parada1 = await dataUri("img/local/parada-1.webp");
 
-/* El video del recorrido viaja en base64 y acá se vuelve a armar como blob.
+/* El video del local viaja en base64 y acá se vuelve a armar como blob.
    Un blob se puede recorrer salteando de un punto a otro; una dirección
    data: larguísima, en algunos navegadores, no. */
-const videoB64 = await base64("video/recorrido.mp4");
+const videoB64 = await base64("video/local.mp4");
 const puenteVideo = `<script>
 (() => {
   const b64 = "${videoB64}";
   const crudo = atob(b64);
   const bytes = new Uint8Array(crudo.length);
   for (let i = 0; i < crudo.length; i++) bytes[i] = crudo.charCodeAt(i);
-  globalThis.VIDEO_RECORRIDO = URL.createObjectURL(new Blob([bytes], { type: "video/mp4" }));
+  globalThis.VIDEO_LOCAL = URL.createObjectURL(new Blob([bytes], { type: "video/mp4" }));
 })();
 </script>`;
 
@@ -71,7 +72,8 @@ meter(/<script type="module" src="js\/resenas\.js"><\/script>/, "");
 html = html.replace(/src="img\/logo\.webp"/g, () => `src="${logo}"`);
 html = html.replace(/href="img\/logo-256\.webp"/, () => `href="${icono}"`);
 html = html.replace(/href="img\/logo\.webp"/, () => `href="${logo}"`);
-html = html.replace(/src="img\/salon\.webp"/g, () => `src="${panoramica}"`);
+html = html.replace(/src="img\/local\/vista-general\.webp"/g, () => `src="${vistaGeneral}"`);
+html = html.replace(/poster="img\/local\/parada-1\.webp"/g, () => `poster="${parada1}"`);
 /* El mapa y el video los resuelve el JS con rutas desde la raíz del sitio:
    acá se los deja resueltos antes de que el módulo arranque. */
 html = html.replace(/<\/style>/, () =>

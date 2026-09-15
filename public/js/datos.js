@@ -121,8 +121,8 @@ export const GOOGLE = {
 };
 
 /* ── El catálogo con productos ────────────────────────────────────────────
-   Sólo las dos familias de máquinas: son las que llevan ficha, foto y
-   buscador. Cada una es una entrada del riel del catálogo y sus
+   Máquinas a explosión, máquinas eléctricas y herramientas de mano: son las
+   que llevan ficha, foto y buscador. Cada una es una entrada del riel del catálogo y sus
    subcategorías son los filtros de adentro.
 
    AGREGAR una categoría → sumá el objeto acá y usá el mismo `id` como clave
@@ -165,7 +165,31 @@ export const CATEGORIAS = [
       compresores: "Compresores y aire",
       soldadoras: "Soldadoras",
       bateria: "Herramienta a batería",
+      banco: "Banco y carpintería",
+      jardin: "Jardín",
+      limpieza: "Hidrolavadoras y aspiradoras",
+      bombas: "Bombas de agua y trasvase",
       otras: "Otras máquinas eléctricas",
+    },
+  },
+  {
+    id: "manuales",
+    nombre: "Herramientas de mano",
+    lema: "Pinzas, llaves, destornilladores, martillos, corte y medición",
+    texto:
+      "La herramienta de mano de todos los días, para el oficio y para la casa. Si no encontrás la medida que buscás, preguntanos.",
+    icono: "llave",
+    sub: {
+      pinzas: "Pinzas y alicates",
+      llaves: "Llaves",
+      tubos: "Bocallaves y criques",
+      destornilladores: "Destornilladores",
+      martillos: "Martillos, mazas y punzones",
+      corte: "Corte: tijeras, serruchos y cutters",
+      medicion: "Medición y nivelación",
+      sujecion: "Morsas y prensas",
+      juegos: "Juegos de herramientas",
+      otras: "Otras herramientas de mano",
     },
   },
 ];
@@ -207,12 +231,6 @@ export const RUBROS = [
     icono: "obra",
   },
   {
-    id: "manuales",
-    nombre: "Herramientas manuales",
-    texto: "La herramienta de mano de todos los días, para el oficio y para la casa.",
-    icono: "llave",
-  },
-  {
     id: "repuestos",
     nombre: "Repuestos",
     texto: "Lo que se gasta y lo que se cambia. Traé la pieza usada o el modelo de tu máquina.",
@@ -221,6 +239,26 @@ export const RUBROS = [
 ];
 
 export const rubroPorId = (id) => RUBROS.find((r) => r.id === id) || null;
+
+/* ── El local por dentro ──────────────────────────────────────────────────
+   Las paradas del paseo en video, en el orden en que se recorre el salón.
+   `t`    segundo del video (public/video/local.mp4) donde se detiene.
+   `x, y` dónde va el punto en la vista general
+          (public/img/local/vista-general.webp, 3206 × 308 píxeles).
+   ───────────────────────────────────────────────────────────────────────── */
+
+export const PARADAS = [
+  { nombre: "Vitrina de la entrada", t: 0, x: 880, y: 135 },
+  { nombre: "Palas y herramientas de jardín", t: 8, x: 1000, y: 70 },
+  { nombre: "Sanitarios y vitrina", t: 13.75, x: 1110, y: 115 },
+  { nombre: "Generadores y cajas de herramientas", t: 22.25, x: 1390, y: 165 },
+  { nombre: "Motosierras y pinturas", t: 32.5, x: 85, y: 95 },
+  { nombre: "Estantería del fondo", t: 38.75, x: 205, y: 50 },
+  { nombre: "Compresores y escaleras", t: 44, x: 215, y: 180 },
+  { nombre: "Mostrador y discos", t: 50.5, x: 450, y: 50 },
+  { nombre: "Pasillo del fondo", t: 63, x: 1726, y: 95 },
+  { nombre: "Herramientas de mano", t: 66.75, x: 1990, y: 70 },
+];
 
 /* Dibujos de las tarjetas de categoría: trazo simple, toman el color del texto.
    Para una categoría nueva, sumá acá su dibujo y nombralo en `icono`. */
@@ -254,25 +292,33 @@ export function nombreSub(catId, subId) {
 
 /* ── Productos ────────────────────────────────────────────────────────────
    Las filas de filas.js se convierten acá en objetos.
-   Formato: "codigo|nombre|marca|modelo|subcategoria|foto|caracteristicas"
+   Formato: "codigo|nombre|marca|modelo|subcategoria|foto|caracteristicas|medidas"
    ───────────────────────────────────────────────────────────────────────── */
+
+const clave = (s) => String(s).toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/[^a-z0-9.]+/g, "");
 
 export function armarProductos(filas) {
   return CATEGORIAS.flatMap((cat) =>
     (filas[cat.id] || []).map((fila) => {
-      const [sku, nombre, marca, modelo, sub, foto, caracteristicas] = fila.split("|");
+      const [sku, nombre, marca, modelo, sub, foto, caracteristicas, medidas] = fila.split("|");
       return {
-        id: `${cat.id}-${String(sku).toLowerCase()}`,
+        // La marca va en el id porque dos marcas pueden usar el mismo código.
+        id: `${cat.id}-${clave(marca || "")}-${clave(sku)}`,
         sku,
         nombre,
         marca: marca || "",
-        modelo: modelo || sku,
+        modelo: modelo || "",
         categoria: cat.id,
         categoriaNombre: cat.nombre,
         sub: cat.sub[sub] ? sub : Object.keys(cat.sub)[0],
-        // El sexto campo lleva "-" cuando todavía no tenemos foto del producto.
-        imagen: foto === "-" ? "" : `img/p/${cat.id}-${sku}.webp`,
+        // Foto: vacío = img/p/<categoria>-<codigo>.webp · "-" = todavía no hay · otro valor = nombre del archivo.
+        imagen: foto === "-" ? "" : `img/p/${foto || `${cat.id}-${sku}.webp`}`,
         caracteristicas: caracteristicas || "",
+        // Las medidas del mismo producto, cada una con su código: "codigo=medida;codigo=medida".
+        medidas: (medidas || "").split(";").filter(Boolean).map((m) => {
+          const [codigo, ...resto] = m.split("=");
+          return { codigo, detalle: resto.join("=") };
+        }),
       };
     })
   );
@@ -308,8 +354,9 @@ export function mensajeProducto(p) {
     ``,
     `Producto: ${p.nombre}`,
     p.marca ? `Marca: ${p.marca}` : null,
-    `Modelo: ${p.modelo}`,
-    `Código: ${p.sku}`,
+    p.modelo ? `Modelo: ${p.modelo}` : null,
+    p.medidas.length > 1 ? null : `Código: ${p.sku}`,
+    p.medidas.length > 1 ? `Medida que necesito: ` : null,
     ``,
     `¿Tienen disponibilidad?`,
   ].filter((linea) => linea !== null).join("\n");
