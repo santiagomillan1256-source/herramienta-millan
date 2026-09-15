@@ -26,7 +26,7 @@ const DEMO = new URLSearchParams(location.search).has("demo");
 const CATALOGO = DEMO ? armarProductos(globalThis.FILAS_EJEMPLO || {}) : PRODUCTOS;
 const EQUIPOS = DEMO ? ALQUILER_EJEMPLO : ALQUILER;
 
-const estado = { cat: null, sub: "todas", marca: "todas", q: "", limite: PASO, grupo: "todos" };
+const estado = { cat: null, sub: "todas", marca: "todas", q: "", limite: PASO, grupo: null };
 
 /* ── Utilidades ───────────────────────────────────────────── */
 
@@ -479,10 +479,32 @@ function pintarAlquiler() {
 
   const usados = Object.keys(GRUPOS).filter((id) => EQUIPOS.some((m) => m.grupo === id));
   const cuantos = (id) => EQUIPOS.filter((m) => m.grupo === id).length;
-  $("#grupos").innerHTML = [{ id: "todos", txt: "Todos los rubros", n: EQUIPOS.length },
-    ...usados.map((id) => ({ id, txt: nombreGrupo(id), n: cuantos(id) }))]
-    .map((g) => `<button class="grupo-chip${g.id === estado.grupo ? " activa" : ""}" type="button" data-grupo="${esc(g.id)}" aria-pressed="${g.id === estado.grupo}">${esc(g.txt)} <span class="grupo-n">${g.n}</span></button>`)
-    .join("");
+  const deCuantos = (n) => `${n} ${n === 1 ? "equipo" : "equipos"}`;
+  if (estado.grupo && !usados.includes(estado.grupo)) estado.grupo = null;
+  const abierto = estado.grupo;
+
+  /* Primero, sólo las categorías: una tarjeta por rubro con la foto de una
+     de sus máquinas. Las máquinas aparecen recién al elegir una. */
+  $("#grupos").hidden = !!abierto;
+  $("#equipos").hidden = !abierto;
+  $("#grupos").innerHTML = usados.map((id) => {
+    const g = GRUPOS[id];
+    const foto = EQUIPOS.find((m) => m.id === g.foto && m.foto) || EQUIPOS.find((m) => m.grupo === id && m.foto);
+    return `<button class="alq-categoria" type="button" data-grupo="${esc(id)}" aria-label="Ver los equipos de ${esc(g.nombre.toLowerCase())} (${deCuantos(cuantos(id))})">
+      <span class="alq-categoria-foto">${foto
+        ? `<img src="${rutaFoto("alq/" + foto.id)}" alt="" loading="lazy" decoding="async" width="800" height="600">`
+        : SIN_MAQUINA}</span>
+      <span class="alq-categoria-cuerpo">
+        <span class="alq-categoria-nombre">${esc(g.nombre)}</span>
+        <span class="alq-categoria-texto">${esc(g.texto || "")}</span>
+        <span class="alq-categoria-pie">
+          <span class="equipos-cuenta">${deCuantos(cuantos(id))}</span>
+          <span class="alq-categoria-flecha" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </span>
+      </span>
+    </button>`;
+  }).join("");
+  if (!abierto) { $("#equipos").innerHTML = ""; return; }
 
   const tarjeta = (m) => `<article class="equipo">
     <div class="equipo-foto">${m.foto
@@ -496,20 +518,50 @@ function pintarAlquiler() {
     </div>
   </article>`;
 
-  /* Un bloque por rubro, con su título y sus equipos en cuadros. Con un rubro
-     elegido en los botones de arriba, sólo ese. */
-  const grupos = estado.grupo === "todos" ? usados : [estado.grupo];
-  $("#equipos").innerHTML = grupos.map((id) => {
-    const deEste = EQUIPOS.filter((m) => m.grupo === id);
-    return `<section class="equipos-grupo" aria-labelledby="alq-${esc(id)}">
+  /* La categoría elegida: volver, saltar a otra y sus equipos en cuadros. */
+  const deEste = EQUIPOS.filter((m) => m.grupo === abierto);
+  $("#equipos").innerHTML = `<div class="alq-barra">
+      <button class="alq-volver" type="button" data-alq-volver>
+        <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        Todas las categorías
+      </button>
+      <div class="alq-otras" role="group" aria-label="Otras categorías de alquiler">${usados.map((id) =>
+        `<button class="grupo-chip${id === abierto ? " activa" : ""}" type="button" data-grupo="${esc(id)}" aria-pressed="${id === abierto}">${esc(nombreGrupo(id))} <span class="grupo-n">${cuantos(id)}</span></button>`).join("")}</div>
+    </div>
+    <section class="equipos-grupo" aria-labelledby="alq-${esc(abierto)}">
       <div class="equipos-grupo-cab">
-        <h3 id="alq-${esc(id)}">${esc(nombreGrupo(id))}</h3>
-        <span class="equipos-cuenta">${deEste.length} ${deEste.length === 1 ? "equipo" : "equipos"}</span>
-        <p>${esc(GRUPOS[id]?.texto || "")}</p>
+        <h3 id="alq-${esc(abierto)}" tabindex="-1">${esc(nombreGrupo(abierto))}</h3>
+        <span class="equipos-cuenta">${deCuantos(deEste.length)}</span>
+        <p>${esc(GRUPOS[abierto]?.texto || "")}</p>
       </div>
       <div class="equipos-grilla">${deEste.map(tarjeta).join("")}</div>
     </section>`;
-  }).join("");
+  /* La barra de categorías arranca mostrando la elegida. */
+  const activa = $(".alq-otras .activa");
+  if (activa) activa.parentElement.scrollLeft = activa.offsetLeft - activa.parentElement.offsetLeft - 16;
+}
+
+/** Abre una categoría de alquiler (o vuelve a las tarjetas con null) y deja
+    la vista al comienzo del catálogo de alquiler. El paso queda en el
+    historial, así el botón "atrás" del teléfono vuelve a las categorías. */
+function elegirGrupo(id, { historial = true } = {}) {
+  const antes = estado.grupo;
+  estado.grupo = id;
+  pintarAlquiler();
+  if (historial) {
+    const destino = id ? `#alquiler-${id}` : "#alquiler";
+    if (id && !antes) history.pushState({ alquiler: id }, "", destino);
+    else history.replaceState(id ? { alquiler: id } : null, "", destino);
+  }
+  /* Con "atrás" el navegador reacomoda el scroll después de este código:
+     por eso la vista se acomoda un instante más tarde. */
+  setTimeout(() => {
+    const caja = $("#alquiler-catalogo");
+    const arriba = caja.getBoundingClientRect().top;
+    if (arriba < 90 || arriba > innerHeight * 0.5) caja.scrollIntoView({ block: "start" });
+    if (id) $(`#alq-${id}`)?.focus({ preventScroll: true });
+    else if (antes) $(`.alq-categoria[data-grupo="${antes}"]`)?.focus({ preventScroll: true });
+  }, historial ? 0 : 60);
 }
 
 /* ══════ CARTELES ═════════════════════════════════════════ */
@@ -741,7 +793,15 @@ document.addEventListener("click", (e) => {
   if (marcaChip) { estado.marca = marcaChip.dataset.marcaChip; estado.limite = PASO; pintarCatalogo(); return; }
 
   const grupo = t.closest?.("[data-grupo]");
-  if (grupo) { estado.grupo = grupo.dataset.grupo; pintarAlquiler(); return; }
+  if (grupo) { elegirGrupo(grupo.dataset.grupo); return; }
+
+  if (t.closest?.("[data-alq-volver]")) {
+    /* Si la categoría se abrió desde las tarjetas, "volver" es un paso atrás
+       del historial; si se entró directo con el enlace, se va a las tarjetas. */
+    if (history.state?.alquiler) history.back();
+    else elegirGrupo(null);
+    return;
+  }
 
   const consulta = t.closest?.("[data-consulta]");
   if (consulta) { const c = consulta.dataset.consulta; abrirElegir(MENSAJES[c](), DETALLES[c]); return; }
@@ -825,6 +885,15 @@ if (inicial) abrirCategoria(inicial[1], "todas", false);
 addEventListener("hashchange", () => {
   const h = enDireccion();
   if (h && h[1] !== estado.cat) abrirCategoria(h[1]);
+});
+
+/* Alquiler: #alquiler-<rubro> en la dirección abre esa categoría, y el botón
+   "atrás" del navegador vuelve de una categoría a las tarjetas. */
+const grupoEnDireccion = () => (location.hash.match(/^#alquiler-([a-z]+)$/) || [])[1] || null;
+if (grupoEnDireccion() && GRUPOS[grupoEnDireccion()]) elegirGrupo(grupoEnDireccion(), { historial: false });
+addEventListener("popstate", () => {
+  const g = grupoEnDireccion();
+  if (g !== estado.grupo && (g === null || GRUPOS[g])) elegirGrupo(g, { historial: false });
 });
 
 /* Sección activa en la tira de navegación */

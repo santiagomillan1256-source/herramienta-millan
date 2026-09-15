@@ -23,42 +23,52 @@
    ══════════════════════════════════════════════════════════════════════════ */
 
 /** Los rubros de alquiler: el tipo de trabajo que resuelve cada máquina, no
-    si funciona a explosión o con electricidad. */
+    si funciona a explosión o con electricidad. `foto` es el id de la máquina
+    cuya foto representa al rubro en su tarjeta. */
 export const GRUPOS = {
   demolicion: {
     nombre: "Demolición",
+    foto: "martillo-15",
     texto: "Martillos demoledores para romper losas, pisos, contrapisos y paredes.",
   },
   hormigon: {
     nombre: "Hormigón",
+    foto: "hormigonera-130",
     texto: "Para preparar la mezcla, vibrar el hormigón recién colado y alisar pisos.",
   },
   compactacion: {
     nombre: "Compactación",
+    foto: "placa-compactadora",
     texto: "Para asentar suelo, arena y ripio antes de contrapisos, veredas y zanjas.",
   },
   corte: {
     nombre: "Corte",
+    foto: "amoladora-9",
     texto: "Cortadora de piso, amoladoras y sierras para hormigón, hierro, cerámica y madera.",
   },
   perforacion: {
     nombre: "Perforación",
+    foto: "roto-percutor",
     texto: "Para agujerear pared, hormigón y madera, y hacer pozos en la tierra.",
   },
   jardineria: {
     nombre: "Jardinería, poda y riego",
+    foto: "motosierra-45",
     texto: "Motosierras, podadora de altura, motoguadaña, cortadora de pasto y motobomba.",
   },
   energia: {
     nombre: "Energía y aire comprimido",
+    foto: "generador-mono",
     texto: "Generadores para tener corriente donde no hay, compresores y arrancador de batería.",
   },
   soldadura: {
     nombre: "Soldadura y termofusión",
+    foto: "soldadora-inverter",
     texto: "Para soldar hierro, unir caños de polipropileno y trabajar con calor.",
   },
   elevacion: {
     nombre: "Elevación y traslado",
+    foto: "gato-30",
     texto: "Gatos hidráulicos y carretilla para levantar peso y mover material.",
   },
 };

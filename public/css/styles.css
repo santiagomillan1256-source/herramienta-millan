@@ -516,7 +516,39 @@ li{list-style:none}
 .equipo p{font-size:.8rem;color:#a9b0b8;line-height:1.5}
 .equipo .equipo-carac{font-size:.74rem;color:#d4d8dd;line-height:1.45;margin-bottom:.45rem}
 .equipo .boton{margin-top:auto;align-self:flex-start;padding:.4rem .75rem;font-size:.76rem}
-.grupos{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem}
+/* Catálogo de alquiler: primero las categorías en tarjetas; al elegir una,
+   sólo sus equipos, con la vuelta y el salto a otra categoría arriba. */
+.alquiler-catalogo{scroll-margin-top:8rem}
+.alq-categorias{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
+.alq-categoria{display:flex;flex-direction:column;padding:0;overflow:hidden;text-align:left;cursor:pointer;
+  font:inherit;color:inherit;background:var(--tinta-2);border:1px solid var(--borde-oscuro);border-radius:var(--radio-g);
+  transition:border-color .18s,transform .18s,box-shadow .18s}
+.alq-categoria-foto{position:relative;display:grid;place-items:center;aspect-ratio:16/10;overflow:hidden;background:#fff}
+.alq-categoria-foto img{width:100%;height:100%;object-fit:contain;padding:.4rem;transition:transform .35s ease}
+.alq-categoria-foto svg{width:48px;height:48px;color:var(--gris-2);fill:none;stroke:currentColor;stroke-width:1.3}
+/* Filete naranja que crece al pasar el mouse: marca la tarjeta como botón. */
+.alq-categoria-foto::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--naranja);
+  transform:scaleX(0);transform-origin:left;transition:transform .25s ease}
+.alq-categoria-cuerpo{display:flex;flex-direction:column;gap:.35rem;flex:1;padding:.9rem 1rem 1rem}
+.alq-categoria-nombre{font-family:var(--titulo);font-size:clamp(1.25rem,2vw,1.5rem);line-height:1.1;text-transform:uppercase;color:#fff}
+.alq-categoria-texto{font-size:.82rem;line-height:1.5;color:#a9b0b8}
+.alq-categoria-pie{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-top:auto;padding-top:.45rem}
+.alq-categoria-flecha{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;
+  border:1px solid var(--borde-oscuro);color:#fff;transition:background .18s,border-color .18s,color .18s,transform .18s}
+.alq-categoria-flecha svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.alq-categoria:hover,.alq-categoria:focus-visible{border-color:var(--naranja);transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(0,0,0,.9)}
+.alq-categoria:hover .alq-categoria-foto img,.alq-categoria:focus-visible .alq-categoria-foto img{transform:scale(1.06)}
+.alq-categoria:hover .alq-categoria-foto::after,.alq-categoria:focus-visible .alq-categoria-foto::after{transform:scaleX(1)}
+.alq-categoria:hover .alq-categoria-flecha,.alq-categoria:focus-visible .alq-categoria-flecha{background:var(--naranja);border-color:var(--naranja);color:var(--tinta);transform:translateX(2px)}
+.alq-categoria:active{transform:scale(.98)}
+
+.alq-barra{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin-bottom:1rem}
+.alq-volver{display:inline-flex;align-items:center;gap:.45rem;min-height:40px;padding:.5rem .95rem;cursor:pointer;
+  font:inherit;font-size:.82rem;font-weight:700;color:var(--tinta);background:var(--naranja);border:0;border-radius:var(--radio);transition:background .15s}
+.alq-volver:hover{background:var(--naranja-claro)}
+.alq-volver .icono{width:17px;height:17px}
+.alq-otras{display:flex;flex-wrap:wrap;gap:.4rem;flex:1;min-width:0}
+.equipos-grupo-cab h3:focus{outline:none}
 .grupo-chip{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border:1px solid var(--borde-oscuro);border-radius:var(--radio);
   background:transparent;color:#cfd4da;font-size:.8rem;font-weight:600;cursor:pointer;transition:.14s}
 .grupo-chip:hover{border-color:#fff;color:#fff}
@@ -990,7 +1022,21 @@ a.contacto-fila:hover .contacto-accion{border-color:var(--naranja);color:var(--n
   .equipo h4{font-size:.84rem;line-height:1.3}
   .equipo p{font-size:.74rem;line-height:1.45;margin-bottom:.4rem}
   .equipo .equipo-carac{display:none}
-  .grupos{flex-wrap:nowrap;overflow-x:auto;margin-inline:calc(-1 * clamp(1rem,3.5vw,2rem));padding-inline:clamp(1rem,3.5vw,2rem);scrollbar-width:none}
+  /* Categorías de a dos; si queda una sola en la última fila, ocupa el ancho. */
+  .alq-categorias{grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+  .alq-categoria:last-child:nth-child(odd){grid-column:1 / -1;flex-direction:row}
+  .alq-categoria:last-child:nth-child(odd) .alq-categoria-foto{width:46%;flex:none;aspect-ratio:4/3}
+  .alq-categoria-foto{aspect-ratio:4/3}
+  .alq-categoria-cuerpo{padding:.65rem .7rem .7rem;gap:.25rem}
+  .alq-categoria-nombre{font-size:1.08rem}
+  .alq-categoria-texto{display:none}
+  .alq-categoria:last-child:nth-child(odd) .alq-categoria-texto{display:block;font-size:.74rem;line-height:1.4}
+  .alq-categoria-flecha{width:30px;height:30px}
+  .alq-categoria:hover{transform:none}
+  .alq-barra{gap:.6rem;margin-bottom:.8rem}
+  .alq-volver{width:100%;justify-content:center}
+  .alq-otras{flex-wrap:nowrap;flex:0 0 auto;width:calc(100% + 2 * clamp(1rem,3.5vw,2rem));overflow-x:auto;
+    margin-inline:calc(-1 * clamp(1rem,3.5vw,2rem));padding-inline:clamp(1rem,3.5vw,2rem);scrollbar-width:none}
   .grupo-chip{flex:none}
   .equipo-cuerpo{padding:.6rem .6rem .65rem;gap:.25rem}
   .equipo .boton{align-self:stretch;justify-content:center;padding:.45rem .4rem;min-height:36px}
