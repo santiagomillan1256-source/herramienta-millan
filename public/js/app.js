@@ -252,7 +252,7 @@ function pintarIndice() {
      entera, y el nombre se repite abajo en texto para que se lea siempre. */
   $("#indice").innerHTML = CATEGORIAS.map((c) => `<div class="indice-bloque" id="indice-${c.id}">
     <button class="indice-foto" type="button" data-cat="${c.id}" aria-label="Ver ${esc(c.nombre.toLowerCase())}">
-      <img src="${rutaFoto("cat-" + c.id)}" alt="" loading="lazy" decoding="async" width="1000" height="914"
+      <img src="${rutaFoto("cat-" + c.id)}" alt="" loading="lazy" decoding="async" width="1312" height="1199"
            onerror="this.closest('.indice-bloque').classList.add('sin-foto')">
     </button>
     <h4 class="indice-nombre"><span class="indice-ico" aria-hidden="true">${dibujo(c.icono)}</span>${esc(c.nombre)}</h4>
@@ -473,9 +473,10 @@ function pintarAlquiler() {
   if (!hay) return;
 
   const usados = Object.keys(GRUPOS).filter((id) => EQUIPOS.some((m) => m.grupo === id));
-  $("#grupos").innerHTML = [{ id: "todos", txt: "Todos los equipos" },
-    ...usados.map((id) => ({ id, txt: nombreGrupo(id) }))]
-    .map((g) => `<button class="grupo-chip${g.id === estado.grupo ? " activa" : ""}" type="button" data-grupo="${esc(g.id)}" aria-pressed="${g.id === estado.grupo}">${esc(g.txt)}</button>`)
+  const cuantos = (id) => EQUIPOS.filter((m) => m.grupo === id).length;
+  $("#grupos").innerHTML = [{ id: "todos", txt: "Todos los rubros", n: EQUIPOS.length },
+    ...usados.map((id) => ({ id, txt: nombreGrupo(id), n: cuantos(id) }))]
+    .map((g) => `<button class="grupo-chip${g.id === estado.grupo ? " activa" : ""}" type="button" data-grupo="${esc(g.id)}" aria-pressed="${g.id === estado.grupo}">${esc(g.txt)} <span class="grupo-n">${g.n}</span></button>`)
     .join("");
 
   const tarjeta = (m) => `<article class="equipo">
@@ -485,44 +486,25 @@ function pintarAlquiler() {
     <div class="equipo-cuerpo">
       <h4>${esc(m.nombre)}</h4>
       <p>${esc(m.descripcion)}</p>
-      ${m.caracteristicas?.length ? `<ul class="equipo-carac">${m.caracteristicas.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
-      <p class="para"><b>Para:</b> ${esc(m.uso)}</p>
+      ${m.caracteristicas?.length ? `<p class="equipo-carac">${m.caracteristicas.map(esc).join(" · ")}</p>` : ""}
       <button class="boton boton-wa boton-chico" type="button" data-consulta-alquiler="${esc(m.id)}" aria-label="Consultar por WhatsApp el alquiler de ${esc(m.nombre.toLowerCase())}">${WA_SVG} Consultar</button>
     </div>
   </article>`;
 
-  /* Con "Todos los equipos", un bloque por categoría con su título y los
-     equipos en una fila que se desliza de costado (con flechas en pantallas
-     grandes). Con una categoría elegida, todos sus equipos en grilla. */
-  const todos = estado.grupo === "todos";
-  const grupos = todos ? usados : [estado.grupo];
+  /* Un bloque por rubro, con su título y sus equipos en cuadros. Con un rubro
+     elegido en los botones de arriba, sólo ese. */
+  const grupos = estado.grupo === "todos" ? usados : [estado.grupo];
   $("#equipos").innerHTML = grupos.map((id) => {
     const deEste = EQUIPOS.filter((m) => m.grupo === id);
     return `<section class="equipos-grupo" aria-labelledby="alq-${esc(id)}">
       <div class="equipos-grupo-cab">
         <h3 id="alq-${esc(id)}">${esc(nombreGrupo(id))}</h3>
+        <span class="equipos-cuenta">${deEste.length} ${deEste.length === 1 ? "equipo" : "equipos"}</span>
         <p>${esc(GRUPOS[id]?.texto || "")}</p>
-        <span class="equipos-cuenta">${deEste.length} ${deEste.length === 1 ? "equipo" : "equipos"}${todos ? '<span class="solo-toque"> · deslizá para ver todos</span>' : ""}</span>
-        ${todos ? `<span class="equipos-flechas">
-          <button class="equipos-flecha" type="button" data-desplazar="-1" aria-controls="fila-${esc(id)}" aria-label="Ver los equipos anteriores de ${esc(nombreGrupo(id).toLowerCase())}" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-          <button class="equipos-flecha" type="button" data-desplazar="1" aria-controls="fila-${esc(id)}" aria-label="Ver más equipos de ${esc(nombreGrupo(id).toLowerCase())}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-        </span>` : ""}
       </div>
-      <div class="equipos-grilla${todos ? " fila" : ""}" id="fila-${esc(id)}">${deEste.map(tarjeta).join("")}</div>
+      <div class="equipos-grilla">${deEste.map(tarjeta).join("")}</div>
     </section>`;
   }).join("");
-  $$("#equipos .fila").forEach(actualizarFlechas);
-}
-
-/** Habilita o apaga las flechas de una fila según hasta dónde se deslizó. */
-function actualizarFlechas(fila) {
-  const cab = fila.previousElementSibling;
-  const [atras, adelante] = $$(".equipos-flecha", cab);
-  if (!atras) return;
-  const max = fila.scrollWidth - fila.clientWidth - 2;
-  atras.disabled = fila.scrollLeft <= 2;
-  adelante.disabled = fila.scrollLeft >= max;
-  cab.classList.toggle("sin-desplazar", max <= 0);
 }
 
 /* ══════ CARTELES ═════════════════════════════════════════ */
@@ -636,7 +618,6 @@ if (DEMO) $("#demo").hidden = false;
    con una imagen que no está. Subir la foto a public/img/ alcanza. */
 for (const [nombre, selector] of [
   ["frente", ".portada"],
-  ["alquiler", ".alquiler"],
   ["fotos/salon-entrada", ".cierre"],
 ]) {
   const prueba = new Image();
@@ -758,13 +739,6 @@ document.addEventListener("click", (e) => {
   const grupo = t.closest?.("[data-grupo]");
   if (grupo) { estado.grupo = grupo.dataset.grupo; pintarAlquiler(); return; }
 
-  const flecha = t.closest?.("[data-desplazar]");
-  if (flecha) {
-    const fila = document.getElementById(flecha.getAttribute("aria-controls"));
-    fila?.scrollBy({ left: Number(flecha.dataset.desplazar) * fila.clientWidth * 0.9, behavior: "smooth" });
-    return;
-  }
-
   const consulta = t.closest?.("[data-consulta]");
   if (consulta) { const c = consulta.dataset.consulta; abrirElegir(MENSAJES[c](), DETALLES[c]); return; }
 
@@ -861,11 +835,5 @@ if (secciones.length) {
   }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
   secciones.forEach((s) => spy.observe(s));
 }
-
-/* Las flechas de las filas de alquiler siguen al desplazamiento (también con el dedo). */
-$("#equipos").addEventListener("scroll", (e) => {
-  if (e.target.classList?.contains("fila")) actualizarFlechas(e.target);
-}, { capture: true, passive: true });
-addEventListener("resize", () => $$("#equipos .fila").forEach(actualizarFlechas));
 
 $$(".wa").forEach((el) => { el.innerHTML = WA_SVG; });

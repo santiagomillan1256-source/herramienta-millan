@@ -289,16 +289,6 @@ li{list-style:none}
 .ficha-otros a>span span{font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;color:#a3aab3;white-space:nowrap}
 .ficha-otros b{font-family:var(--titulo);font-size:1.08rem;letter-spacing:.01em;color:#fff}
 
-/* ══════ FOTOS DEL LOCAL ═══════════════════════════════════════════════════ */
-/* Fotos reales del salón repartidas por la página, con un rótulo corto abajo. */
-.foto-local{position:relative;margin:0;overflow:hidden;border-radius:var(--radio-g);background:var(--tinta-3);
-  border:1px solid var(--borde)}
-.foto-local img{width:100%;height:100%;object-fit:cover}
-.foto-local figcaption{position:absolute;left:0;right:0;bottom:0;padding:1.6rem .85rem .6rem;
-  font-size:.7rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:#fff;
-  background:linear-gradient(180deg,rgba(15,18,22,0),rgba(15,18,22,.82))}
-.foto-oscura{border-color:var(--borde-oscuro)}
-
 /* ══════ LOS TRES SERVICIOS ═══════════════════════════════════════════════ */
 .servicios{background:var(--blanco);border-bottom:1px solid var(--borde)}
 .servicios-lista{display:flex;flex-direction:column}
@@ -321,10 +311,7 @@ li{list-style:none}
 
 /* ══════ CATÁLOGO ════════════════════════════════════════════════════════ */
 .catalogo{padding-block:clamp(2.6rem,6vw,4.4rem)}
-.catalogo-cab{display:grid;grid-template-columns:minmax(0,1fr) clamp(260px,30vw,380px);align-items:end;gap:1.2rem clamp(1.4rem,4vw,3rem);margin-bottom:1.8rem}
-.foto-cab img{aspect-ratio:16/10}
-.rubros-cab{display:grid;grid-template-columns:minmax(0,1fr) clamp(260px,30vw,380px);align-items:end;gap:1.2rem clamp(1.4rem,4vw,3rem)}
-.foto-cab.foto-alta img{object-position:center 62%}
+.catalogo-cab{margin-bottom:1.8rem}
 .catalogo-caja{display:grid;grid-template-columns:274px minmax(0,1fr);
   background:var(--blanco);border:1px solid var(--borde)}
 
@@ -499,48 +486,44 @@ li{list-style:none}
 .alquiler-cab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:clamp(1.2rem,4vw,3rem);
   align-items:start;padding-bottom:1.8rem;margin-bottom:1.8rem;border-bottom:1px solid var(--borde-oscuro)}
 .alquiler-cab .boton{margin-top:1.2rem}
-.alquiler-cab .foto-local{margin-top:1.4rem;max-width:520px}
-.alquiler-cab .foto-local img{aspect-ratio:16/9;object-position:center 40%}
-.equipos-grupo+.equipos-grupo{margin-top:2.4rem}
-.equipos-grupo-cab{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem 1rem;margin-bottom:1rem;
+/* Cada rubro es un panel propio: título, cuántos equipos tiene y los equipos en cuadros. */
+.equipos-grupo{padding:clamp(1rem,2.4vw,1.5rem);border:1px solid var(--borde-oscuro);border-radius:var(--radio-g);
+  background:rgba(255,255,255,.025)}
+.equipos-grupo+.equipos-grupo{margin-top:1.1rem}
+.equipos-grupo-cab{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem .8rem;margin-bottom:1.1rem;
   padding-left:.8rem;border-left:3px solid var(--naranja)}
-.equipos-grupo-cab h3{font-size:clamp(1.4rem,2.6vw,1.8rem);text-transform:uppercase;color:#fff}
-.equipos-grupo-cab p{flex:1 1 30ch;font-size:.86rem;color:#a9b0b8;line-height:1.5}
-.equipos-cuenta{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--naranja-claro)}
-.solo-toque{display:none}
-/* Con "Todos los equipos", cada categoría es una fila que se desliza de costado. */
-.equipos-grilla.fila{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 4px) / 5);
-  overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--tinta-3) transparent}
-.equipos-grilla.fila>.equipo{scroll-snap-align:start}
-.equipos-flechas{display:inline-flex;gap:.4rem;margin-left:.2rem}
-.equipos-flecha{display:grid;place-items:center;width:38px;height:38px;padding:0;border:1px solid var(--borde-oscuro);
-  border-radius:50%;background:transparent;color:#fff;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s}
-.equipos-flecha:hover:not(:disabled){background:var(--naranja);border-color:var(--naranja);color:var(--tinta)}
-.equipos-flecha:disabled{opacity:.3;cursor:default}
-.equipos-flecha svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.sin-desplazar .equipos-flechas{display:none}
-.equipos-grilla{display:grid;gap:1px;grid-template-columns:repeat(auto-fill,minmax(min(236px,100%),1fr));
-  background:var(--borde-oscuro);border:1px solid var(--borde-oscuro)}
-.equipo-carac{display:flex;flex-direction:column;gap:.2rem;margin:.25rem 0 .15rem}
-.equipo-carac li{position:relative;padding-left:.95rem;font-size:.8rem;line-height:1.45;color:#d4d8dd}
-.equipo-carac li::before{content:"";position:absolute;left:0;top:.55em;width:.42rem;height:2px;background:var(--naranja)}
+.equipos-grupo-cab h3{font-size:clamp(1.35rem,2.4vw,1.7rem);text-transform:uppercase;color:#fff;line-height:1.1}
+.equipos-grupo-cab p{flex:1 0 100%;font-size:.86rem;color:#a9b0b8;line-height:1.5}
+.equipos-cuenta{padding:.2rem .5rem;border-radius:var(--radio);background:rgba(232,114,12,.16);
+  font-size:.66rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--naranja-claro);white-space:nowrap}
+.equipos-grilla{display:grid;gap:.8rem;grid-template-columns:repeat(3,minmax(0,1fr))}
+/* En pantalla ancha el título del rubro va a la izquierda y los equipos, de a cuatro, a la derecha. */
+@media (min-width:1024px){
+  .equipos-grupo{display:grid;grid-template-columns:minmax(0,210px) minmax(0,1fr);gap:1.4rem;align-items:start}
+  .equipos-grupo-cab{flex-direction:column;align-items:flex-start;margin-bottom:0;position:sticky;top:8.5rem}
+  .equipos-grupo-cab p{flex:none}
+  .equipos-grilla{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
 
-.equipo{display:flex;flex-direction:column;background:var(--tinta-2)}
+.equipo{display:flex;flex-direction:column;overflow:hidden;background:var(--tinta-2);
+  border:1px solid var(--borde-oscuro);border-radius:var(--radio);transition:border-color .15s,transform .15s}
+.equipo:hover{border-color:rgba(232,114,12,.6);transform:translateY(-2px)}
 .equipo-foto{background:#fff;aspect-ratio:4/3;display:grid;place-items:center;overflow:hidden}
 .equipo-foto img{width:100%;height:100%;object-fit:contain}
 .equipo-foto svg{width:44px;height:44px;color:rgba(255,255,255,.24);fill:none;stroke:currentColor;stroke-width:1.3}
-.equipo-cuerpo{display:flex;flex-direction:column;gap:.3rem;padding:.9rem .95rem 1rem;flex:1}
-.equipo h4{font-family:var(--texto);font-size:.95rem;font-weight:700;line-height:1.3}
-.equipo p{font-size:.82rem;color:#a9b0b8;line-height:1.5}
-.equipo .para{color:#d4d8dd}
-.equipo .para b{color:#fff;font-weight:600}
-.equipo .para{margin-bottom:.55rem}
-.equipo .boton{margin-top:auto;align-self:flex-start;padding-top:.5rem;padding-bottom:.5rem}
-.grupos{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.4rem}
-.grupo-chip{padding:.45rem .9rem;border:1px solid var(--borde-oscuro);border-radius:var(--radio);
+.equipo-cuerpo{display:flex;flex-direction:column;gap:.3rem;padding:.8rem .85rem .9rem;flex:1}
+.equipo h4{font-family:var(--texto);font-size:.93rem;font-weight:700;line-height:1.3;color:#fff}
+.equipo p{font-size:.8rem;color:#a9b0b8;line-height:1.5}
+.equipo .equipo-carac{font-size:.74rem;color:#d4d8dd;line-height:1.45;margin-bottom:.45rem}
+.equipo .boton{margin-top:auto;align-self:flex-start;padding:.4rem .75rem;font-size:.76rem}
+.grupos{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem}
+.grupo-chip{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border:1px solid var(--borde-oscuro);border-radius:var(--radio);
   background:transparent;color:#cfd4da;font-size:.8rem;font-weight:600;cursor:pointer;transition:.14s}
 .grupo-chip:hover{border-color:#fff;color:#fff}
 .grupo-chip.activa{background:var(--naranja);border-color:var(--naranja);color:var(--tinta)}
+.grupo-n{min-width:1.35rem;padding:.05rem .3rem;border-radius:99px;background:rgba(255,255,255,.1);
+  font-size:.68rem;font-weight:700;text-align:center;font-variant-numeric:tabular-nums}
+.grupo-chip.activa .grupo-n{background:rgba(21,24,28,.18)}
 .alquiler-vacio{padding:2.4rem 1.2rem;text-align:center;border:1px solid var(--borde-oscuro);
   border-radius:var(--radio);background:rgba(13,15,19,.62)}
 .alquiler-vacio h3{font-family:var(--texto);font-size:1.05rem;font-weight:700;line-height:1.35;margin-bottom:.4rem;color:#fff}
@@ -563,27 +546,39 @@ li{list-style:none}
 .paso:last-child::after{display:none}
 .paso h3{font-size:1.15rem;text-transform:uppercase;margin-bottom:.35rem}
 .paso p{font-size:.88rem;color:var(--gris);line-height:1.55}
-.reparacion-extra{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:1px;
-  margin-top:2.4rem;background:var(--borde);border:1px solid var(--borde)}
-.extra{background:var(--papel-2);padding:1.5rem}
-.extra-foto{width:calc(100% + 3rem);height:auto;max-width:none;margin:-1.5rem -1.5rem 1.2rem;aspect-ratio:16/8;object-fit:cover}
-.extra h3{font-size:1.2rem;text-transform:uppercase;margin-bottom:.5rem}
-.extra p{font-size:.9rem;color:var(--gris);line-height:1.6;margin-bottom:1.1rem}
 
 /* ══════ CONFIANZA ═══════════════════════════════════════════════════════ */
 .confianza{background:var(--papel);padding-block:clamp(2.6rem,6vw,4.2rem);border-bottom:1px solid var(--borde)}
 .valores{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:1px;
   margin-top:2rem;background:var(--borde);border:1px solid var(--borde)}
 .valor{background:var(--blanco);padding:1.5rem 1.4rem}
-.mosaico{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);grid-template-rows:auto auto;gap:.8rem;margin-top:2rem}
-.mosaico-alta{grid-row:1 / span 2}
-.mosaico .foto-local:not(.mosaico-alta):not(.mosaico-ancha) img{aspect-ratio:16/8}
-.mosaico-ancha img{aspect-ratio:1600/370}
-.mosaico-alta img{object-position:center 60%}
 .valor-ico{display:block;width:26px;height:26px;margin-bottom:.85rem;color:var(--naranja-osc)}
 .valor-ico svg{display:block;width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .valor h3{font-family:var(--texto);font-size:1rem;font-weight:700;margin-bottom:.4rem}
 .valor p{font-size:.88rem;color:var(--gris);line-height:1.6}
+
+/* ══════ NUESTRO LOCAL ═══════════════════════════════════════════════════ */
+.local{background:var(--tinta);color:#e8eaed;padding-block:clamp(2.8rem,6vw,4.6rem)}
+.local .titulo-seccion{color:#fff}
+.local-cab{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:1rem clamp(1.4rem,4vw,3.2rem);align-items:start;margin-bottom:clamp(1.6rem,3.5vw,2.4rem)}
+.local-antetitulo{margin-bottom:.55rem;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--naranja-claro)}
+.local-texto p{color:#b3b9c0;font-size:.96rem;line-height:1.7;max-width:62ch}
+.local-texto p+p{margin-top:.7rem}
+.local-datos{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1.1rem}
+.local-datos li{padding:.32rem .75rem;border:1px solid var(--borde-oscuro);border-radius:99px;
+  font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff}
+.local-datos li::before{content:"";display:inline-block;width:.42rem;height:.42rem;margin-right:.45rem;border-radius:50%;background:var(--naranja);vertical-align:.05em}
+/* Galería: el frente grande, la estantería alta y dos fotos chicas. */
+.galeria{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,.9fr) minmax(0,1fr);
+  grid-auto-rows:clamp(170px,19vw,255px);gap:.7rem}
+.galeria-foto{position:relative;margin:0;overflow:hidden;border-radius:var(--radio-g);background:var(--tinta-3)}
+.galeria-foto img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.galeria-foto:hover img{transform:scale(1.04)}
+.galeria-grande,.galeria-alta{grid-row:span 2}
+.galeria-alta img{object-position:center 60%}
+.galeria-foto figcaption{position:absolute;left:0;right:0;bottom:0;padding:2rem .9rem .7rem;
+  font-size:.7rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:#fff;
+  background:linear-gradient(180deg,rgba(15,18,22,0),rgba(15,18,22,.85))}
 
 /* ══════ OPINIONES DE GOOGLE ════════════════════════════════════════════ */
 .opiniones{background:var(--blanco);padding-block:clamp(2.6rem,6vw,4.2rem);border-bottom:1px solid var(--borde)}
@@ -658,9 +653,6 @@ a.contacto-fila:hover{border-color:var(--naranja);background:var(--naranja-papel
 a.contacto-fila .flecha{margin-left:auto;color:var(--gris-2)}
 a.contacto-fila:hover .flecha{color:var(--naranja)}
 .ubi-acciones{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.2rem}
-.visitanos-der{display:flex;flex-direction:column;gap:.9rem;min-width:0}
-.foto-frente img{aspect-ratio:16/9;object-position:center 55%}
-.visitanos-der .mapa{flex:1}
 .contacto-accion{margin-left:auto;padding:.42rem .75rem;border:1px solid var(--borde-fuerte);border-radius:var(--radio);
   font-size:.74rem;font-weight:700;letter-spacing:.03em;white-space:nowrap;color:var(--tinta)}
 a.contacto-fila:hover .contacto-accion{border-color:var(--naranja);color:var(--naranja-osc)}
@@ -789,7 +781,6 @@ a.contacto-fila:hover .contacto-accion{border-color:var(--naranja);color:var(--n
   .tira-links a{padding:0 .6rem;font-size:.8rem}
 }
 @media (max-width:1120px){
-  .equipos-grilla.fila{grid-auto-columns:calc((100% - 3px) / 3.6)}
   .megamenu-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .pie-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pasos{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.6rem}
@@ -815,6 +806,24 @@ a.contacto-fila:hover .contacto-accion{border-color:var(--naranja);color:var(--n
   .riel-item.activa{box-shadow:inset 0 -3px 0 var(--naranja)}
   .ficha-prod{grid-template-columns:1fr}
   .ficha-prod-foto{border-right:0;border-bottom:1px solid var(--borde)}
+}
+/* Con "Nuestro local" la tira suma un enlace: se aprieta un poco para seguir en un renglón. */
+@media (min-width:1181px) and (max-width:1260px){
+  .tira-links a{padding:0 .7rem}
+}
+@media (min-width:1081px) and (max-width:1180px){
+  .tira-links a{padding:0 .5rem}
+}
+@media (min-width:881px) and (max-width:1080px){
+  .tira-catalogo{padding:0 .75rem;letter-spacing:.06em}
+  .tira-catalogo .barritas{display:none}
+  .tira-links{gap:0}
+  .tira-links a{padding:0 .42rem;font-size:.76rem;letter-spacing:.015em}
+}
+@media (min-width:881px) and (max-width:960px){
+  .tira-catalogo{letter-spacing:.04em}
+  .tira-links a{padding:0 .34rem;font-size:.74rem}
+  .tira-links a[href="#inicio"]{display:none}
 }
 @media (max-width:880px){
   .abrir-menu{display:inline-flex}
@@ -852,9 +861,9 @@ a.contacto-fila:hover .contacto-accion{border-color:var(--naranja);color:var(--n
 /* Las tres categorías de a una: el cartel como franja, con el nombre impreso
    entero a la vista, y las subcategorías en columnas. */
 @media (max-width:760px){
-  .catalogo-cab,.rubros-cab{grid-template-columns:1fr}
-  .equipos-grilla.fila{grid-auto-columns:calc((100% - 2px) / 2.3)}
-  .foto-cab img{aspect-ratio:16/7}
+  .local-cab{grid-template-columns:1fr}
+  .galeria{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:clamp(150px,34vw,250px)}
+  .galeria-grande{grid-column:1 / -1}
   .indice{grid-template-columns:1fr}
   .indice-foto img{aspect-ratio:16/10}
   .indice-lista{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 .9rem}
@@ -896,7 +905,7 @@ a.contacto-fila:hover .contacto-accion{border-color:var(--naranja);color:var(--n
   .megamenu-pie{margin-top:1rem}
 
   /* Secciones: menos aire arriba y abajo, títulos y bajadas algo más chicos. */
-  .catalogo,.rubros,.reparacion,.confianza,.opiniones,.visitanos{padding-block:2.2rem}
+  .catalogo,.rubros,.reparacion,.confianza,.local,.opiniones,.visitanos{padding-block:2.2rem}
   .alquiler-in{padding-block:2.2rem}
   .titulo-seccion{font-size:1.75rem}
   .bajada{font-size:.94rem;line-height:1.55}
@@ -973,22 +982,20 @@ a.contacto-fila:hover .contacto-accion{border-color:var(--naranja);color:var(--n
   .alquiler-in:has(> .alquiler-vacio:not([hidden])) .alquiler-cab{padding-bottom:0;border-bottom:0}
   .alquiler-vacio{padding:1.3rem 1rem}
   .alquiler-vacio h3{font-size:1rem}
-  .equipos-grilla{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-  /* En el celular la fila asoma la tarjeta siguiente: se entiende que se desliza. */
-  .equipos-grilla.fila{grid-auto-columns:62%;margin-right:calc(-1 * clamp(1rem,3.5vw,2rem));border-right:0}
-  .equipos-flechas{display:none}
-  .solo-toque{display:inline}
-  .equipos-grupo+.equipos-grupo{margin-top:1.8rem}
-  .equipos-grupo-cab{margin-bottom:.75rem}
+  /* En el celular, dos cuadros por fila: foto, nombre, una línea y el botón. */
+  .equipos-grupo{padding:.85rem .7rem .8rem}
+  .equipos-grupo+.equipos-grupo{margin-top:.8rem}
+  .equipos-grilla{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+  .equipos-grupo-cab{margin-bottom:.75rem;padding-left:.6rem}
   .equipos-grupo-cab p{font-size:.8rem}
-  .equipo h4{font-size:.88rem;line-height:1.3}
-  .equipo p{font-size:.78rem}
-  .equipo-carac li{font-size:.75rem}
-  .alquiler-cab .foto-local{margin-top:1rem}
+  .equipo:hover{transform:none}
+  .equipo h4{font-size:.84rem;line-height:1.3}
+  .equipo p{font-size:.74rem;line-height:1.45;margin-bottom:.4rem}
+  .equipo .equipo-carac{display:none}
   .grupos{flex-wrap:nowrap;overflow-x:auto;margin-inline:calc(-1 * clamp(1rem,3.5vw,2rem));padding-inline:clamp(1rem,3.5vw,2rem);scrollbar-width:none}
   .grupo-chip{flex:none}
-  .equipo-cuerpo{padding:.75rem .7rem .8rem}
-  .equipo .boton{align-self:stretch}
+  .equipo-cuerpo{padding:.6rem .6rem .65rem;gap:.25rem}
+  .equipo .boton{align-self:stretch;justify-content:center;padding:.45rem .4rem;min-height:36px}
 
   /* Reparación: los cuatro pasos como una lista con el número al costado. */
   .reparacion-cab .boton{margin-top:1rem}
@@ -998,18 +1005,12 @@ a.contacto-fila:hover .contacto-accion{border-color:var(--naranja);color:var(--n
   .paso-n{grid-row:1 / span 2;width:32px;height:32px;margin:0;font-size:1rem}
   .paso h3{font-size:1.05rem;margin-bottom:.15rem;align-self:center}
   .paso p{font-size:.86rem;line-height:1.5}
-  .reparacion-extra{margin-top:1.5rem}
-  .extra{padding:1.05rem 1rem 1.1rem}
-  .extra h3{font-size:1.1rem;margin-bottom:.35rem}
-  .extra p{font-size:.86rem;line-height:1.55;margin-bottom:.8rem}
-  .extra-foto{width:calc(100% + 2rem);margin:-1.05rem -1rem .9rem}
 
   /* Nosotros: el ícono al costado del título. */
-  .mosaico{grid-template-columns:1fr 1fr;gap:.5rem;margin-top:1.3rem}
-  .mosaico-alta{grid-row:auto}
-  .mosaico .foto-local:not(.mosaico-ancha) img{aspect-ratio:4/5}
-  .mosaico .mosaico-ancha{grid-column:1 / -1}
-  .foto-local figcaption{padding:1.2rem .6rem .45rem;font-size:.6rem;letter-spacing:.07em}
+  .local-texto p{font-size:.9rem;line-height:1.6}
+  .galeria{gap:.45rem;grid-auto-rows:44vw}
+  .galeria-grande{grid-row:span 1}
+  .galeria-foto figcaption{padding:1.3rem .6rem .5rem;font-size:.6rem;letter-spacing:.07em}
   .valores{grid-template-columns:1fr;margin-top:1.3rem}
   .valor{display:grid;grid-template-columns:22px minmax(0,1fr);column-gap:.75rem;padding:1rem 1rem 1.05rem}
   .valor-ico,.valor-ico svg{width:22px;height:22px}

@@ -1,7 +1,7 @@
 Fotos del sitio:
   frente.webp    fondo de la portada
-  alquiler.webp  detras de la banda oscura de Alquiler
-  fotos/         fotos reales del local repartidas por la pagina
+  cat-*.webp     carteles de las categorias del catalogo (1312x1199)
+  fotos/         fotos reales del local: la galeria "Nuestro local" y el fondo de la banda final
   alq/           una foto por equipo de alquiler (800x600)
   rubros/        carteles de los rubros
 

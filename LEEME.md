@@ -108,7 +108,11 @@ sección de rubros y el pie se rearman solos con lo que haya en esas dos listas.
 ## Cargar equipos de alquiler
 
 En `public/js/alquiler.js`, dentro de `ALQUILER`. Hay 36 equipos cargados en
-5 categorías (`GRUPOS`). Cada uno lleva nombre, descripción, características,
+9 rubros (`GRUPOS`), ordenados por el tipo de trabajo y no por si la máquina es
+a explosión o eléctrica: demolición, hormigón, compactación, corte, perforación,
+jardinería, poda y riego, energía y aire comprimido, soldadura y termofusión, y
+elevación y traslado. Cada rubro se muestra en su propio panel, con sus equipos
+en cuadros. Cada uno lleva nombre, descripción, características,
 para qué sirve y su foto en `public/img/alq/<id>.webp`. El botón "Consultar"
 abre la ventana con Magali y Marcelo (WhatsApp y llamada), el fijo y el correo,
 con el mensaje ya escrito.
@@ -117,6 +121,13 @@ Las fotos de alquiler son fotos de producto de fabricantes (Truper, Lüsqtoff,
 Milwaukee, HiKOKI, Wacker Neuson, Altrad Belle y STIHL) que muestran el tipo de
 máquina; la página aclara que son ilustrativas y que la marca del equipo
 alquilado puede variar.
+
+## Nuestro local
+
+Sección propia, después de "Nosotros": una presentación corta del negocio (con
+datos públicos de Google e Instagram) y una galería con las fotos reales de la
+carpeta "imagenes 2". Los textos están en `public/index.html` y las fotos en
+`public/img/fotos/`.
 
 ## Contacto
 
@@ -187,10 +198,9 @@ aparece sola: no hay que tocar código.
 | Archivo | Dónde se ve |
 |---|---|
 | `public/img/frente.webp` | **el fondo de la portada** (el celular viejo pintado en el cartel está difuminado) |
-| `public/img/alquiler.webp` | detrás de la banda oscura de Alquiler |
-| `public/img/cat-<id>.webp` | el cartel de cada categoría del catálogo (`cat-explosion`, `cat-electricas`, `cat-manuales`), de 1000 × 914 |
+| `public/img/cat-<id>.webp` | el cartel de cada categoría del catálogo (`cat-explosion`, `cat-electricas`, `cat-manuales`), de 1312 × 1199 (la de herramientas de mano, 1000 × 914) |
 | `public/img/rubros/<id>.webp` | **la imagen de cada tarjeta de rubro** (bulones, pinturas, pvc, materiales, repuestos) |
-| `public/img/fotos/*.webp` | **las fotos reales del local**, repartidas por la página: catálogo, rubros, alquiler, reparación, nosotros, dónde estamos y la banda final (`salon-entrada`) |
+| `public/img/fotos/*.webp` | **las fotos reales del local**: la galería de la sección **Nuestro local** (`frente-dia`, `salon-estanteria`, `jardin`, `frente-noche`, con el celular viejo del cartel difuminado) y el fondo de la banda final (`salon-entrada`) |
 | `public/img/p/<categoria>-<codigo>.webp` | una por producto |
 | `public/img/alq/<id>.webp` | una por equipo de alquiler, 800 × 600 sobre fondo blanco |
 

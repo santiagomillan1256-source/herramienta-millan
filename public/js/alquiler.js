@@ -1,8 +1,8 @@
 /* ══════════════════════════════════════════════════════════════════════════
    ALQUILER DE EQUIPOS
 
-   Las máquinas que el negocio da en alquiler, agrupadas por el tipo de trabajo
-   que resuelven. Una categoría sin equipos cargados no se dibuja.
+   Las máquinas que el negocio da en alquiler, agrupadas por rubro: el tipo de
+   trabajo que resuelven. Una categoría sin equipos cargados no se dibuja.
 
    PARA CARGAR UNA MÁQUINA, sumá un objeto a ALQUILER:
 
@@ -10,7 +10,7 @@
        id: "martillo-demoledor",        // nombra la foto: img/alq/<id>.webp
        foto: true,                      // false mientras no haya foto
        nombre: "Martillo demoledor",    // qué es la máquina
-       grupo: "demolicion",             // una clave de GRUPOS
+       grupo: "demolicion",             // una clave de GRUPOS (el rubro)
        descripcion: "Una línea sobre la máquina.",
        caracteristicas: ["Rasgo principal", "Otro rasgo"],
        uso: "Para qué trabajos sirve.",
@@ -22,23 +22,40 @@
    máquina (peso, capacidad, motor), nunca datos de un modelo en particular.
    ══════════════════════════════════════════════════════════════════════════ */
 
-/** Las máquinas se muestran agrupadas por el tipo de trabajo que resuelven. */
+/** Los rubros de alquiler: el tipo de trabajo que resuelve cada máquina, no
+    si funciona a explosión o con electricidad. */
 export const GRUPOS = {
   demolicion: {
-    nombre: "Demolición y hormigón",
-    texto: "Martillos demoledores, hormigonera, vibrador, compactadores y llana: romper, preparar y terminar el material.",
+    nombre: "Demolición",
+    texto: "Martillos demoledores para romper losas, pisos, contrapisos y paredes.",
+  },
+  hormigon: {
+    nombre: "Hormigón",
+    texto: "Para preparar la mezcla, vibrar el hormigón recién colado y alisar pisos.",
+  },
+  compactacion: {
+    nombre: "Compactación",
+    texto: "Para asentar suelo, arena y ripio antes de contrapisos, veredas y zanjas.",
   },
   corte: {
-    nombre: "Corte y perforación",
-    texto: "Cortadora de piso, amoladoras, sierras, taladros y ahoyadoras para cortar, agujerear y abrir.",
+    nombre: "Corte",
+    texto: "Cortadora de piso, amoladoras y sierras para hormigón, hierro, cerámica y madera.",
   },
-  jardin: {
-    nombre: "Jardín y campo",
-    texto: "Motosierras, podadora de altura, motoguadaña, cortadora de pasto y motobomba para el trabajo al aire libre.",
+  perforacion: {
+    nombre: "Perforación",
+    texto: "Para agujerear pared, hormigón y madera, y hacer pozos en la tierra.",
   },
-  taller: {
-    nombre: "Taller y obra",
-    texto: "Soldadora, compresores, generadores y equipos de apoyo: energía, aire y calor donde estés trabajando.",
+  jardineria: {
+    nombre: "Jardinería, poda y riego",
+    texto: "Motosierras, podadora de altura, motoguadaña, cortadora de pasto y motobomba.",
+  },
+  energia: {
+    nombre: "Energía y aire comprimido",
+    texto: "Generadores para tener corriente donde no hay, compresores y arrancador de batería.",
+  },
+  soldadura: {
+    nombre: "Soldadura y termofusión",
+    texto: "Para soldar hierro, unir caños de polipropileno y trabajar con calor.",
   },
   elevacion: {
     nombre: "Elevación y traslado",
@@ -49,7 +66,7 @@ export const GRUPOS = {
 export const nombreGrupo = (id) => (GRUPOS[id] || {}).nombre || "Equipos";
 
 export const ALQUILER = [
-  /* ── Demolición y hormigón ── */
+  /* ── Demolición ── */
   {
     id: "martillo-20",
     foto: true,
@@ -86,11 +103,13 @@ export const ALQUILER = [
     caracteristicas: ["Peso: 7 kg", "Eléctrico, liviano", "Sirve para trabajo en pared"],
     uso: "Trabajos de precisión: canaletas, pases de caños y demolición en pared.",
   },
+
+  /* ── Hormigón ── */
   {
     id: "hormigonera-130",
     foto: true,
     nombre: "Hormigonera de 130 litros",
-    grupo: "demolicion",
+    grupo: "hormigon",
     descripcion: "Trompo con motor eléctrico para preparar la mezcla en la obra.",
     caracteristicas: ["Capacidad del tambor: 130 litros", "Motor eléctrico", "Sobre ruedas para moverla"],
     uso: "Hacer hormigón, mortero y mezcla de asiento sin amasar a pala.",
@@ -99,16 +118,27 @@ export const ALQUILER = [
     id: "vibrador-hormigon",
     foto: true,
     nombre: "Vibrador de hormigón",
-    grupo: "demolicion",
+    grupo: "hormigon",
     descripcion: "Motor con manguera flexible y aguja que compacta el hormigón recién colado.",
     caracteristicas: ["Aguja vibradora en la punta", "Manguera flexible", "Se usa con el hormigón fresco"],
     uso: "Sacar el aire de columnas, vigas y plateas para que el hormigón quede parejo.",
   },
   {
+    id: "llana-mecanica-90",
+    foto: true,
+    nombre: "Llana mecánica de 90",
+    grupo: "hormigon",
+    descripcion: "Alisadora de aspas con motor a explosión para pisos de hormigón.",
+    caracteristicas: ["Diámetro de trabajo: 90 cm", "Motor a explosión de 6 HP", "Aspas giratorias con aro de protección"],
+    uso: "Alisar y dar terminación a pisos de hormigón de superficie grande.",
+  },
+
+  /* ── Compactación ── */
+  {
     id: "placa-compactadora",
     foto: true,
     nombre: "Placa compactadora",
-    grupo: "demolicion",
+    grupo: "compactacion",
     descripcion: "Placa vibratoria que avanza sola y compacta por superficie.",
     caracteristicas: ["Placa vibratoria de base plana", "Avanza sola al vibrar", "Manija de guía"],
     uso: "Asentar suelo, arena y ripio antes de contrapisos, veredas y adoquines.",
@@ -117,22 +147,13 @@ export const ALQUILER = [
     id: "canguro-compactador",
     foto: true,
     nombre: "Canguro compactador",
-    grupo: "demolicion",
+    grupo: "compactacion",
     descripcion: "Compactador de golpe vertical: entra donde la placa no llega.",
     caracteristicas: ["Compacta a golpes, de arriba hacia abajo", "Zapata angosta", "Motor a explosión"],
     uso: "Compactar zanjas, rellenos angostos y fondos de cimiento.",
   },
-  {
-    id: "llana-mecanica-90",
-    foto: true,
-    nombre: "Llana mecánica de 90",
-    grupo: "demolicion",
-    descripcion: "Alisadora de aspas con motor a explosión para pisos de hormigón.",
-    caracteristicas: ["Diámetro de trabajo: 90 cm", "Motor a explosión de 6 HP", "Aspas giratorias con aro de protección"],
-    uso: "Alisar y dar terminación a pisos de hormigón de superficie grande.",
-  },
 
-  /* ── Corte y perforación ── */
+  /* ── Corte ── */
   {
     id: "cortadora-concreto",
     foto: true,
@@ -187,11 +208,13 @@ export const ALQUILER = [
     caracteristicas: ["Hoja fina de movimiento vertical", "Base apoyada sobre la pieza", "Hace cortes curvos"],
     uso: "Cortes curvos y calados en madera, melamina, chapa fina y plástico.",
   },
+
+  /* ── Perforación ── */
   {
     id: "roto-percutor",
     foto: true,
     nombre: "Roto percutor SDS Plus",
-    grupo: "corte",
+    grupo: "perforacion",
     descripcion: "Taladro con golpe y mecha de encastre rápido; también sirve para picar.",
     caracteristicas: ["Encastre SDS Plus", "Perfora con percusión", "Modo para picar"],
     uso: "Perforar hormigón y ladrillo, y hacer canaletas o pases livianos.",
@@ -200,7 +223,7 @@ export const ALQUILER = [
     id: "taladro-13",
     foto: true,
     nombre: "Taladro común de 13 milímetros",
-    grupo: "corte",
+    grupo: "perforacion",
     descripcion: "Taladro eléctrico de mandril de 13 mm, para agujerear distintos materiales.",
     caracteristicas: ["Mandril de 13 mm", "Eléctrico", "Admite mechas para madera, metal y pared"],
     uso: "Agujerear madera, chapa, plástico y pared.",
@@ -209,7 +232,7 @@ export const ALQUILER = [
     id: "ahoyadora-1",
     foto: true,
     nombre: "Ahoyadora de una persona",
-    grupo: "corte",
+    grupo: "perforacion",
     descripcion: "Ahoyadora con motor a explosión que maneja un solo operario.",
     caracteristicas: ["La opera una sola persona", "Motor a explosión", "Mecha helicoidal"],
     uso: "Hacer pozos para postes, plantas y alambrados.",
@@ -218,18 +241,18 @@ export const ALQUILER = [
     id: "ahoyadora-2",
     foto: true,
     nombre: "Ahoyadora de 2 personas",
-    grupo: "corte",
+    grupo: "perforacion",
     descripcion: "Ahoyadora con manijas a los dos lados, pensada para operarla entre dos.",
     caracteristicas: ["La operan dos personas", "Motor a explosión", "Manijas a ambos lados"],
     uso: "Pozos más profundos o de mayor diámetro, y terreno más duro.",
   },
 
-  /* ── Jardín y campo ── */
+  /* ── Jardinería, poda y riego ── */
   {
     id: "motosierra-45",
     foto: true,
     nombre: "Motosierra de 45 cc",
-    grupo: "jardin",
+    grupo: "jardineria",
     descripcion: "Motosierra a explosión de cilindrada media.",
     caracteristicas: ["Cilindrada: 45 cc", "Motor a explosión", "Espada y cadena de corte"],
     uso: "Voltear y trozar árboles, cortar leña y ramas gruesas.",
@@ -238,7 +261,7 @@ export const ALQUILER = [
     id: "motosierra-38",
     foto: true,
     nombre: "Motosierra de 38 cc",
-    grupo: "jardin",
+    grupo: "jardineria",
     descripcion: "Motosierra a explosión más liviana, cómoda para cortes donde importa el peso.",
     caracteristicas: ["Cilindrada: 38 cc", "Motor a explosión", "Más liviana que la de 45 cc"],
     uso: "Poda, ramas medianas y cortes de leña livianos.",
@@ -247,7 +270,7 @@ export const ALQUILER = [
     id: "podadora-altura",
     foto: true,
     nombre: "Podadora de altura de explosión",
-    grupo: "jardin",
+    grupo: "jardineria",
     descripcion: "Motor a explosión con espada de corte en la punta de una pértiga larga.",
     caracteristicas: ["Motor a explosión", "Pértiga larga", "Espada y cadena en la punta"],
     uso: "Podar ramas altas desde el piso, sin escalera.",
@@ -256,7 +279,7 @@ export const ALQUILER = [
     id: "motoguadana-52",
     foto: true,
     nombre: "Motoguadaña de 52 cc",
-    grupo: "jardin",
+    grupo: "jardineria",
     descripcion: "Desmalezadora a explosión, con hilo o cuchilla.",
     caracteristicas: ["Cilindrada: 52 cc", "Motor a explosión", "Corta con tanza o cuchilla"],
     uso: "Cortar pasto alto, yuyo y maleza en terrenos que la cortadora no toma.",
@@ -265,7 +288,7 @@ export const ALQUILER = [
     id: "cortadora-pasto",
     foto: true,
     nombre: "Cortadora de pasto carrito",
-    grupo: "jardin",
+    grupo: "jardineria",
     descripcion: "Cortadora de empuje sobre ruedas.",
     caracteristicas: ["Tipo carrito, sobre cuatro ruedas", "Se empuja con manija", "Cuchilla bajo la carcasa"],
     uso: "Mantener el césped parejo en jardines y patios.",
@@ -274,63 +297,18 @@ export const ALQUILER = [
     id: "motobomba",
     foto: true,
     nombre: "Motobomba",
-    grupo: "jardin",
+    grupo: "jardineria",
     descripcion: "Bomba de agua con motor propio: no necesita conexión eléctrica.",
     caracteristicas: ["Motor a explosión", "Entrada y salida para mangueras", "No necesita electricidad"],
     uso: "Mover agua: riego, llenado y vaciado de pozos, piletas y tanques.",
   },
 
-  /* ── Taller y obra ── */
-  {
-    id: "soldadora-inverter",
-    foto: true,
-    nombre: "Soldadora inverter",
-    grupo: "taller",
-    descripcion: "Equipo de soldar compacto y liviano, de arco estable.",
-    caracteristicas: ["Tecnología inverter", "Suelda con electrodo", "Compacta y fácil de trasladar"],
-    uso: "Soldar hierro: estructuras, rejas, portones y reparaciones.",
-  },
-  {
-    id: "compresor-50",
-    foto: true,
-    nombre: "Compresor de 50 litros",
-    grupo: "taller",
-    descripcion: "Compresor de aire con tanque de 50 litros, fácil de mover.",
-    caracteristicas: ["Tanque de 50 litros", "Eléctrico", "Manómetro y salida de aire"],
-    uso: "Pintar, soplar, inflar y usar herramientas de aire en trabajos cortos.",
-  },
-  {
-    id: "compresor-100",
-    foto: true,
-    nombre: "Compresor de 100 litros",
-    grupo: "taller",
-    descripcion: "Compresor con tanque de 100 litros: aguanta más tiempo sin recargar.",
-    caracteristicas: ["Tanque de 100 litros", "Eléctrico", "Más reserva de aire que el de 50"],
-    uso: "Pintado de superficies grandes y herramientas neumáticas de uso seguido.",
-  },
-  {
-    id: "termofusora",
-    foto: true,
-    nombre: "Termofusora",
-    grupo: "taller",
-    descripcion: "Plancha calefactora con boquillas de distintas medidas.",
-    caracteristicas: ["Plancha que calienta caño y accesorio", "Boquillas intercambiables", "Eléctrica"],
-    uso: "Unir caños y accesorios de polipropileno en instalaciones de agua.",
-  },
-  {
-    id: "pistola-calor",
-    foto: true,
-    nombre: "Pistola de calor",
-    grupo: "taller",
-    descripcion: "Sopladora de aire caliente, eléctrica y de mano.",
-    caracteristicas: ["Sopla aire caliente", "Eléctrica, de una mano", "Boquilla de salida"],
-    uso: "Ablandar pintura vieja, termocontraer, descongelar y curvar plásticos.",
-  },
+  /* ── Energía y aire comprimido ── */
   {
     id: "generador-mono",
     foto: true,
     nombre: "Generador monofásico",
-    grupo: "taller",
+    grupo: "energia",
     descripcion: "Grupo electrógeno con motor a explosión que entrega corriente monofásica.",
     caracteristicas: ["Salida monofásica (220 V)", "Motor a explosión", "Portátil"],
     uso: "Dar luz y corriente donde no hay red, o durante un corte.",
@@ -339,19 +317,66 @@ export const ALQUILER = [
     id: "generador-tri",
     foto: true,
     nombre: "Generador trifásico",
-    grupo: "taller",
+    grupo: "energia",
     descripcion: "Grupo electrógeno que además entrega corriente trifásica.",
     caracteristicas: ["Salida trifásica", "Motor a explosión", "Para equipos que piden trifásica"],
     uso: "Alimentar máquinas y equipos de obra que trabajan con trifásica.",
   },
   {
+    id: "compresor-50",
+    foto: true,
+    nombre: "Compresor de 50 litros",
+    grupo: "energia",
+    descripcion: "Compresor de aire con tanque de 50 litros, fácil de mover.",
+    caracteristicas: ["Tanque de 50 litros", "Eléctrico", "Manómetro y salida de aire"],
+    uso: "Pintar, soplar, inflar y usar herramientas de aire en trabajos cortos.",
+  },
+  {
+    id: "compresor-100",
+    foto: true,
+    nombre: "Compresor de 100 litros",
+    grupo: "energia",
+    descripcion: "Compresor con tanque de 100 litros: aguanta más tiempo sin recargar.",
+    caracteristicas: ["Tanque de 100 litros", "Eléctrico", "Más reserva de aire que el de 50"],
+    uso: "Pintado de superficies grandes y herramientas neumáticas de uso seguido.",
+  },
+  {
     id: "cargador-arrancador",
     foto: true,
     nombre: "Cargador y arrancador de batería",
-    grupo: "taller",
+    grupo: "energia",
     descripcion: "Carga la batería y, en modo arranque, da el pique para encender el motor.",
     caracteristicas: ["Modo carga", "Modo arranque", "Pinzas para los bornes"],
     uso: "Recuperar y arrancar baterías de autos, camionetas y maquinaria.",
+  },
+
+  /* ── Soldadura y termofusión ── */
+  {
+    id: "soldadora-inverter",
+    foto: true,
+    nombre: "Soldadora inverter",
+    grupo: "soldadura",
+    descripcion: "Equipo de soldar compacto y liviano, de arco estable.",
+    caracteristicas: ["Tecnología inverter", "Suelda con electrodo", "Compacta y fácil de trasladar"],
+    uso: "Soldar hierro: estructuras, rejas, portones y reparaciones.",
+  },
+  {
+    id: "termofusora",
+    foto: true,
+    nombre: "Termofusora",
+    grupo: "soldadura",
+    descripcion: "Plancha calefactora con boquillas de distintas medidas.",
+    caracteristicas: ["Plancha que calienta caño y accesorio", "Boquillas intercambiables", "Eléctrica"],
+    uso: "Unir caños y accesorios de polipropileno en instalaciones de agua.",
+  },
+  {
+    id: "pistola-calor",
+    foto: true,
+    nombre: "Pistola de calor",
+    grupo: "soldadura",
+    descripcion: "Sopladora de aire caliente, eléctrica y de mano.",
+    caracteristicas: ["Sopla aire caliente", "Eléctrica, de una mano", "Boquilla de salida"],
+    uso: "Ablandar pintura vieja, termocontraer, descongelar y curvar plásticos.",
   },
 
   /* ── Elevación y traslado ── */

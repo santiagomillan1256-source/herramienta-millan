@@ -33,7 +33,7 @@ const js = [
 
 /* Las fotos de fondo, incrustadas: app.js las busca en globalThis.FOTOS. */
 const fotos = {};
-for (const n of ["frente", "alquiler", "cat-explosion", "cat-electricas", "cat-manuales"]) {
+for (const n of ["frente", "cat-explosion", "cat-electricas", "cat-manuales"]) {
   fotos[n] = await dataUri(`img/${n}.webp`);
 }
 for (const carpeta of ["rubros", "fotos", "alq"]) {
